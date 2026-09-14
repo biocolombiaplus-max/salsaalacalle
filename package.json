@@ -4,15 +4,18 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && prisma migrate deploy && next build",
     "start": "next start",
     "lint": "eslint",
+    "postinstall": "prisma generate",
     "db:migrate": "prisma migrate deploy",
     "db:studio": "prisma studio",
     "seed:admin": "node scripts/create-admin.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
+    "@sparticuz/chromium": "^153.0.0",
+    "@vercel/blob": "^2.8.0",
     "bcryptjs": "^3.0.3",
     "date-fns": "^4.4.0",
     "jsonwebtoken": "^9.0.3",

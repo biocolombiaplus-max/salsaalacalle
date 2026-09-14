@@ -7,6 +7,10 @@ import { renderTicketPng } from "@/lib/ticketImage";
 import { sendTicketEmail } from "@/lib/email";
 import { sendTicketWhatsApp } from "@/lib/whatsapp";
 
+// Da más margen en Vercel: generar la boleta (Chromium) y enviar correo/WhatsApp
+// puede tardar unos segundos.
+export const maxDuration = 60;
+
 const schema = z.object({
   nombre: z
     .string()

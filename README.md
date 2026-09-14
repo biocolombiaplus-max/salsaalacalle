@@ -8,11 +8,17 @@ al evento (check-in por escaneo de QR).
 ## Stack técnico
 
 - **Next.js 16** (App Router) + **TypeScript** + **Tailwind CSS 4**
-- **Prisma** + **SQLite** (fácilmente migrable a PostgreSQL/MySQL cambiando `DATABASE_URL`)
-- **Playwright (Chromium)** para renderizar la boleta como imagen (diseño tipo "boarding pass")
+- **Prisma** + **PostgreSQL** (Neon, Vercel Postgres, Supabase, etc. — cualquier proveedor sirve)
+- **Vercel Blob** para las imágenes que sube el admin (logo, hero, galería, fondo de boleta); en
+  desarrollo local, si no configuras Blob, se guardan en `public/uploads/` automáticamente
+- **Playwright (Chromium)** para renderizar la boleta como imagen (diseño tipo "boarding pass");
+  en Vercel usa `@sparticuz/chromium`, un binario empaquetado para funciones serverless
 - **Nodemailer** (SMTP) para el envío de correo
 - **WhatsApp Cloud API (Meta)** para el envío de la boleta por WhatsApp
 - Autenticación de administrador con JWT en cookie httpOnly
+
+Todo el proyecto está preparado para desplegarse tal cual en **Vercel** (ver la guía al final de
+este documento).
 
 ## Estructura principal
 
@@ -26,13 +32,16 @@ prisma/schema.prisma    modelos de datos
 scripts/create-admin.mjs script para crear/actualizar el usuario administrador
 ```
 
-## Configuración inicial
+## Configuración inicial (desarrollo local)
 
 1. Instala dependencias:
    ```bash
    npm install
    ```
-2. Copia `.env.example` a `.env` y completa las variables (ver detalle abajo).
+2. Copia `.env.example` a `.env` y completa las variables (ver detalle abajo). Necesitas una base
+   de datos PostgreSQL incluso en local: la más rápida de crear gratis es
+   [Neon](https://neon.tech) o [Supabase](https://supabase.com) (copia la cadena de conexión que
+   te dan a `DATABASE_URL`).
 3. Crea la base de datos y aplica las migraciones:
    ```bash
    npx prisma migrate deploy
@@ -50,14 +59,15 @@ scripts/create-admin.mjs script para crear/actualizar el usuario administrador
 
 | Variable | Descripción |
 |---|---|
-| `DATABASE_URL` | Cadena de conexión de la base de datos (`file:./dev.db` para SQLite). |
+| `DATABASE_URL` | Cadena de conexión de PostgreSQL, ej. `postgresql://usuario:password@host:5432/db?sslmode=require`. |
 | `JWT_SECRET` | Secreto largo y aleatorio para firmar sesiones de admin **y** los códigos QR. Cámbialo antes de producción. |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Credenciales usadas por `npm run seed:admin` para crear el primer administrador. |
+| `BLOB_READ_WRITE_TOKEN` | Token de Vercel Blob para guardar las imágenes subidas desde el panel admin. En Vercel se crea solo al conectar un Blob store; en local puedes dejarlo vacío (usa `public/uploads/`). |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD` | Datos del proveedor de correo transaccional (ver recomendaciones abajo). |
 | `SMTP_FROM_NAME`, `SMTP_FROM_EMAIL` | Nombre y correo que verán los asistentes como remitente. |
 | `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_ACCESS_TOKEN` | Credenciales de WhatsApp Cloud API (Meta for Developers). |
 | `WHATSAPP_TEMPLATE_NAME`, `WHATSAPP_TEMPLATE_LANG` | Nombre e idioma de la plantilla de WhatsApp aprobada (ver más abajo). |
-| `NEXT_PUBLIC_SITE_URL` | URL pública del sitio en producción (para enlaces en el correo). |
+| `NEXT_PUBLIC_SITE_URL` | URL pública del sitio en producción (para enlaces en el correo y como respaldo al renderizar la boleta). |
 
 ### Correo profesional (sin caer en spam)
 
@@ -96,7 +106,8 @@ scripts/create-admin.mjs script para crear/actualizar el usuario administrador
   galería de fotos, colores de marca, información del evento (fecha, lugar, programación), redes
   sociales, datos de contacto y datos legales del responsable del tratamiento.
 
-Todas las imágenes subidas se guardan en `public/uploads/` (excluido de git).
+En Vercel, las imágenes subidas se guardan en Vercel Blob; en local (sin `BLOB_READ_WRITE_TOKEN`)
+se guardan en `public/uploads/` (excluido de git).
 
 ## Seguridad del código QR
 
@@ -112,12 +123,71 @@ autorización explícita en el formulario de registro. **Se recomienda que un ab
 texto final** antes del lanzamiento oficial, y que completes el NIT/razón social real del
 responsable del tratamiento en `/admin/settings`.
 
-## Despliegue en producción
+## Despliegue en Vercel (paso a paso)
 
-1. Configura una base de datos persistente (SQLite en un volumen persistente, o PostgreSQL).
-2. Define todas las variables de entorno en tu proveedor de hosting.
-3. Ejecuta `npx prisma migrate deploy` y `npm run seed:admin` una sola vez.
-4. `npm run build && npm run start`.
-5. Verifica que `/opt/pw-browsers` (Chromium) esté disponible en el entorno de producción para la
-   generación de boletas; si tu hosting no lo incluye, instala Playwright con
-   `npx playwright install --with-deps chromium` en el proceso de build.
+El proyecto ya está listo para desplegarse en Vercel sin tocar código. Necesitas 3 cosas antes de
+darle a "Deploy": una base de datos Postgres, un almacén de Blob para imágenes, y las variables de
+entorno.
+
+### 1. Sube el repositorio a Vercel
+
+1. Entra a [vercel.com](https://vercel.com) e inicia sesión (puedes usar tu cuenta de GitHub).
+2. **Add New → Project** y selecciona el repositorio `salsaalacalle` (rama
+   `claude/gracious-carson-w7cfz0`, o la que hayas fusionado a tu rama principal).
+3. Vercel detecta automáticamente que es un proyecto Next.js. No cambies el "Build Command" ni el
+   "Install Command" (usa los definidos en `package.json`).
+4. **Todavía no le des a Deploy** — primero completa los pasos 2 y 3 para tener las variables de
+   entorno listas (si despliegas sin ellas, el build fallará porque no hay `DATABASE_URL`).
+
+### 2. Crea la base de datos (Postgres)
+
+1. Dentro del proyecto en Vercel, ve a la pestaña **Storage → Create Database → Postgres**
+   (es Neon por debajo, tiene plan gratuito).
+2. Al crearla, Vercel te ofrece **conectarla al proyecto** — acéptalo. Esto agrega automáticamente
+   la variable `DATABASE_URL` (y algunas otras `POSTGRES_*`) al proyecto. Si solo ves variables
+   como `POSTGRES_PRISMA_URL`, agrega manualmente una variable `DATABASE_URL` en
+   **Settings → Environment Variables** con ese mismo valor, ya que es el nombre que usa este
+   proyecto.
+
+### 3. Crea el almacén de imágenes (Blob)
+
+1. **Storage → Create Database → Blob**.
+2. Conéctalo al proyecto igual que la base de datos — esto agrega automáticamente
+   `BLOB_READ_WRITE_TOKEN`.
+
+### 4. Completa las demás variables de entorno
+
+En **Settings → Environment Variables**, agrega (para el ambiente "Production" al menos):
+
+- `JWT_SECRET` — genera una cadena larga aleatoria (por ejemplo con `openssl rand -hex 32`).
+- `ADMIN_EMAIL` y `ADMIN_PASSWORD` — las credenciales que quieras para el primer administrador.
+- `NEXT_PUBLIC_SITE_URL` — la URL que Vercel te va a asignar, ej. `https://salsaalacalle.vercel.app`
+  (o tu dominio propio una vez lo conectes).
+- Las variables de `SMTP_*` y `WHATSAPP_*` cuando tengas esas credenciales listas (ver secciones
+  arriba). Mientras tanto puedes dejarlas vacías: el registro seguirá funcionando, solo no se
+  enviará el correo/WhatsApp.
+
+### 5. Despliega
+
+1. Dale a **Deploy**. El build corre automáticamente `prisma generate`, `prisma migrate deploy`
+   (crea las tablas en tu base de datos) y `next build`.
+2. Cuando termine, entra a la URL que te da Vercel (algo como
+   `https://salsaalacalle.vercel.app`) — ya deberías ver la landing.
+3. Crea el usuario administrador ejecutando el script una sola vez **desde tu máquina**, apuntando
+   a la base de datos de producción (usa el mismo `DATABASE_URL` que configuraste en Vercel):
+   ```bash
+   DATABASE_URL="postgresql://...produccion..." ADMIN_EMAIL="tu@correo.com" ADMIN_PASSWORD="tuClave" npm run seed:admin
+   ```
+4. Entra a `https://tu-sitio.vercel.app/admin/login` con esas credenciales.
+
+### 6. Dominio propio (opcional)
+
+En **Settings → Domains** puedes conectar tu propio dominio (ej. `salsaalacalle.com`). Actualiza
+`NEXT_PUBLIC_SITE_URL` a ese dominio y vuelve a desplegar.
+
+### Notas de límites en el plan gratuito de Vercel
+
+- Las funciones tienen un límite de tiempo de ejecución; la ruta de registro ya está configurada
+  con `maxDuration = 60` segundos, suficiente para generar la boleta y enviar correo/WhatsApp.
+- El plan gratuito de Neon/Vercel Postgres y de Vercel Blob tienen cuotas generosas para un evento
+  de este tamaño, pero revisa los límites si esperas miles de registros.

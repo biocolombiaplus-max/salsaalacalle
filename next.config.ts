@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
       { protocol: "http", hostname: "**" },
     ],
   },
+  serverExternalPackages: ["playwright-core", "@sparticuz/chromium"],
 };
 
 export default nextConfig;

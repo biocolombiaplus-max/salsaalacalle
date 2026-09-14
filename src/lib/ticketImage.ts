@@ -3,27 +3,41 @@ import fs from "fs/promises";
 import { chromium } from "playwright-core";
 import type { SiteSettings } from "@/lib/settings";
 
-const CHROMIUM_PATH =
-  "/opt/pw-browsers/chromium-1194/chrome-linux/chrome";
+// Chromium preinstalado en el entorno de desarrollo de este sandbox.
+const LOCAL_CHROMIUM_PATH = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome";
+
+async function fetchAsDataUri(url: string): Promise<string | null> {
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  const buf = Buffer.from(await res.arrayBuffer());
+  const type = res.headers.get("content-type") || "image/jpeg";
+  return `data:${type};base64,${buf.toString("base64")}`;
+}
 
 async function toDataUri(src: string): Promise<string | null> {
   if (!src) return null;
   try {
     if (src.startsWith("http://") || src.startsWith("https://")) {
-      const res = await fetch(src);
-      if (!res.ok) return null;
-      const buf = Buffer.from(await res.arrayBuffer());
-      const type = res.headers.get("content-type") || "image/jpeg";
-      return `data:${type};base64,${buf.toString("base64")}`;
+      return await fetchAsDataUri(src);
     }
     if (src.startsWith("data:")) return src;
+
     const rel = src.startsWith("/") ? src.slice(1) : src;
-    const filePath = path.join(process.cwd(), "public", rel);
-    const buf = await fs.readFile(filePath);
-    const ext = path.extname(filePath).toLowerCase();
-    const type =
-      ext === ".png" ? "image/png" : ext === ".webp" ? "image/webp" : "image/jpeg";
-    return `data:${type};base64,${buf.toString("base64")}`;
+    try {
+      const filePath = path.join(process.cwd(), "public", rel);
+      const buf = await fs.readFile(filePath);
+      const ext = path.extname(filePath).toLowerCase();
+      const type =
+        ext === ".png" ? "image/png" : ext === ".webp" ? "image/webp" : "image/jpeg";
+      return `data:${type};base64,${buf.toString("base64")}`;
+    } catch {
+      // En despliegues serverless (Vercel) los assets de /public no siempre son
+      // accesibles por el sistema de archivos dentro de la función; como respaldo
+      // los pedimos por HTTP al propio sitio.
+      const base = process.env.NEXT_PUBLIC_SITE_URL;
+      if (!base) return null;
+      return await fetchAsDataUri(`${base}${src}`);
+    }
   } catch {
     return null;
   }
@@ -191,10 +205,21 @@ let browserSingleton: import("playwright-core").Browser | null = null;
 
 async function getBrowser() {
   if (browserSingleton && browserSingleton.isConnected()) return browserSingleton;
-  browserSingleton = await chromium.launch({
-    executablePath: CHROMIUM_PATH,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
+
+  if (process.env.VERCEL) {
+    // Vercel (y otros entornos serverless) no traen Chromium preinstalado:
+    // usamos un binario empaquetado para funciones serverless.
+    const sparticuzChromium = (await import("@sparticuz/chromium")).default;
+    browserSingleton = await chromium.launch({
+      executablePath: await sparticuzChromium.executablePath(),
+      args: sparticuzChromium.args,
+    });
+  } else {
+    browserSingleton = await chromium.launch({
+      executablePath: LOCAL_CHROMIUM_PATH,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+  }
   return browserSingleton;
 }
 
