@@ -28,13 +28,18 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSettings();
+
   return (
     <html lang="es">
+      <head>
+        <style>{`:root{--wine:${settings.colorPrimario};--gold:${settings.colorSecundario};--green:${settings.colorTerciario};}`}</style>
+      </head>
       <body className={`${playfair.variable} ${inter.variable} antialiased`}>
         {children}
       </body>

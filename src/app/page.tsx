@@ -56,7 +56,7 @@ export default async function Home() {
           {heroImg ? (
             <Image src={heroImg} alt={s.eventoEdicion} fill priority className="object-cover" />
           ) : (
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(224,166,56,0.18),transparent_55%),linear-gradient(135deg,#1a0d12_0%,#2b0f16_45%,#0c0708_100%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(252,144,0,0.18),transparent_55%),linear-gradient(135deg,#1a0d12_0%,#2b0f16_45%,#0c0708_100%)]" />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/30" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-black/70" />
@@ -80,7 +80,7 @@ export default async function Home() {
           <div className="flex flex-wrap items-center gap-6">
             <Link
               href="/registro"
-              className="inline-flex items-center gap-2 rounded-full bg-wine px-8 py-4 font-semibold text-white shadow-[0_10px_30px_-8px_rgba(200,16,46,0.6)] hover:brightness-110 transition text-base sm:text-lg"
+              className="inline-flex items-center gap-2 rounded-full bg-wine px-8 py-4 font-semibold text-white shadow-[0_10px_30px_-8px_rgba(240,36,12,0.55)] hover:brightness-110 transition text-base sm:text-lg"
             >
               Reservar mi boleta gratis
             </Link>
@@ -164,10 +164,10 @@ export default async function Home() {
               un número único y un código QR que se valida en segundos en el punto de ingreso.
             </p>
             <ul className="space-y-3 text-white/80 text-sm sm:text-base">
-              <li className="flex gap-3"><span className="text-gold">✓</span> Tu boleta <strong className="text-white">no tiene ningún costo</strong>.</li>
-              <li className="flex gap-3"><span className="text-gold">✓</span> No es personal: puede ser usada por cualquier persona (es transferible).</li>
-              <li className="flex gap-3"><span className="text-gold">✓</span> El QR solo se usa para organizar el ingreso, agilizar filas y cuidar la seguridad de todos.</li>
-              <li className="flex gap-3"><span className="text-gold">✓</span> Tus datos están protegidos conforme a la ley colombiana de protección de datos.</li>
+              <li className="flex gap-3"><span className="text-green">✓</span> Tu boleta <strong className="text-white">no tiene ningún costo</strong>.</li>
+              <li className="flex gap-3"><span className="text-green">✓</span> No es personal: puede ser usada por cualquier persona (es transferible).</li>
+              <li className="flex gap-3"><span className="text-green">✓</span> El QR solo se usa para organizar el ingreso, agilizar filas y cuidar la seguridad de todos.</li>
+              <li className="flex gap-3"><span className="text-green">✓</span> Tus datos están protegidos conforme a la ley colombiana de protección de datos.</li>
             </ul>
           </div>
           <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-8 sm:p-10 text-center">
@@ -199,7 +199,7 @@ export default async function Home() {
         </h2>
         <Link
           href="/registro"
-          className="inline-flex items-center gap-2 rounded-full bg-wine px-10 py-5 font-semibold text-white text-lg shadow-[0_10px_30px_-8px_rgba(200,16,46,0.6)] hover:brightness-110 transition"
+          className="inline-flex items-center gap-2 rounded-full bg-wine px-10 py-5 font-semibold text-white text-lg shadow-[0_10px_30px_-8px_rgba(240,36,12,0.55)] hover:brightness-110 transition"
         >
           Reservar mi boleta gratis
         </Link>

@@ -17,6 +17,7 @@ export type SiteSettings = {
   logoUrl: string;
   colorPrimario: string;
   colorSecundario: string;
+  colorTerciario: string;
   heroImagenes: string[];
   galeriaImagenes: string[];
   boletaFondoUrl: string;
@@ -51,9 +52,10 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     { hora: "11:30 p.m.", actividad: "Salsa en vivo y DJ" },
     { hora: "3:00 a.m.", actividad: "Cierre del evento" },
   ],
-  logoUrl: "",
-  colorPrimario: "#c8102e",
-  colorSecundario: "#e0a638",
+  logoUrl: "/brand/logo-salsa-a-la-calle.jpg",
+  colorPrimario: "#F0240C",
+  colorSecundario: "#FC9000",
+  colorTerciario: "#7FA30F",
   heroImagenes: [],
   galeriaImagenes: [],
   boletaFondoUrl: "",

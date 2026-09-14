@@ -228,12 +228,15 @@ export default function SettingsForm() {
             </div>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-6">
-            <Field label="Color primario">
+          <div className="grid sm:grid-cols-3 gap-6">
+            <Field label="Color primario (rojo)">
               <input type="color" value={settings.colorPrimario} onChange={(e) => set("colorPrimario", e.target.value)} className="h-11 w-full rounded-xl bg-black/30 border border-white/15" />
             </Field>
-            <Field label="Color secundario (dorado)">
+            <Field label="Color secundario (naranja)">
               <input type="color" value={settings.colorSecundario} onChange={(e) => set("colorSecundario", e.target.value)} className="h-11 w-full rounded-xl bg-black/30 border border-white/15" />
+            </Field>
+            <Field label="Color terciario (verde)">
+              <input type="color" value={settings.colorTerciario} onChange={(e) => set("colorTerciario", e.target.value)} className="h-11 w-full rounded-xl bg-black/30 border border-white/15" />
             </Field>
           </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 function calc(target: number) {
   const diff = Math.max(0, target - Date.now());
@@ -11,15 +11,18 @@ function calc(target: number) {
   return { dias, horas, minutos, segundos, done: diff === 0 };
 }
 
+function subscribe(callback: () => void) {
+  const id = setInterval(callback, 1000);
+  return () => clearInterval(id);
+}
+
+function getServerSnapshot() {
+  return null;
+}
+
 export default function Countdown({ fechaISO }: { fechaISO: string }) {
   const target = new Date(fechaISO).getTime();
-  const [t, setT] = useState<ReturnType<typeof calc> | null>(null);
-
-  useEffect(() => {
-    setT(calc(target));
-    const id = setInterval(() => setT(calc(target)), 1000);
-    return () => clearInterval(id);
-  }, [target]);
+  const t = useSyncExternalStore(subscribe, () => calc(target), getServerSnapshot);
 
   if (!t || Number.isNaN(target) || t.done) return null;
 

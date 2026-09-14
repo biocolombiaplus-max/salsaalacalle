@@ -3,8 +3,9 @@
 :root {
   --background: #0a0708;
   --foreground: #f5efe6;
-  --gold: #e0a638;
-  --wine: #c8102e;
+  --gold: #fc9000;
+  --wine: #f0240c;
+  --green: #7fa30f;
   --ink: #120b0d;
   --font-sans: var(--font-body);
   --font-display: var(--font-display);
@@ -15,6 +16,7 @@
   --color-foreground: var(--foreground);
   --color-gold: var(--gold);
   --color-wine: var(--wine);
+  --color-green: var(--green);
   --font-sans: var(--font-body);
   --font-display: var(--font-display);
 }
@@ -43,6 +45,9 @@ body {
 .border-gold { border-color: var(--gold); }
 .text-wine { color: var(--wine); }
 .bg-wine { background-color: var(--wine); }
+.text-green { color: var(--green); }
+.bg-green { background-color: var(--green); }
+.border-green { border-color: var(--green); }
 
 @keyframes marquee {
   from { transform: translateX(0); }
