@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Registration {
+  id            String    @id @default(cuid())
+  ticketCode    String    @unique
+  nombre        String
+  correo        String
+  whatsapp      String
+  barrio        String
+  qrToken       String    @unique
+  status        String    @default("valido") // valido | anulado
+  checkedInAt   DateTime?
+  checkedInBy   String?
+  emailSentAt   DateTime?
+  whatsappSentAt DateTime?
+  emailError    String?
+  whatsappError String?
+  createdAt     DateTime  @default(now())
+
+  @@index([correo])
+  @@index([whatsapp])
+  @@index([createdAt])
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  nombre       String
+  createdAt    DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  actor     String
+  detail    String?
+  createdAt DateTime @default(now())
+}
