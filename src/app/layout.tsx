@@ -15,15 +15,40 @@ const inter = Inter({
   weight: ["400", "500", "600", "700"],
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+function absoluteUrl(path: string): string {
+  if (!path) return path;
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  return `${SITE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
+  const title = `${settings.eventoNombre} · ${settings.eventoEdicion}`;
+  // Para que WhatsApp, Facebook, etc. muestren una imagen en la vista previa
+  // del link siempre usamos el logo como respaldo si no hay foto del hero.
+  const previewImage = absoluteUrl(settings.heroImagenes[0] || settings.logoUrl);
+
   return {
-    title: `${settings.eventoNombre} · ${settings.eventoEdicion}`,
+    metadataBase: new URL(SITE_URL),
+    title,
     description: settings.eventoDescripcion,
+    icons: settings.logoUrl ? { icon: settings.logoUrl, apple: settings.logoUrl } : undefined,
     openGraph: {
-      title: `${settings.eventoNombre} · ${settings.eventoEdicion}`,
+      title,
       description: settings.eventoDescripcion,
-      images: settings.heroImagenes[0] ? [settings.heroImagenes[0]] : undefined,
+      url: SITE_URL,
+      siteName: settings.eventoNombre,
+      locale: "es_CO",
+      type: "website",
+      images: previewImage ? [{ url: previewImage, width: 1200, height: 1200, alt: title }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: settings.eventoDescripcion,
+      images: previewImage ? [previewImage] : undefined,
     },
   };
 }
