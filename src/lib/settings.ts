@@ -17,6 +17,7 @@ export type SiteSettings = {
   eventoCupo: string;
   eventoPrograma: ProgramaItem[];
   logoUrl: string;
+  logoAltura: number;
   colorPrimario: string;
   colorSecundario: string;
   colorTerciario: string;
@@ -61,6 +62,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     { hora: "3:00 a.m.", actividad: "Cierre del evento" },
   ],
   logoUrl: "/brand/logo-salsa-a-la-calle.jpg",
+  logoAltura: 64,
   colorPrimario: "#F0240C",
   colorSecundario: "#FC9000",
   colorTerciario: "#7FA30F",
@@ -103,6 +105,9 @@ export async function getSettings(forceFresh = false): Promise<SiteSettings> {
       } catch {
         // keep default if malformed
       }
+    } else if (typeof defaultVal === "number") {
+      const num = Number(raw);
+      if (!Number.isNaN(num)) (merged as Record<string, unknown>)[key] = num;
     } else {
       (merged as Record<string, unknown>)[key] = raw;
     }

@@ -30,9 +30,10 @@ export default async function Home() {
               <Image
                 src={s.logoUrl}
                 alt={s.eventoNombre}
-                width={112}
-                height={112}
-                className="h-14 sm:h-16 w-auto object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]"
+                width={s.logoAltura * 2}
+                height={s.logoAltura * 2}
+                style={{ height: `clamp(2rem, 10vw, ${s.logoAltura}px)` }}
+                className="w-auto object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]"
               />
             ) : (
               <div className="h-14 w-14 rounded-full bg-gradient-to-br from-wine to-gold flex items-center justify-center font-display font-bold text-sm">

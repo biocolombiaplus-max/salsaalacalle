@@ -255,10 +255,26 @@ export default function SettingsForm() {
             <div>
               <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Logo del evento</p>
               {settings.logoUrl && (
-                <Image src={settings.logoUrl} alt="Logo" width={80} height={80} className="rounded-xl object-cover mb-3 h-20 w-20" />
+                <div className="mb-3 h-20 w-20 rounded-xl bg-black/30 flex items-center justify-center overflow-hidden">
+                  <Image src={settings.logoUrl} alt="Logo" width={80} height={80} className="max-h-full w-auto object-contain" />
+                </div>
               )}
               <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("logoUrl", e.target.files[0])} className="text-xs text-white/60" />
               {uploading === "logoUrl" && <p className="text-xs text-gold mt-1">Subiendo...</p>}
+              <div className="mt-4">
+                <label className="block text-[11px] uppercase tracking-widest text-white/50 mb-2">
+                  Tamaño del logo en la landing ({settings.logoAltura}px)
+                </label>
+                <input
+                  type="range"
+                  min={32}
+                  max={140}
+                  step={4}
+                  value={settings.logoAltura}
+                  onChange={(e) => set("logoAltura", Number(e.target.value))}
+                  className="w-full accent-gold"
+                />
+              </div>
             </div>
             <div>
               <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Imagen de fondo de la boleta</p>
