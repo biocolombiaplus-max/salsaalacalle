@@ -14,7 +14,13 @@ export default async function RegistroPage() {
         <div className="flex flex-col items-center text-center mb-10">
           <Link href="/" className="flex items-center gap-3 mb-6">
             {s.logoUrl ? (
-              <Image src={s.logoUrl} alt={s.eventoNombre} width={52} height={52} className="rounded-full object-cover h-13 w-13" />
+              <Image
+                src={s.logoUrl}
+                alt={s.eventoNombre}
+                width={160}
+                height={160}
+                className="h-24 w-auto object-contain drop-shadow-[0_2px_16px_rgba(0,0,0,0.5)]"
+              />
             ) : (
               <div className="h-12 w-12 rounded-full bg-gradient-to-br from-wine to-gold" />
             )}

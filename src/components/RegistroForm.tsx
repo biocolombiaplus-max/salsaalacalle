@@ -7,7 +7,7 @@ type Result =
   | { state: "idle" }
   | { state: "loading" }
   | { state: "error"; message: string }
-  | { state: "success"; ticketCode: string; emailOk: boolean; whatsappOk: boolean };
+  | { state: "success"; ticketCode: string };
 
 export default function RegistroForm() {
   const [form, setForm] = useState({ nombre: "", correo: "", whatsapp: "", barrio: "", aceptaPolitica: false });
@@ -31,7 +31,7 @@ export default function RegistroForm() {
         setResult({ state: "error", message: data.error || "No fue posible completar tu registro." });
         return;
       }
-      setResult({ state: "success", ticketCode: data.ticketCode, emailOk: data.emailOk, whatsappOk: data.whatsappOk });
+      setResult({ state: "success", ticketCode: data.ticketCode });
     } catch {
       setResult({ state: "error", message: "Error de conexión. Intenta nuevamente." });
     }
@@ -46,10 +46,10 @@ export default function RegistroForm() {
           Tu número de boleta es
         </p>
         <p className="font-display text-3xl font-bold text-gold mb-6 tracking-widest">{result.ticketCode}</p>
-        <div className="text-sm text-white/70 space-y-1 mb-6">
-          <p>{result.emailOk ? "✓ Boleta enviada a tu correo electrónico." : "⚠ No pudimos enviar el correo, revisa el buzón de spam más tarde o contáctanos."}</p>
-          <p>{result.whatsappOk ? "✓ Boleta enviada a tu WhatsApp." : "⚠ No pudimos enviar el WhatsApp, guarda tu número de boleta."}</p>
-        </div>
+        <p className="text-sm text-white/70 mb-6">
+          En los próximos minutos te llegará tu boleta con el código QR al correo y al WhatsApp que registraste.
+          Guarda este número de boleta mientras tanto.
+        </p>
         <p className="text-xs text-white/40">
           Presenta tu boleta (código QR) en el punto de ingreso el día del evento. Recuerda: no tiene costo y es transferible.
         </p>

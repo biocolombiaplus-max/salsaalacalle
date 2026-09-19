@@ -27,9 +27,15 @@ export default async function Home() {
         <div className="max-w-6xl mx-auto flex items-center justify-between px-5 sm:px-8 py-3">
           <div className="flex items-center gap-3">
             {s.logoUrl ? (
-              <Image src={s.logoUrl} alt={s.eventoNombre} width={40} height={40} className="rounded-full object-cover h-10 w-10" />
+              <Image
+                src={s.logoUrl}
+                alt={s.eventoNombre}
+                width={112}
+                height={112}
+                className="h-14 sm:h-16 w-auto object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]"
+              />
             ) : (
-              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-wine to-gold flex items-center justify-center font-display font-bold text-sm">
+              <div className="h-14 w-14 rounded-full bg-gradient-to-br from-wine to-gold flex items-center justify-center font-display font-bold text-sm">
                 SC
               </div>
             )}
@@ -315,7 +321,26 @@ export default async function Home() {
             </p>
           </div>
         </div>
-        <p className="text-center text-white/30 text-xs mt-12">
+        {s.creditoBoleteria && (
+          <div className="max-w-6xl mx-auto border-t border-white/10 mt-12 pt-6 flex justify-center">
+            <p className="text-center text-white/40 text-xs uppercase tracking-widest">
+              Proceso de boletería y registro gestionado por{" "}
+              {s.creditoBoleteriaUrl ? (
+                <a
+                  href={s.creditoBoleteriaUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/70 hover:text-gold transition-colors font-semibold"
+                >
+                  {s.creditoBoleteria}
+                </a>
+              ) : (
+                <span className="text-white/70 font-semibold">{s.creditoBoleteria}</span>
+              )}
+            </p>
+          </div>
+        )}
+        <p className="text-center text-white/30 text-xs mt-6">
           © {new Date().getFullYear()} {s.eventoNombre}. Todos los derechos reservados.{" "}
           <Link
             href="/admin/login"

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
@@ -7,8 +7,8 @@ import { renderTicketPng } from "@/lib/ticketImage";
 import { sendTicketEmail } from "@/lib/email";
 import { sendTicketWhatsApp } from "@/lib/whatsapp";
 
-// Da más margen en Vercel: generar la boleta (Chromium) y enviar correo/WhatsApp
-// puede tardar unos segundos.
+// Da más margen para el trabajo en segundo plano (boleta + correo + WhatsApp)
+// que sigue corriendo después de responder al navegador.
 export const maxDuration = 60;
 
 const schema = z.object({
@@ -29,6 +29,53 @@ const schema = z.object({
   }),
 });
 
+async function enviarBoleta(params: {
+  registrationId: string;
+  nombre: string;
+  correo: string;
+  whatsapp: string;
+  ticketCode: string;
+  siteUrl: string;
+}) {
+  const { registrationId, nombre, correo, whatsapp, ticketCode, siteUrl } = params;
+  try {
+    const settings = await getSettings();
+    const qrDataUrl = await generateQrDataUrl(buildQrPayload(ticketCode));
+    const ticketPng = await renderTicketPng({ nombre, ticketCode, qrDataUrl, settings });
+
+    try {
+      await sendTicketEmail({ to: correo, nombre, ticketCode, ticketPng, settings, siteUrl });
+      await prisma.registration.update({
+        where: { id: registrationId },
+        data: { emailSentAt: new Date(), emailError: null },
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error desconocido";
+      console.error("Error enviando correo", message);
+      await prisma.registration.update({ where: { id: registrationId }, data: { emailError: message } });
+    }
+
+    try {
+      await sendTicketWhatsApp({ to: whatsapp, nombre, ticketCode, ticketPng, settings });
+      await prisma.registration.update({
+        where: { id: registrationId },
+        data: { whatsappSentAt: new Date(), whatsappError: null },
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error desconocido";
+      console.error("Error enviando WhatsApp", message);
+      await prisma.registration.update({ where: { id: registrationId }, data: { whatsappError: message } });
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Error desconocido";
+    console.error("Error generando la boleta", message);
+    await prisma.registration.update({
+      where: { id: registrationId },
+      data: { emailError: message, whatsappError: message },
+    });
+  }
+}
+
 export async function POST(req: NextRequest) {
   let body: unknown;
   try {
@@ -47,7 +94,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const settings = await getSettings();
-    const edicionNumero = (settings.eventoEdicion.match(/\d+/)?.[0] || "4");
+    const edicionNumero = settings.eventoEdicion.match(/\d+/)?.[0] || "4";
 
     let ticketCode = createTicketCode(edicionNumero);
     for (let i = 0; i < 5; i++) {
@@ -59,69 +106,26 @@ export async function POST(req: NextRequest) {
     const qrPayload = buildQrPayload(ticketCode);
 
     const registration = await prisma.registration.create({
-      data: {
-        ticketCode,
+      data: { ticketCode, nombre, correo, whatsapp, barrio, qrToken: qrPayload },
+    });
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `${req.nextUrl.protocol}//${req.nextUrl.host}`;
+
+    // Responde de inmediato al navegador; la boleta (Chromium) y los envíos de
+    // correo/WhatsApp, que pueden tardar varios segundos, siguen en segundo
+    // plano para no dejar a la persona esperando ni arriesgar un timeout.
+    after(() =>
+      enviarBoleta({
+        registrationId: registration.id,
         nombre,
         correo,
         whatsapp,
-        barrio,
-        qrToken: qrPayload,
-      },
-    });
+        ticketCode,
+        siteUrl,
+      })
+    );
 
-    const qrDataUrl = await generateQrDataUrl(qrPayload);
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `${req.nextUrl.protocol}//${req.nextUrl.host}`;
-
-    let ticketPng: Buffer | null = null;
-    try {
-      ticketPng = await renderTicketPng({ nombre, ticketCode, qrDataUrl, settings });
-    } catch (err) {
-      console.error("Error generando imagen de boleta", err);
-    }
-
-    let emailOk = false;
-    let whatsappOk = false;
-
-    if (ticketPng) {
-      try {
-        await sendTicketEmail({ to: correo, nombre, ticketCode, ticketPng, settings, siteUrl });
-        emailOk = true;
-        await prisma.registration.update({
-          where: { id: registration.id },
-          data: { emailSentAt: new Date(), emailError: null },
-        });
-      } catch (err) {
-        const message = err instanceof Error ? err.message : "Error desconocido";
-        console.error("Error enviando correo", message);
-        await prisma.registration.update({
-          where: { id: registration.id },
-          data: { emailError: message },
-        });
-      }
-
-      try {
-        await sendTicketWhatsApp({ to: whatsapp, nombre, ticketCode, ticketPng, settings });
-        whatsappOk = true;
-        await prisma.registration.update({
-          where: { id: registration.id },
-          data: { whatsappSentAt: new Date(), whatsappError: null },
-        });
-      } catch (err) {
-        const message = err instanceof Error ? err.message : "Error desconocido";
-        console.error("Error enviando WhatsApp", message);
-        await prisma.registration.update({
-          where: { id: registration.id },
-          data: { whatsappError: message },
-        });
-      }
-    }
-
-    return NextResponse.json({
-      ok: true,
-      ticketCode,
-      emailOk,
-      whatsappOk,
-    });
+    return NextResponse.json({ ok: true, ticketCode });
   } catch (err) {
     console.error("Error en registro", err);
     return NextResponse.json(

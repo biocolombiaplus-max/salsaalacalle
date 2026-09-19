@@ -35,6 +35,8 @@ export type SiteSettings = {
   contactoTelefono: string;
   legalResponsable: string;
   legalNit: string;
+  creditoBoleteria: string;
+  creditoBoleteriaUrl: string;
 };
 
 export const DEFAULT_SETTINGS: SiteSettings = {
@@ -77,6 +79,8 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   contactoTelefono: "",
   legalResponsable: "Salsa a la Calle",
   legalNit: "",
+  creditoBoleteria: "SID & Biomarketing",
+  creditoBoleteriaUrl: "",
 };
 
 let cache: { data: SiteSettings; ts: number } | null = null;

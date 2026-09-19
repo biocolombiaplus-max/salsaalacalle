@@ -409,6 +409,30 @@ export default function SettingsForm() {
             Estos datos se muestran en la Política de Tratamiento de Datos Personales del sitio. Recomendamos
             validar el texto legal completo con un abogado antes del lanzamiento oficial.
           </p>
+
+          <div className="sm:col-span-2 pt-4 mt-2 border-t border-white/10">
+            <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Crédito de boletería (footer)</p>
+          </div>
+          <Field label="Texto del crédito">
+            <input
+              className={inputClass}
+              value={settings.creditoBoleteria}
+              onChange={(e) => set("creditoBoleteria", e.target.value)}
+              placeholder="SID & Biomarketing"
+            />
+          </Field>
+          <Field label="Enlace del crédito (opcional)">
+            <input
+              className={inputClass}
+              value={settings.creditoBoleteriaUrl}
+              onChange={(e) => set("creditoBoleteriaUrl", e.target.value)}
+              placeholder="https://..."
+            />
+          </Field>
+          <p className="sm:col-span-2 text-xs text-white/40">
+            Aparece en el pie de página como &quot;Proceso de boletería y registro gestionado por [texto]&quot;,
+            aclarando que ustedes administran el registro sin ser los organizadores del evento.
+          </p>
         </div>
       )}
 
