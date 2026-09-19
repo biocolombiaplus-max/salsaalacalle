@@ -340,16 +340,21 @@ export default async function Home() {
             </p>
           </div>
         )}
-        <p className="text-center text-white/30 text-xs mt-6">
-          © {new Date().getFullYear()} {s.eventoNombre}. Todos los derechos reservados.{" "}
+        <div className="flex flex-col items-center gap-3 mt-6">
+          <p className="text-center text-white/30 text-xs">
+            © {new Date().getFullYear()} {s.eventoNombre}. Todos los derechos reservados.
+          </p>
           <Link
             href="/admin/login"
-            aria-label="Acceso administrativo"
-            className="text-white/10 hover:text-white/40 transition-colors"
+            className="inline-flex items-center gap-1.5 text-white/35 hover:text-gold text-[11px] transition-colors"
           >
-            ·
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="11" width="18" height="10" rx="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            Acceso administrativo
           </Link>
-        </p>
+        </div>
       </footer>
     </main>
   );
