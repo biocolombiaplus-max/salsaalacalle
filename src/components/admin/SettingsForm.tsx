@@ -2,16 +2,19 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import type { SiteSettings, ProgramaItem } from "@/lib/settings";
+import type { SiteSettings, ProgramaItem, Patrocinador } from "@/lib/settings";
 
-type Tab = "evento" | "imagenes" | "redes" | "legal";
+type Tab = "evento" | "imagenes" | "patrocinadores" | "redes" | "legal";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "evento", label: "Evento" },
   { id: "imagenes", label: "Imágenes y marca" },
+  { id: "patrocinadores", label: "Patrocinadores" },
   { id: "redes", label: "Redes y contacto" },
   { id: "legal", label: "Datos legales" },
 ];
+
+type SingleImageKey = "logoUrl" | "boletaFondoUrl" | "sobreImagenUrl" | "seguridadImagenUrl";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -75,7 +78,7 @@ export default function SettingsForm() {
     }
   }
 
-  async function handleSingleUpload(key: "logoUrl" | "boletaFondoUrl", file: File) {
+  async function handleSingleUpload(key: SingleImageKey, file: File) {
     setUploading(key);
     try {
       const url = await uploadFile(file, "misc");
@@ -117,6 +120,32 @@ export default function SettingsForm() {
 
   function removePrograma(index: number) {
     set("eventoPrograma", settings!.eventoPrograma.filter((_, i) => i !== index));
+  }
+
+  function addPatrocinador() {
+    set("patrocinadores", [...settings!.patrocinadores, { nombre: "", logoUrl: "" }]);
+  }
+
+  function updatePatrocinador(index: number, patch: Partial<Patrocinador>) {
+    const next = settings!.patrocinadores.map((p, i) => (i === index ? { ...p, ...patch } : p));
+    set("patrocinadores", next);
+  }
+
+  function removePatrocinador(index: number) {
+    set("patrocinadores", settings!.patrocinadores.filter((_, i) => i !== index));
+  }
+
+  async function handlePatrocinadorLogo(index: number, file: File) {
+    const uploadKey = `patrocinador-${index}`;
+    setUploading(uploadKey);
+    try {
+      const url = await uploadFile(file, "misc");
+      updatePatrocinador(index, { logoUrl: url });
+    } catch (e) {
+      setMessage(e instanceof Error ? e.message : "Error al subir el logo");
+    } finally {
+      setUploading(null);
+    }
   }
 
   return (
@@ -169,6 +198,19 @@ export default function SettingsForm() {
           <div className="sm:col-span-2">
             <Field label="Dirección">
               <input className={inputClass} value={settings.eventoDireccion} onChange={(e) => set("eventoDireccion", e.target.value)} />
+            </Field>
+          </div>
+          <div className="sm:col-span-2">
+            <Field label="Enlace de Google Maps (botón 'Cómo llegar')">
+              <input
+                className={inputClass}
+                value={settings.googleMapsUrl}
+                onChange={(e) => set("googleMapsUrl", e.target.value)}
+                placeholder="https://maps.app.goo.gl/..."
+              />
+              <p className="text-[11px] text-white/40 mt-2">
+                En Google Maps busca el lugar → botón &quot;Compartir&quot; → &quot;Copiar enlace&quot;, y pégalo aquí.
+              </p>
             </Field>
           </div>
           <div className="sm:col-span-2">
@@ -226,6 +268,22 @@ export default function SettingsForm() {
               <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("boletaFondoUrl", e.target.files[0])} className="text-xs text-white/60" />
               {uploading === "boletaFondoUrl" && <p className="text-xs text-gold mt-1">Subiendo...</p>}
             </div>
+            <div>
+              <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Imagen sección &quot;Sobre el evento&quot;</p>
+              {settings.sobreImagenUrl && (
+                <Image src={settings.sobreImagenUrl} alt="Sobre el evento" width={140} height={100} className="rounded-xl object-cover mb-3 h-[100px] w-[140px]" />
+              )}
+              <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("sobreImagenUrl", e.target.files[0])} className="text-xs text-white/60" />
+              {uploading === "sobreImagenUrl" && <p className="text-xs text-gold mt-1">Subiendo...</p>}
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Imagen de fondo sección &quot;Seguridad&quot;</p>
+              {settings.seguridadImagenUrl && (
+                <Image src={settings.seguridadImagenUrl} alt="Seguridad" width={140} height={100} className="rounded-xl object-cover mb-3 h-[100px] w-[140px]" />
+              )}
+              <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("seguridadImagenUrl", e.target.files[0])} className="text-xs text-white/60" />
+              {uploading === "seguridadImagenUrl" && <p className="text-xs text-gold mt-1">Subiendo...</p>}
+            </div>
           </div>
 
           <div className="grid sm:grid-cols-3 gap-6">
@@ -267,6 +325,49 @@ export default function SettingsForm() {
             <input type="file" accept="image/*" multiple onChange={(e) => e.target.files && handleMultiUpload("galeriaImagenes", "gallery", e.target.files)} className="text-xs text-white/60" />
             {uploading === "galeriaImagenes" && <p className="text-xs text-gold mt-1">Subiendo...</p>}
           </div>
+        </div>
+      )}
+
+      {tab === "patrocinadores" && (
+        <div className="max-w-3xl">
+          <p className="text-white/50 text-sm mb-6">
+            Los logos aparecen en una franja animada en la landing. Sube logos con fondo transparente
+            (PNG) para mejor resultado.
+          </p>
+          <div className="space-y-4">
+            {settings.patrocinadores.map((p, i) => (
+              <div key={i} className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                <div className="h-16 w-24 shrink-0 rounded-lg bg-black/30 flex items-center justify-center overflow-hidden">
+                  {p.logoUrl ? (
+                    <Image src={p.logoUrl} alt={p.nombre || "Patrocinador"} width={96} height={64} className="max-h-14 w-auto object-contain" />
+                  ) : (
+                    <span className="text-white/30 text-[10px]">Sin logo</span>
+                  )}
+                </div>
+                <div className="flex-1 space-y-2">
+                  <input
+                    className={inputClass}
+                    placeholder="Nombre del patrocinador"
+                    value={p.nombre}
+                    onChange={(e) => updatePatrocinador(i, { nombre: e.target.value })}
+                  />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => e.target.files?.[0] && handlePatrocinadorLogo(i, e.target.files[0])}
+                    className="text-xs text-white/60"
+                  />
+                  {uploading === `patrocinador-${i}` && <p className="text-xs text-gold">Subiendo...</p>}
+                </div>
+                <button onClick={() => removePatrocinador(i)} className="text-red-400 text-xs px-2 self-start">
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+          <button onClick={addPatrocinador} className="text-gold text-xs hover:underline mt-4">
+            + Agregar patrocinador
+          </button>
         </div>
       )}
 

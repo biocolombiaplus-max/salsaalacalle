@@ -74,7 +74,18 @@ export default async function Home() {
           <div className="flex flex-wrap items-center gap-6 mb-10 text-white/90 text-sm sm:text-base">
             <span className="flex items-center gap-2">📅 {s.eventoFechaTexto}</span>
             <span className="flex items-center gap-2">🕓 {s.eventoHoraTexto}</span>
-            <span className="flex items-center gap-2">📍 {s.eventoLugar}</span>
+            {s.googleMapsUrl ? (
+              <a
+                href={s.googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-gold transition-colors underline decoration-white/20 underline-offset-4"
+              >
+                📍 {s.eventoLugar}
+              </a>
+            ) : (
+              <span className="flex items-center gap-2">📍 {s.eventoLugar}</span>
+            )}
           </div>
 
           <div className="flex flex-wrap items-center gap-6">
@@ -94,13 +105,26 @@ export default async function Home() {
 
       {/* SOBRE EL EVENTO */}
       <section id="evento" className="relative py-24 sm:py-32 px-5 sm:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">Sobre el evento</p>
-          <h2 className="font-display text-3xl sm:text-5xl font-bold mb-6">
-            Vive la salsa como nunca antes
-          </h2>
-          <p className="text-white/70 text-base sm:text-lg leading-relaxed">{s.eventoDescripcion}</p>
-        </div>
+        {s.sobreImagenUrl ? (
+          <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+            <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border border-white/10">
+              <Image src={s.sobreImagenUrl} alt={s.eventoEdicion} fill className="object-cover" />
+            </div>
+            <div>
+              <p className="uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">Sobre el evento</p>
+              <h2 className="font-display text-3xl sm:text-5xl font-bold mb-6">Vive la salsa como nunca antes</h2>
+              <p className="text-white/70 text-base sm:text-lg leading-relaxed">{s.eventoDescripcion}</p>
+            </div>
+          </div>
+        ) : (
+          <div className="max-w-4xl mx-auto text-center">
+            <p className="uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">Sobre el evento</p>
+            <h2 className="font-display text-3xl sm:text-5xl font-bold mb-6">
+              Vive la salsa como nunca antes
+            </h2>
+            <p className="text-white/70 text-base sm:text-lg leading-relaxed">{s.eventoDescripcion}</p>
+          </div>
+        )}
 
         <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16">
           {[
@@ -108,10 +132,20 @@ export default async function Home() {
             { title: "Hora", value: s.eventoHoraTexto, icon: "🕓" },
             { title: "Lugar", value: `${s.eventoLugar} · ${s.eventoDireccion}`, icon: "📍" },
           ].map((it) => (
-            <div key={it.title} className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center">
+            <div key={it.title} className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 text-center flex flex-col">
               <div className="text-3xl mb-4">{it.icon}</div>
               <p className="uppercase tracking-widest text-xs text-gold mb-2">{it.title}</p>
               <p className="text-white/90 font-medium">{it.value}</p>
+              {it.title === "Lugar" && s.googleMapsUrl && (
+                <a
+                  href={s.googleMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-flex items-center justify-center gap-1.5 mx-auto rounded-full border border-gold/40 text-gold text-xs font-semibold px-4 py-2 hover:bg-gold hover:text-[#1a1408] transition"
+                >
+                  Cómo llegar →
+                </a>
+              )}
             </div>
           ))}
         </div>
@@ -151,8 +185,16 @@ export default async function Home() {
       )}
 
       {/* SEGURIDAD / CONFIANZA */}
-      <section id="seguridad" className="relative py-24 sm:py-32 px-5 sm:px-8 bg-gradient-to-b from-transparent via-wine/10 to-transparent border-y border-white/10">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+      <section id="seguridad" className="relative py-24 sm:py-32 px-5 sm:px-8 border-y border-white/10 overflow-hidden">
+        {s.seguridadImagenUrl ? (
+          <div className="absolute inset-0">
+            <Image src={s.seguridadImagenUrl} alt="" fill className="object-cover" />
+            <div className="absolute inset-0 bg-black/80" />
+          </div>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-wine/10 to-transparent" />
+        )}
+        <div className="relative max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <div>
             <p className="uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">Registro y seguridad</p>
             <h2 className="font-display text-3xl sm:text-4xl font-bold mb-6">
@@ -190,6 +232,40 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* PATROCINADORES */}
+      {s.patrocinadores.length > 0 && (
+        <section className="relative py-20 sm:py-24 px-5 sm:px-8 border-b border-white/10 overflow-hidden">
+          <p className="text-center uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-12">
+            Con el respaldo de
+          </p>
+          <div
+            className="relative max-w-6xl mx-auto overflow-hidden"
+            style={{
+              maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
+              WebkitMaskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
+            }}
+          >
+            <div className="flex w-max animate-marquee gap-16 items-center">
+              {[...s.patrocinadores, ...s.patrocinadores].map((p, i) => (
+                <div
+                  key={`${p.nombre}-${i}`}
+                  className="shrink-0 flex items-center justify-center h-20 w-40 rounded-2xl border border-white/10 bg-white/[0.04] px-6 hover:border-gold/40 transition-colors"
+                  title={p.nombre}
+                >
+                  <Image
+                    src={p.logoUrl}
+                    alt={p.nombre}
+                    width={140}
+                    height={70}
+                    className="max-h-12 w-auto object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition duration-300"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* CTA FINAL */}
       <section className="relative py-24 sm:py-32 px-5 sm:px-8 text-center">
@@ -240,7 +316,14 @@ export default async function Home() {
           </div>
         </div>
         <p className="text-center text-white/30 text-xs mt-12">
-          © {new Date().getFullYear()} {s.eventoNombre}. Todos los derechos reservados.
+          © {new Date().getFullYear()} {s.eventoNombre}. Todos los derechos reservados.{" "}
+          <Link
+            href="/admin/login"
+            aria-label="Acceso administrativo"
+            className="text-white/10 hover:text-white/40 transition-colors"
+          >
+            ·
+          </Link>
         </p>
       </footer>
     </main>

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 
 export type ProgramaItem = { hora: string; actividad: string };
+export type Patrocinador = { nombre: string; logoUrl: string };
 
 export type SiteSettings = {
   eventoNombre: string;
@@ -11,6 +12,7 @@ export type SiteSettings = {
   eventoLugar: string;
   eventoDireccion: string;
   eventoCiudad: string;
+  googleMapsUrl: string;
   eventoDescripcion: string;
   eventoCupo: string;
   eventoPrograma: ProgramaItem[];
@@ -21,6 +23,9 @@ export type SiteSettings = {
   heroImagenes: string[];
   galeriaImagenes: string[];
   boletaFondoUrl: string;
+  sobreImagenUrl: string;
+  seguridadImagenUrl: string;
+  patrocinadores: Patrocinador[];
   redesInstagram: string;
   redesFacebook: string;
   redesTiktok: string;
@@ -35,12 +40,13 @@ export type SiteSettings = {
 export const DEFAULT_SETTINGS: SiteSettings = {
   eventoNombre: "Salsa a la Calle",
   eventoEdicion: "4to Encuentro Salsero 2026",
-  eventoFechaISO: "2026-09-26T19:00:00-05:00",
-  eventoFechaTexto: "Sábado 26 de septiembre de 2026",
+  eventoFechaISO: "2026-09-25T19:00:00-05:00",
+  eventoFechaTexto: "Viernes 25 de septiembre de 2026",
   eventoHoraTexto: "7:00 p.m. — 3:00 a.m.",
-  eventoLugar: "Por confirmar",
-  eventoDireccion: "Cúcuta, Norte de Santander",
+  eventoLugar: "El Patín de la Fruta",
+  eventoDireccion: "Malecón, Cúcuta",
   eventoCiudad: "Cúcuta",
+  googleMapsUrl: "",
   eventoDescripcion:
     "El encuentro salsero más esperado de Cúcuta regresa por cuarta vez consecutiva: una tarde y noche para bailar, compartir y vivir la salsa en comunidad, con música en vivo, DJ invitados, ruedas de casino y el mejor ambiente de la ciudad.",
   eventoCupo: "Cupos limitados",
@@ -59,6 +65,9 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   heroImagenes: [],
   galeriaImagenes: [],
   boletaFondoUrl: "",
+  sobreImagenUrl: "",
+  seguridadImagenUrl: "",
+  patrocinadores: [],
   redesInstagram: "",
   redesFacebook: "",
   redesTiktok: "",

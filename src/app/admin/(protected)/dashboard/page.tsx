@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import StatsBar from "@/components/admin/StatsBar";
+import DashboardCharts from "@/components/admin/DashboardCharts";
 import SearchBox from "@/components/admin/SearchBox";
 import type { Prisma } from "@prisma/client";
 
@@ -42,9 +42,10 @@ export default async function DashboardPage({
         </div>
       </div>
 
-      <StatsBar />
+      <DashboardCharts />
 
-      <div className="mt-8 mb-4">
+      <div className="mt-10 mb-4">
+        <h2 className="font-display text-xl font-bold mb-4">Registros</h2>
         <SearchBox initialQ={q} initialEstado={estado} />
       </div>
 
