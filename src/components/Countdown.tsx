@@ -1,14 +1,26 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useCallback, useRef, useSyncExternalStore } from "react";
 
-function calc(target: number) {
+type Snapshot = { dias: number; horas: number; minutos: number; segundos: number; done: boolean };
+
+function calc(target: number): Snapshot {
   const diff = Math.max(0, target - Date.now());
   const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
   const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
   const minutos = Math.floor((diff / (1000 * 60)) % 60);
   const segundos = Math.floor((diff / 1000) % 60);
   return { dias, horas, minutos, segundos, done: diff === 0 };
+}
+
+function sameSnapshot(a: Snapshot, b: Snapshot) {
+  return (
+    a.dias === b.dias &&
+    a.horas === b.horas &&
+    a.minutos === b.minutos &&
+    a.segundos === b.segundos &&
+    a.done === b.done
+  );
 }
 
 function subscribe(callback: () => void) {
@@ -22,7 +34,20 @@ function getServerSnapshot() {
 
 export default function Countdown({ fechaISO }: { fechaISO: string }) {
   const target = new Date(fechaISO).getTime();
-  const t = useSyncExternalStore(subscribe, () => calc(target), getServerSnapshot);
+  // useSyncExternalStore vuelve a renderizar cuando la referencia del snapshot
+  // cambia; calc() devuelve un objeto nuevo cada vez, así que lo cacheamos y
+  // solo generamos uno nuevo cuando los valores realmente cambian (si no, se
+  // entra en un bucle infinito de renders).
+  const cacheRef = useRef<Snapshot | null>(null);
+  const getSnapshot = useCallback(() => {
+    const next = calc(target);
+    const prev = cacheRef.current;
+    if (prev && sameSnapshot(prev, next)) return prev;
+    cacheRef.current = next;
+    return next;
+  }, [target]);
+
+  const t = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   if (!t || Number.isNaN(target) || t.done) return null;
 
