@@ -18,7 +18,9 @@ export async function saveUploadedImage(file: File, folder: "hero" | "gallery" |
 
   // En Vercel el sistema de archivos es de solo lectura (salvo /tmp, que no persiste),
   // así que las imágenes que sube el admin se guardan en Vercel Blob cuando está disponible.
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
+  // El Blob store conectado al proyecto puede autenticarse con BLOB_READ_WRITE_TOKEN
+  // o, en los stores más nuevos, con OIDC usando BLOB_STORE_ID (ambos los resuelve `put`).
+  if (process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID) {
     const blob = await put(`uploads/${folder}/${name}`, file, {
       access: "public",
       contentType: file.type,
