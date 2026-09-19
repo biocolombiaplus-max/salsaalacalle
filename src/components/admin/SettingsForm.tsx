@@ -38,12 +38,62 @@ async function uploadFile(file: File, folder: "hero" | "gallery" | "misc"): Prom
   return data.url as string;
 }
 
+type PendingFile = { id: string; localUrl: string; name: string; error?: string };
+
+function UploadSpinnerOverlay() {
+  return (
+    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+      <div className="h-5 w-5 rounded-full border-2 border-gold border-t-transparent animate-spin" />
+    </div>
+  );
+}
+
+function PendingThumb({
+  item,
+  onDismiss,
+  className,
+}: {
+  item: PendingFile;
+  onDismiss: () => void;
+  className: string;
+}) {
+  return (
+    <div
+      className={`relative rounded-lg overflow-hidden border ${className} ${
+        item.error ? "border-red-500" : "border-transparent"
+      }`}
+      title={item.error ? `${item.name}: ${item.error}` : item.name}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element -- vista previa local (blob:), next/image no la soporta */}
+      <img src={item.localUrl} alt={item.name} className="h-full w-full object-cover" />
+      {!item.error && (
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+          <div className="h-5 w-5 rounded-full border-2 border-gold border-t-transparent animate-spin" />
+        </div>
+      )}
+      {item.error && (
+        <button
+          onClick={onDismiss}
+          className="absolute inset-0 bg-red-950/80 flex flex-col items-center justify-center gap-1 text-[10px] text-red-200 px-1 text-center"
+        >
+          <span>⚠ Falló</span>
+          <span className="underline">Quitar</span>
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function SettingsForm() {
   const [tab, setTab] = useState<Tab>("evento");
   const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [uploading, setUploading] = useState<string | null>(null);
+  // Vista previa local mientras cada imagen se sube, para que se vea de
+  // inmediato qué archivo se está agregando (antes de tener la URL final).
+  const [singlePreview, setSinglePreview] = useState<Record<string, string>>({});
+  const [pendingMulti, setPendingMulti] = useState<Record<string, PendingFile[]>>({});
 
   useEffect(() => {
     fetch("/api/admin/settings")
@@ -79,30 +129,59 @@ export default function SettingsForm() {
   }
 
   async function handleSingleUpload(key: SingleImageKey, file: File) {
+    const localUrl = URL.createObjectURL(file);
+    setSinglePreview((prev) => ({ ...prev, [key]: localUrl }));
     setUploading(key);
     try {
       const url = await uploadFile(file, "misc");
       set(key, url);
     } catch (e) {
-      setMessage(e instanceof Error ? e.message : "Error al subir imagen");
+      setMessage(`${file.name}: ${e instanceof Error ? e.message : "Error al subir imagen"}`);
     } finally {
       setUploading(null);
+      setSinglePreview((prev) => {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      });
+      URL.revokeObjectURL(localUrl);
     }
   }
 
   async function handleMultiUpload(key: "heroImagenes" | "galeriaImagenes", folder: "hero" | "gallery", files: FileList) {
-    setUploading(key);
-    try {
-      const urls: string[] = [];
-      for (const file of Array.from(files)) {
-        urls.push(await uploadFile(file, folder));
-      }
-      set(key, [...settings![key], ...urls]);
-    } catch (e) {
-      setMessage(e instanceof Error ? e.message : "Error al subir imágenes");
-    } finally {
-      setUploading(null);
-    }
+    const items: PendingFile[] = Array.from(files).map((file) => ({
+      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      localUrl: URL.createObjectURL(file),
+      name: file.name,
+    }));
+    setPendingMulti((prev) => ({ ...prev, [key]: [...(prev[key] || []), ...items] }));
+
+    await Promise.all(
+      items.map(async (item, i) => {
+        const file = Array.from(files)[i];
+        try {
+          const url = await uploadFile(file, folder);
+          setSettings((prev) => (prev ? { ...prev, [key]: [...prev[key], url] } : prev));
+        } catch (e) {
+          setPendingMulti((prev) => ({
+            ...prev,
+            [key]: (prev[key] || []).map((p) =>
+              p.id === item.id ? { ...p, error: e instanceof Error ? e.message : "Error al subir" } : p
+            ),
+          }));
+          return;
+        }
+        setPendingMulti((prev) => ({
+          ...prev,
+          [key]: (prev[key] || []).filter((p) => p.id !== item.id),
+        }));
+        URL.revokeObjectURL(item.localUrl);
+      })
+    );
+  }
+
+  function dismissPendingError(key: "heroImagenes" | "galeriaImagenes", id: string) {
+    setPendingMulti((prev) => ({ ...prev, [key]: (prev[key] || []).filter((p) => p.id !== id) }));
   }
 
   function removeFromArray(key: "heroImagenes" | "galeriaImagenes", index: number) {
@@ -254,13 +333,13 @@ export default function SettingsForm() {
           <div className="grid sm:grid-cols-2 gap-6">
             <div>
               <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Logo del evento</p>
-              {settings.logoUrl && (
-                <div className="mb-3 h-20 w-20 rounded-xl bg-black/30 flex items-center justify-center overflow-hidden">
-                  <Image src={settings.logoUrl} alt="Logo" width={80} height={80} className="max-h-full w-auto object-contain" />
+              {(singlePreview.logoUrl || settings.logoUrl) && (
+                <div className="relative mb-3 h-20 w-20 rounded-xl bg-black/30 flex items-center justify-center overflow-hidden">
+                  <Image src={singlePreview.logoUrl || settings.logoUrl} alt="Logo" width={80} height={80} className="max-h-full w-auto object-contain" />
+                  {uploading === "logoUrl" && <UploadSpinnerOverlay />}
                 </div>
               )}
               <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("logoUrl", e.target.files[0])} className="text-xs text-white/60" />
-              {uploading === "logoUrl" && <p className="text-xs text-gold mt-1">Subiendo...</p>}
               <div className="mt-4">
                 <label className="block text-[11px] uppercase tracking-widest text-white/50 mb-2">
                   Tamaño del logo en la landing ({settings.logoAltura}px)
@@ -278,27 +357,33 @@ export default function SettingsForm() {
             </div>
             <div>
               <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Imagen de fondo de la boleta</p>
-              {settings.boletaFondoUrl && (
-                <Image src={settings.boletaFondoUrl} alt="Fondo boleta" width={140} height={70} className="rounded-xl object-cover mb-3 h-[70px] w-[140px]" />
+              {(singlePreview.boletaFondoUrl || settings.boletaFondoUrl) && (
+                <div className="relative mb-3 h-[70px] w-[140px] rounded-xl overflow-hidden">
+                  <Image src={singlePreview.boletaFondoUrl || settings.boletaFondoUrl} alt="Fondo boleta" width={140} height={70} className="rounded-xl object-cover h-[70px] w-[140px]" />
+                  {uploading === "boletaFondoUrl" && <UploadSpinnerOverlay />}
+                </div>
               )}
               <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("boletaFondoUrl", e.target.files[0])} className="text-xs text-white/60" />
-              {uploading === "boletaFondoUrl" && <p className="text-xs text-gold mt-1">Subiendo...</p>}
             </div>
             <div>
               <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Imagen sección &quot;Sobre el evento&quot;</p>
-              {settings.sobreImagenUrl && (
-                <Image src={settings.sobreImagenUrl} alt="Sobre el evento" width={140} height={100} className="rounded-xl object-cover mb-3 h-[100px] w-[140px]" />
+              {(singlePreview.sobreImagenUrl || settings.sobreImagenUrl) && (
+                <div className="relative mb-3 h-[100px] w-[140px] rounded-xl overflow-hidden">
+                  <Image src={singlePreview.sobreImagenUrl || settings.sobreImagenUrl} alt="Sobre el evento" width={140} height={100} className="rounded-xl object-cover h-[100px] w-[140px]" />
+                  {uploading === "sobreImagenUrl" && <UploadSpinnerOverlay />}
+                </div>
               )}
               <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("sobreImagenUrl", e.target.files[0])} className="text-xs text-white/60" />
-              {uploading === "sobreImagenUrl" && <p className="text-xs text-gold mt-1">Subiendo...</p>}
             </div>
             <div>
               <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Imagen de fondo sección &quot;Seguridad&quot;</p>
-              {settings.seguridadImagenUrl && (
-                <Image src={settings.seguridadImagenUrl} alt="Seguridad" width={140} height={100} className="rounded-xl object-cover mb-3 h-[100px] w-[140px]" />
+              {(singlePreview.seguridadImagenUrl || settings.seguridadImagenUrl) && (
+                <div className="relative mb-3 h-[100px] w-[140px] rounded-xl overflow-hidden">
+                  <Image src={singlePreview.seguridadImagenUrl || settings.seguridadImagenUrl} alt="Seguridad" width={140} height={100} className="rounded-xl object-cover h-[100px] w-[140px]" />
+                  {uploading === "seguridadImagenUrl" && <UploadSpinnerOverlay />}
+                </div>
               )}
               <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("seguridadImagenUrl", e.target.files[0])} className="text-xs text-white/60" />
-              {uploading === "seguridadImagenUrl" && <p className="text-xs text-gold mt-1">Subiendo...</p>}
             </div>
           </div>
 
@@ -323,9 +408,11 @@ export default function SettingsForm() {
                   <button onClick={() => removeFromArray("heroImagenes", i)} className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full h-5 w-5 text-xs">✕</button>
                 </div>
               ))}
+              {(pendingMulti.heroImagenes || []).map((p) => (
+                <PendingThumb key={p.id} item={p} onDismiss={() => dismissPendingError("heroImagenes", p.id)} className="h-20 w-30" />
+              ))}
             </div>
             <input type="file" accept="image/*" multiple onChange={(e) => e.target.files && handleMultiUpload("heroImagenes", "hero", e.target.files)} className="text-xs text-white/60" />
-            {uploading === "heroImagenes" && <p className="text-xs text-gold mt-1">Subiendo...</p>}
           </div>
 
           <div>
@@ -337,9 +424,11 @@ export default function SettingsForm() {
                   <button onClick={() => removeFromArray("galeriaImagenes", i)} className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full h-5 w-5 text-xs">✕</button>
                 </div>
               ))}
+              {(pendingMulti.galeriaImagenes || []).map((p) => (
+                <PendingThumb key={p.id} item={p} onDismiss={() => dismissPendingError("galeriaImagenes", p.id)} className="h-[90px] w-[90px]" />
+              ))}
             </div>
             <input type="file" accept="image/*" multiple onChange={(e) => e.target.files && handleMultiUpload("galeriaImagenes", "gallery", e.target.files)} className="text-xs text-white/60" />
-            {uploading === "galeriaImagenes" && <p className="text-xs text-gold mt-1">Subiendo...</p>}
           </div>
         </div>
       )}
