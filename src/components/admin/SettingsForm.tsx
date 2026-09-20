@@ -14,7 +14,13 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "legal", label: "Datos legales" },
 ];
 
-type SingleImageKey = "logoUrl" | "boletaFondoUrl" | "sobreImagenUrl" | "seguridadImagenUrl";
+type SingleImageKey =
+  | "logoUrl"
+  | "boletaFondoUrl"
+  | "sobreImagenUrl"
+  | "seguridadImagenUrl"
+  | "programaImagenUrl"
+  | "ctaImagenUrl";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -384,6 +390,26 @@ export default function SettingsForm() {
                 </div>
               )}
               <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("seguridadImagenUrl", e.target.files[0])} className="text-xs text-white/60" />
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Imagen de fondo sección &quot;Programación&quot;</p>
+              {(singlePreview.programaImagenUrl || settings.programaImagenUrl) && (
+                <div className="relative mb-3 h-[100px] w-[140px] rounded-xl overflow-hidden">
+                  <Image src={singlePreview.programaImagenUrl || settings.programaImagenUrl} alt="Programación" width={140} height={100} className="rounded-xl object-cover h-[100px] w-[140px]" />
+                  {uploading === "programaImagenUrl" && <UploadSpinnerOverlay />}
+                </div>
+              )}
+              <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("programaImagenUrl", e.target.files[0])} className="text-xs text-white/60" />
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Imagen de fondo del CTA final</p>
+              {(singlePreview.ctaImagenUrl || settings.ctaImagenUrl) && (
+                <div className="relative mb-3 h-[100px] w-[140px] rounded-xl overflow-hidden">
+                  <Image src={singlePreview.ctaImagenUrl || settings.ctaImagenUrl} alt="CTA final" width={140} height={100} className="rounded-xl object-cover h-[100px] w-[140px]" />
+                  {uploading === "ctaImagenUrl" && <UploadSpinnerOverlay />}
+                </div>
+              )}
+              <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("ctaImagenUrl", e.target.files[0])} className="text-xs text-white/60" />
             </div>
           </div>
 

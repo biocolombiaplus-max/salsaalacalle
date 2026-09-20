@@ -26,6 +26,8 @@ export type SiteSettings = {
   boletaFondoUrl: string;
   sobreImagenUrl: string;
   seguridadImagenUrl: string;
+  programaImagenUrl: string;
+  ctaImagenUrl: string;
   patrocinadores: Patrocinador[];
   redesInstagram: string;
   redesFacebook: string;
@@ -71,6 +73,8 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   boletaFondoUrl: "",
   sobreImagenUrl: "",
   seguridadImagenUrl: "",
+  programaImagenUrl: "",
+  ctaImagenUrl: "",
   patrocinadores: [],
   redesInstagram: "",
   redesFacebook: "",

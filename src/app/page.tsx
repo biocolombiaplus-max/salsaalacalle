@@ -169,12 +169,20 @@ export default async function Home() {
       </section>
 
       {/* PROGRAMA */}
-      <section id="programa" className="relative py-24 sm:py-32 px-5 sm:px-8 bg-white/[0.02] border-y border-white/10">
-        <div className="max-w-3xl mx-auto text-center mb-16">
+      <section id="programa" className="relative py-24 sm:py-32 px-5 sm:px-8 border-y border-white/10 overflow-hidden">
+        {s.programaImagenUrl ? (
+          <div className="absolute inset-0">
+            <Image src={s.programaImagenUrl} alt="" fill className="object-cover" />
+            <div className="absolute inset-0 bg-black/85" />
+          </div>
+        ) : (
+          <div className="absolute inset-0 bg-white/[0.02]" />
+        )}
+        <div className="relative max-w-3xl mx-auto text-center mb-16">
           <p className="uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">Programación</p>
           <h2 className="font-display text-3xl sm:text-5xl font-bold">Así se vivirá la noche</h2>
         </div>
-        <div className="max-w-2xl mx-auto">
+        <div className="relative max-w-2xl mx-auto">
           {s.eventoPrograma.map((item, i) => (
             <div key={i} className="flex gap-6 items-start py-5 border-b border-white/10 last:border-0">
               <span className="font-display text-gold font-bold w-24 shrink-0 text-right">{item.hora}</span>
@@ -285,14 +293,20 @@ export default async function Home() {
       )}
 
       {/* CTA FINAL */}
-      <section className="relative py-24 sm:py-32 px-5 sm:px-8 text-center">
-        <p className="uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">{s.eventoCupo}</p>
-        <h2 className="font-display text-3xl sm:text-6xl font-bold mb-8 max-w-3xl mx-auto">
+      <section className="relative py-24 sm:py-32 px-5 sm:px-8 text-center overflow-hidden">
+        {s.ctaImagenUrl && (
+          <div className="absolute inset-0">
+            <Image src={s.ctaImagenUrl} alt="" fill className="object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/80 to-black/95" />
+          </div>
+        )}
+        <p className="relative uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">{s.eventoCupo}</p>
+        <h2 className="relative font-display text-3xl sm:text-6xl font-bold mb-8 max-w-3xl mx-auto">
           No te quedes por fuera de {s.eventoEdicion}
         </h2>
         <Link
           href="/registro"
-          className="inline-flex items-center gap-2 rounded-full bg-wine px-10 py-5 font-semibold text-white text-lg shadow-[0_10px_30px_-8px_rgba(240,36,12,0.55)] hover:brightness-110 transition"
+          className="relative inline-flex items-center gap-2 rounded-full bg-wine px-10 py-5 font-semibold text-white text-lg shadow-[0_10px_30px_-8px_rgba(240,36,12,0.55)] hover:brightness-110 transition"
         >
           Reservar mi boleta gratis
         </Link>
