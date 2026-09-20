@@ -51,7 +51,8 @@ export default async function Home() {
                       width={220}
                       height={100}
                       quality={100}
-                      className="h-11 sm:h-14 w-auto object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
+                      style={{ height: `clamp(2rem, 8vw, ${s.patrocinadoresLogoAltura}px)` }}
+                      className="w-auto object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
                     />
                   </div>
                 ))}
