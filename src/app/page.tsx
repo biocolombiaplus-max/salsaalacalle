@@ -50,9 +50,9 @@ export default async function Home() {
           </nav>
           <Link
             href="/registro"
-            className="rounded-full bg-gold text-[#1a1408] font-semibold text-sm px-5 py-2.5 hover:brightness-110 transition"
+            className="btn-shine rounded-full bg-gold text-[#1a1408] font-semibold text-sm px-5 py-2.5 hover:brightness-110 transition"
           >
-            Registro gratis
+            Registro <span className="gratis-badge">GRATIS</span>
           </Link>
         </div>
       </header>
@@ -111,9 +111,9 @@ export default async function Home() {
           <div className="flex flex-wrap items-center gap-6">
             <Link
               href="/registro"
-              className="inline-flex items-center gap-2 rounded-full bg-wine px-8 py-4 font-semibold text-white shadow-[0_10px_30px_-8px_rgba(240,36,12,0.55)] hover:brightness-110 transition text-base sm:text-lg"
+              className="btn-shine btn-glow-wine inline-flex items-center gap-2 rounded-full bg-wine px-8 py-4 font-semibold text-white hover:brightness-110 transition text-base sm:text-lg"
             >
-              Reservar mi boleta <span className="text-gold">— GRATIS</span>
+              Reservar mi boleta <span className="gratis-badge text-gold text-lg sm:text-xl">GRATIS</span>
             </Link>
             <Countdown fechaISO={s.eventoFechaISO} />
           </div>
@@ -196,9 +196,9 @@ export default async function Home() {
         <div className="relative flex justify-center mt-12">
           <Link
             href="/registro"
-            className="inline-flex items-center gap-2 rounded-full bg-wine px-7 py-3.5 font-semibold text-white text-sm sm:text-base shadow-[0_10px_30px_-8px_rgba(240,36,12,0.55)] hover:brightness-110 transition"
+            className="btn-shine btn-glow-wine inline-flex items-center gap-2 rounded-full bg-wine px-7 py-3.5 font-semibold text-white text-sm sm:text-base hover:brightness-110 transition"
           >
-            Reservar mi boleta <span className="text-gold">— GRATIS</span>
+            Reservar mi boleta <span className="gratis-badge text-gold text-base sm:text-lg">GRATIS</span>
           </Link>
         </div>
       </section>
@@ -228,9 +228,9 @@ export default async function Home() {
         <div className="relative flex justify-center mt-12">
           <Link
             href="/registro"
-            className="inline-flex items-center gap-2 rounded-full bg-wine px-7 py-3.5 font-semibold text-white text-sm sm:text-base shadow-[0_10px_30px_-8px_rgba(240,36,12,0.55)] hover:brightness-110 transition"
+            className="btn-shine btn-glow-wine inline-flex items-center gap-2 rounded-full bg-wine px-7 py-3.5 font-semibold text-white text-sm sm:text-base hover:brightness-110 transition"
           >
-            Reservar mi boleta <span className="text-gold">— GRATIS</span>
+            Reservar mi boleta <span className="gratis-badge text-gold text-base sm:text-lg">GRATIS</span>
           </Link>
         </div>
       </section>
@@ -259,9 +259,9 @@ export default async function Home() {
           <div className="relative flex justify-center mt-12">
             <Link
               href="/registro"
-              className="inline-flex items-center gap-2 rounded-full bg-wine px-7 py-3.5 font-semibold text-white text-sm sm:text-base shadow-[0_10px_30px_-8px_rgba(240,36,12,0.55)] hover:brightness-110 transition"
+              className="btn-shine btn-glow-wine inline-flex items-center gap-2 rounded-full bg-wine px-7 py-3.5 font-semibold text-white text-sm sm:text-base hover:brightness-110 transition"
             >
-              Reservar mi boleta <span className="text-gold">— GRATIS</span>
+              Reservar mi boleta <span className="gratis-badge text-gold text-base sm:text-lg">GRATIS</span>
             </Link>
           </div>
         </section>
@@ -301,9 +301,9 @@ export default async function Home() {
             <p className="text-white/60 text-sm mb-8">Regístrate en menos de un minuto y recibe tu invitación al instante.</p>
             <Link
               href="/registro"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-gold text-[#1a1408] font-semibold px-8 py-4 hover:brightness-110 transition w-full sm:w-auto"
+              className="btn-shine btn-glow-gold inline-flex items-center justify-center gap-2 rounded-full bg-gold text-[#1a1408] font-semibold px-8 py-4 hover:brightness-110 transition w-full sm:w-auto"
             >
-              Quiero mi boleta <span className="text-wine font-bold">— GRATIS</span>
+              Quiero mi boleta <span className="gratis-badge text-wine text-lg sm:text-xl">GRATIS</span>
             </Link>
             <p className="mt-4 text-[11px] text-white/40">
               Tratamos tus datos según la{" "}
@@ -351,9 +351,9 @@ export default async function Home() {
           <div className="relative flex justify-center mt-12">
             <Link
               href="/registro"
-              className="inline-flex items-center gap-2 rounded-full border border-gold/40 text-gold font-semibold text-sm px-7 py-3.5 hover:bg-gold hover:text-[#1a1408] transition"
+              className="btn-shine inline-flex items-center gap-2 rounded-full border border-gold/40 text-gold font-semibold text-sm px-7 py-3.5 hover:bg-gold hover:text-[#1a1408] transition"
             >
-              Reservar mi boleta <span className="font-bold">— GRATIS</span>
+              Reservar mi boleta <span className="gratis-badge text-base sm:text-lg">GRATIS</span>
             </Link>
           </div>
         </section>
@@ -373,9 +373,9 @@ export default async function Home() {
         </h2>
         <Link
           href="/registro"
-          className="relative inline-flex items-center gap-2 rounded-full bg-wine px-10 py-5 font-semibold text-white text-lg shadow-[0_10px_30px_-8px_rgba(240,36,12,0.55)] hover:brightness-110 transition"
+          className="btn-shine btn-glow-wine relative inline-flex items-center gap-2 rounded-full bg-wine px-10 py-5 font-semibold text-white text-lg hover:brightness-110 transition"
         >
-          Reservar mi boleta <span className="text-gold">— GRATIS</span>
+          Reservar mi boleta <span className="gratis-badge text-gold text-xl sm:text-2xl">GRATIS</span>
         </Link>
       </section>
 

@@ -210,9 +210,15 @@ export default function RegistroForm() {
       <button
         type="submit"
         disabled={result.state === "loading"}
-        className="w-full rounded-full bg-wine text-white font-semibold py-4 hover:brightness-110 transition disabled:opacity-60"
+        className="btn-shine btn-glow-wine w-full rounded-full bg-wine text-white font-semibold py-4 hover:brightness-110 transition disabled:opacity-60"
       >
-        {result.state === "loading" ? "Enviando..." : "Confirmar mi registro gratis"}
+        {result.state === "loading" ? (
+          "Enviando..."
+        ) : (
+          <>
+            Confirmar mi registro <span className="gratis-badge text-gold">GRATIS</span>
+          </>
+        )}
       </button>
     </form>
   );
