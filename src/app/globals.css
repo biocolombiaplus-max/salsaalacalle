@@ -111,11 +111,22 @@ body {
   animation: gratis-pulse 1.6s ease-in-out infinite;
 }
 
+/* Fondo degradado en movimiento para el banner de patrocinadores. */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-gradient-shift {
+  animation: gradient-shift 8s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .btn-shine::after,
   .btn-glow-wine,
   .btn-glow-gold,
-  .gratis-badge {
+  .gratis-badge,
+  .animate-gradient-shift {
     animation: none;
   }
 }

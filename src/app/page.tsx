@@ -22,39 +22,47 @@ export default async function Home() {
 
   return (
     <main className="bg-background text-foreground">
-      {/* NAV */}
-      <header className="fixed top-0 inset-x-0 z-50 bg-black/40 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-5 sm:px-8 py-3">
-          <div className="flex items-center gap-3">
-            {s.logoUrl ? (
-              <Image
-                src={s.logoUrl}
-                alt={s.eventoNombre}
-                width={s.logoAltura * 2}
-                height={s.logoAltura * 2}
-                style={{ height: `clamp(2rem, 10vw, ${s.logoAltura}px)` }}
-                className="w-auto object-contain drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]"
-              />
-            ) : (
-              <div className="h-14 w-14 rounded-full bg-gradient-to-br from-wine to-gold flex items-center justify-center font-display font-bold text-sm">
-                SC
+      {/* BANNER DE PATROCINADORES (reemplaza la barra de navegación superior) */}
+      <header className="fixed top-0 inset-x-0 z-50 overflow-hidden border-b border-white/10 backdrop-blur-sm">
+        <div className="absolute inset-0 animate-gradient-shift bg-[length:300%_300%] bg-[linear-gradient(115deg,var(--wine),var(--gold),var(--green),var(--wine))] opacity-90" />
+        <div className="absolute inset-0 bg-black/35" />
+        {s.patrocinadores.length > 0 ? (
+          <div className="relative flex items-center gap-3 py-2.5 px-3 sm:px-5">
+            <span className="shrink-0 hidden sm:inline-flex items-center gap-1.5 rounded-full bg-black/40 text-white/90 text-[11px] font-semibold uppercase tracking-widest px-3 py-1.5">
+              🤝 Patrocinadores
+            </span>
+            <div
+              className="relative flex-1 overflow-hidden"
+              style={{
+                maskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)",
+                WebkitMaskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)",
+              }}
+            >
+              <div className="flex w-max animate-marquee gap-5 items-center">
+                {[...s.patrocinadores, ...s.patrocinadores, ...s.patrocinadores].map((p, i) => (
+                  <div
+                    key={`${p.nombre}-${i}`}
+                    className="shrink-0 flex items-center justify-center rounded-xl bg-white px-4 py-1.5 shadow-[0_6px_18px_-6px_rgba(0,0,0,0.6)]"
+                    title={p.nombre}
+                  >
+                    <Image
+                      src={p.logoUrl}
+                      alt={p.nombre}
+                      width={140}
+                      height={56}
+                      quality={95}
+                      className="h-7 sm:h-9 w-auto object-contain"
+                    />
+                  </div>
+                ))}
               </div>
-            )}
-            <span className="font-display text-lg tracking-wide">{s.eventoNombre}</span>
+            </div>
           </div>
-          <nav className="hidden md:flex items-center gap-8 text-sm text-white/80">
-            <a href="#evento" className="hover:text-gold transition-colors">El evento</a>
-            <a href="#programa" className="hover:text-gold transition-colors">Programación</a>
-            <a href="#galeria" className="hover:text-gold transition-colors">Galería</a>
-            <a href="#seguridad" className="hover:text-gold transition-colors">Seguridad</a>
-          </nav>
-          <Link
-            href="/registro"
-            className="btn-shine rounded-full bg-gold text-[#1a1408] font-semibold text-sm px-5 py-2.5 hover:brightness-110 transition"
-          >
-            Registro <span className="gratis-badge">GRATIS</span>
-          </Link>
-        </div>
+        ) : (
+          <p className="relative text-center text-white font-display text-sm sm:text-base tracking-wide px-4 py-3.5">
+            {s.eventoNombre} · {s.eventoEdicion}
+          </p>
+        )}
       </header>
 
       {/* HERO */}
