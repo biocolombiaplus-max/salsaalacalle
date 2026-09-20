@@ -68,112 +68,106 @@ export function ticketHtml(data: TicketData, bgDataUri: string | null, logoDataU
 <meta charset="utf-8" />
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { width: 1200px; height: 520px; font-family: 'Georgia', 'Times New Roman', serif; }
+  html, body { width: 900px; height: 1600px; font-family: 'Georgia', 'Times New Roman', serif; }
   body { background: #0b0b0d; }
   .ticket {
     position: relative;
-    width: 1200px; height: 520px;
+    width: 900px; height: 1600px;
     display: flex;
+    flex-direction: column;
     overflow: hidden;
-    border-radius: 22px;
+    border-radius: 32px;
     box-shadow: 0 0 0 1px rgba(255,255,255,0.06);
   }
   .main {
     position: relative;
     flex: 1;
-    background: ${bgDataUri ? `url(${bgDataUri}) center/cover no-repeat` : `radial-gradient(circle at 20% 20%, ${secondary}33, transparent 55%), linear-gradient(135deg, #1a0d12 0%, #2b0f16 45%, #120a0c 100%)`};
+    background: ${bgDataUri ? `url(${bgDataUri}) center/cover no-repeat` : `radial-gradient(circle at 30% 12%, ${secondary}33, transparent 55%), linear-gradient(160deg, #1a0d12 0%, #2b0f16 45%, #120a0c 100%)`};
     color: #fff;
-    padding: 46px 50px;
+    padding: 72px 64px 48px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    align-items: center;
   }
   .main::before {
     content: "";
     position: absolute; inset: 0;
-    background: linear-gradient(100deg, rgba(6,4,5,0.92) 0%, rgba(10,6,7,0.72) 45%, rgba(10,6,7,0.55) 100%);
+    background: linear-gradient(190deg, rgba(6,4,5,0.55) 0%, rgba(8,5,6,0.82) 35%, rgba(8,5,6,0.94) 100%);
   }
   .main > * { position: relative; z-index: 1; }
-  .top-row { display: flex; align-items: center; justify-content: space-between; }
-  .brand { display: flex; align-items: center; gap: 16px; }
-  .brand img { height: 58px; width: auto; border-radius: 10px; }
-  .brand-text .name { font-size: 26px; font-weight: 700; letter-spacing: 0.5px; color: #fff; }
-  .brand-text .edition { font-size: 14px; letter-spacing: 3px; text-transform: uppercase; color: ${secondary}; margin-top: 4px; }
-  .badge-free {
-    border: 1.5px solid ${secondary};
-    color: ${secondary};
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 8px 14px;
-    border-radius: 999px;
-    font-family: Arial, sans-serif;
-  }
-  .attendee { margin-top: 10px; }
-  .attendee .label { font-family: Arial, sans-serif; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: ${secondary}; margin-bottom: 8px; }
-  .attendee .value { font-size: 40px; font-weight: 700; color: #fff; max-width: 640px; line-height: 1.15; }
-  .meta-row { display: flex; gap: 46px; font-family: Arial, sans-serif; }
-  .meta-row .item .label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: ${secondary}; margin-bottom: 6px; }
-  .meta-row .item .value { font-size: 17px; color: #f4eee7; font-weight: 600; }
-  .stub {
-    position: relative;
-    width: 340px;
-    background: linear-gradient(160deg, #121013 0%, #1c1518 100%);
-    color: #fff;
-    padding: 40px 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    border-left: 2px dashed rgba(255,255,255,0.18);
-  }
-  .stub::before, .stub::after {
-    content: "";
-    position: absolute; left: -16px;
-    width: 32px; height: 32px;
-    background: #0b0b0d;
-    border-radius: 50%;
-  }
-  .stub::before { top: -16px; }
-  .stub::after { bottom: -16px; }
-  .qr-wrap { background: #fff; padding: 14px; border-radius: 14px; }
-  .qr-wrap img { width: 190px; height: 190px; display: block; }
-  .code { font-family: 'Courier New', monospace; font-size: 22px; letter-spacing: 3px; font-weight: 700; color: ${secondary}; margin-top: 18px; }
-  .instructions { font-family: Arial, sans-serif; font-size: 11px; color: #cbbfc2; text-align: center; line-height: 1.5; margin-top: 14px; }
   .watermark {
     position: absolute;
     top: 50%; left: 50%;
-    transform: translate(-50%,-50%) rotate(-18deg);
+    transform: translate(-50%,-50%) rotate(-22deg);
     font-family: Arial, sans-serif;
-    font-size: 30px;
+    font-size: 46px;
     font-weight: 800;
-    letter-spacing: 8px;
-    color: rgba(255,255,255,0.07);
+    letter-spacing: 12px;
+    color: rgba(255,255,255,0.05);
     white-space: nowrap;
-    z-index: 5;
+    z-index: 0;
     pointer-events: none;
   }
-  .footer-note { font-family: Arial, sans-serif; font-size: 12px; color: #d8cfc9; opacity: 0.85; }
+  .brand { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .brand img { height: 92px; width: auto; border-radius: 16px; margin-bottom: 20px; }
+  .brand .name { font-size: 38px; font-weight: 700; letter-spacing: 0.5px; color: #fff; }
+  .brand .edition { font-size: 17px; letter-spacing: 4px; text-transform: uppercase; color: ${secondary}; margin-top: 10px; }
+  .badge-free {
+    margin-top: 26px;
+    border: 1.5px solid ${secondary};
+    color: ${secondary};
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 12px 26px;
+    border-radius: 999px;
+    font-family: Arial, sans-serif;
+  }
+  .attendee { margin-top: 56px; text-align: center; width: 100%; }
+  .attendee .label { font-family: Arial, sans-serif; font-size: 14px; letter-spacing: 4px; text-transform: uppercase; color: ${secondary}; margin-bottom: 14px; }
+  .attendee .value { font-size: 52px; font-weight: 700; color: #fff; line-height: 1.15; max-width: 760px; margin: 0 auto; }
+  .divider { position: relative; width: 100%; margin: 56px 0; height: 0; border-top: 2px dashed rgba(255,255,255,0.22); }
+  .divider::before, .divider::after {
+    content: "";
+    position: absolute; top: 50%;
+    width: 44px; height: 44px;
+    background: #0b0b0d;
+    border-radius: 50%;
+    transform: translateY(-50%);
+  }
+  .divider::before { left: -64px; }
+  .divider::after { right: -64px; }
+  .meta-row { display: flex; justify-content: space-between; gap: 20px; width: 100%; font-family: Arial, sans-serif; }
+  .meta-row .item { text-align: center; flex: 1; }
+  .meta-row .item .label { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: ${secondary}; margin-bottom: 10px; }
+  .meta-row .item .value { font-size: 19px; color: #f4eee7; font-weight: 600; line-height: 1.35; }
+  .qr-section { margin-top: 56px; display: flex; flex-direction: column; align-items: center; }
+  .qr-wrap { background: #fff; padding: 26px; border-radius: 22px; }
+  .qr-wrap img { width: 320px; height: 320px; display: block; }
+  .code { font-family: 'Courier New', monospace; font-size: 32px; letter-spacing: 5px; font-weight: 700; color: ${secondary}; margin-top: 28px; }
+  .instructions { font-family: Arial, sans-serif; font-size: 15px; color: #cbbfc2; text-align: center; line-height: 1.6; margin-top: 18px; max-width: 560px; }
+  .footer-note { font-family: Arial, sans-serif; font-size: 14px; color: #d8cfc9; opacity: 0.85; text-align: center; line-height: 1.6; margin-top: auto; padding-top: 40px; max-width: 640px; }
   .footer-note b { color: ${secondary}; }
 </style>
 </head>
 <body>
   <div class="ticket">
     <div class="main">
-      <div class="top-row">
-        <div class="brand">
-          ${logoDataUri ? `<img src="${logoDataUri}" />` : ""}
-          <div class="brand-text">
-            <div class="name">${escapeHtml(settings.eventoNombre)}</div>
-            <div class="edition">${escapeHtml(settings.eventoEdicion)}</div>
-          </div>
-        </div>
+      <div class="watermark">GRATIS · NO TIENE COSTO</div>
+      <div class="brand">
+        ${logoDataUri ? `<img src="${logoDataUri}" />` : ""}
+        <div class="name">${escapeHtml(settings.eventoNombre)}</div>
+        <div class="edition">${escapeHtml(settings.eventoEdicion)}</div>
         <div class="badge-free">Entrada libre · Sin costo</div>
       </div>
+
       <div class="attendee">
         <div class="label">Boleta de asistencia</div>
         <div class="value">${escapeHtml(nombre)}</div>
       </div>
+
+      <div class="divider"></div>
+
       <div class="meta-row">
         <div class="item">
           <div class="label">Fecha</div>
@@ -188,13 +182,14 @@ export function ticketHtml(data: TicketData, bgDataUri: string | null, logoDataU
           <div class="value">${escapeHtml(settings.eventoLugar)}</div>
         </div>
       </div>
+
+      <div class="qr-section">
+        <div class="qr-wrap"><img src="${qrDataUrl}" /></div>
+        <div class="code">${escapeHtml(ticketCode)}</div>
+        <div class="instructions">Presenta este código QR en el ingreso para validar tu entrada de forma rápida y sin filas.</div>
+      </div>
+
       <div class="footer-note">Esta boleta <b>no tiene costo</b> y puede ser presentada por cualquier persona (es transferible). El código QR es un control de seguridad para el ingreso, no representa ningún cobro.</div>
-    </div>
-    <div class="stub">
-      <div class="watermark">GRATIS · NO TIENE COSTO</div>
-      <div class="qr-wrap"><img src="${qrDataUrl}" /></div>
-      <div class="code">${escapeHtml(ticketCode)}</div>
-      <div class="instructions">Presenta este código QR en el ingreso para validar tu entrada de forma rápida y sin filas.</div>
     </div>
   </div>
 </body>
@@ -230,7 +225,7 @@ export async function renderTicketPng(data: TicketData): Promise<Buffer> {
   ]);
   const html = ticketHtml(data, bgDataUri, logoDataUri);
   const browser = await getBrowser();
-  const page = await browser.newPage({ viewport: { width: 1200, height: 520 } });
+  const page = await browser.newPage({ viewport: { width: 900, height: 1600 } });
   try {
     await page.setContent(html, { waitUntil: "networkidle" });
     const el = await page.$(".ticket");
