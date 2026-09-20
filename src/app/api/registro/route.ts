@@ -39,13 +39,17 @@ async function enviarBoleta(params: {
   whatsapp: string;
   ticketCode: string;
   siteUrl: string;
+  ticketPngPrerendered: Buffer | null;
 }) {
-  const { registrationId, nombre, correo, whatsapp, ticketCode, siteUrl } = params;
+  const { registrationId, nombre, correo, whatsapp, ticketCode, siteUrl, ticketPngPrerendered } = params;
   try {
     const settings = await getSettings();
-    const qrDataUrl = await generateQrDataUrl(buildQrPayload(ticketCode));
-    const { renderTicketPng } = await import("@/lib/ticketImage");
-    const ticketPng = await renderTicketPng({ nombre, ticketCode, qrDataUrl, settings });
+    let ticketPng = ticketPngPrerendered;
+    if (!ticketPng) {
+      const qrDataUrl = await generateQrDataUrl(buildQrPayload(ticketCode));
+      const { renderTicketPng } = await import("@/lib/ticketImage");
+      ticketPng = await renderTicketPng({ nombre, ticketCode, qrDataUrl, settings });
+    }
 
     try {
       await sendTicketEmail({ to: correo, nombre, ticketCode, ticketPng, settings, siteUrl });
@@ -115,9 +119,24 @@ export async function POST(req: NextRequest) {
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `${req.nextUrl.protocol}//${req.nextUrl.host}`;
 
-    // Responde de inmediato al navegador; la boleta (Chromium) y los envíos de
-    // correo/WhatsApp, que pueden tardar varios segundos, siguen en segundo
-    // plano para no dejar a la persona esperando ni arriesgar un timeout.
+    // Genera la boleta (imagen con QR) antes de responder para poder mostrarla,
+    // descargarla y compartirla de inmediato en pantalla, evitando que la
+    // persona tenga que esperar al correo. Si algo falla aquí (p. ej. un
+    // problema cargando Chromium), no se rompe el registro: simplemente no se
+    // muestra la boleta en pantalla y se reintenta en el envío por correo/WhatsApp.
+    let ticketPngBase64: string | null = null;
+    let ticketPngBuffer: Buffer | null = null;
+    try {
+      const qrDataUrl = await generateQrDataUrl(qrPayload);
+      const { renderTicketPng } = await import("@/lib/ticketImage");
+      ticketPngBuffer = await renderTicketPng({ nombre, ticketCode, qrDataUrl, settings });
+      ticketPngBase64 = `data:image/png;base64,${ticketPngBuffer.toString("base64")}`;
+    } catch (err) {
+      console.error("Error generando la boleta en vivo", err);
+    }
+
+    // El envío de correo/WhatsApp sigue en segundo plano para no alargar más
+    // la respuesta ni arriesgar un timeout si algún proveedor está lento.
     after(() =>
       enviarBoleta({
         registrationId: registration.id,
@@ -126,10 +145,11 @@ export async function POST(req: NextRequest) {
         whatsapp,
         ticketCode,
         siteUrl,
+        ticketPngPrerendered: ticketPngBuffer,
       })
     );
 
-    return NextResponse.json({ ok: true, ticketCode });
+    return NextResponse.json({ ok: true, ticketCode, ticketPngBase64 });
   } catch (err) {
     console.error("Error en registro", err);
     return NextResponse.json(
