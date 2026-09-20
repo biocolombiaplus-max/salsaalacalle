@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       status: "anulado",
       reason: "Esta boleta fue anulada",
-      registration: { nombre: registration.nombre, ticketCode: registration.ticketCode },
+      registration: { nombre: registration.nombre, cedula: registration.cedula, ticketCode: registration.ticketCode },
     });
   }
 
@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
       reason: `Ingreso ya confirmado el ${registration.checkedInAt.toLocaleString("es-CO")}`,
       registration: {
         nombre: registration.nombre,
+        cedula: registration.cedula,
         ticketCode: registration.ticketCode,
         checkedInAt: registration.checkedInAt,
       },
@@ -65,6 +66,7 @@ export async function POST(req: NextRequest) {
     status: "ok",
     registration: {
       nombre: updated.nombre,
+      cedula: updated.cedula,
       ticketCode: updated.ticketCode,
       barrio: updated.barrio,
       checkedInAt: updated.checkedInAt,

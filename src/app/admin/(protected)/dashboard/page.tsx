@@ -18,6 +18,7 @@ export default async function DashboardPage({
   if (q) {
     where.OR = [
       { nombre: { contains: q } },
+      { cedula: { contains: q } },
       { correo: { contains: q } },
       { whatsapp: { contains: q } },
       { barrio: { contains: q } },
@@ -55,6 +56,7 @@ export default async function DashboardPage({
             <tr>
               <th className="text-left px-4 py-3">Boleta</th>
               <th className="text-left px-4 py-3">Nombre</th>
+              <th className="text-left px-4 py-3">Cédula</th>
               <th className="text-left px-4 py-3">Correo</th>
               <th className="text-left px-4 py-3">WhatsApp</th>
               <th className="text-left px-4 py-3">Barrio</th>
@@ -67,6 +69,7 @@ export default async function DashboardPage({
               <tr key={r.id} className="border-t border-white/5 hover:bg-white/[0.02]">
                 <td className="px-4 py-3 font-mono text-gold">{r.ticketCode}</td>
                 <td className="px-4 py-3">{r.nombre}</td>
+                <td className="px-4 py-3 text-white/70 font-mono">{r.cedula}</td>
                 <td className="px-4 py-3 text-white/70">{r.correo}</td>
                 <td className="px-4 py-3 text-white/70">{r.whatsapp}</td>
                 <td className="px-4 py-3 text-white/70">{r.barrio}</td>
@@ -88,7 +91,7 @@ export default async function DashboardPage({
             ))}
             {registros.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-white/40">
+                <td colSpan={8} className="px-4 py-10 text-center text-white/40">
                   No hay registros que coincidan con la búsqueda.
                 </td>
               </tr>

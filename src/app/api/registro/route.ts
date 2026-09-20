@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse, after } from "next/server";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
 import { buildQrPayload, createTicketCode, generateQrDataUrl } from "@/lib/ticket";
@@ -21,6 +22,11 @@ const schema = z.object({
     .min(3, "Ingresa tu nombre completo")
     .max(120)
     .regex(/^[\p{L}\s'.-]+$/u, "El nombre solo puede contener letras"),
+  cedula: z
+    .string()
+    .trim()
+    .transform((v) => v.replace(/[^\d]/g, ""))
+    .pipe(z.string().min(5, "Número de cédula inválido").max(15, "Número de cédula inválido")),
   correo: z.string().trim().toLowerCase().email("Correo electrónico inválido"),
   whatsapp: z
     .string()
@@ -98,7 +104,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: first?.message || "Datos inválidos" }, { status: 400 });
   }
 
-  const { nombre, correo, whatsapp, barrio } = parsed.data;
+  const { nombre, cedula, correo, whatsapp, barrio } = parsed.data;
+
+  const cedulaExistente = await prisma.registration.findUnique({ where: { cedula } });
+  if (cedulaExistente) {
+    return NextResponse.json(
+      { error: "Ya existe un registro con este número de cédula. Cada persona solo puede registrarse una vez." },
+      { status: 409 }
+    );
+  }
 
   try {
     const settings = await getSettings();
@@ -113,9 +127,25 @@ export async function POST(req: NextRequest) {
 
     const qrPayload = buildQrPayload(ticketCode);
 
-    const registration = await prisma.registration.create({
-      data: { ticketCode, nombre, correo, whatsapp, barrio, qrToken: qrPayload },
-    });
+    let registration;
+    try {
+      registration = await prisma.registration.create({
+        data: { ticketCode, nombre, cedula, correo, whatsapp, barrio, qrToken: qrPayload },
+      });
+    } catch (err) {
+      const target = (err as Prisma.PrismaClientKnownRequestError)?.meta?.target;
+      const isCedulaConflict =
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === "P2002" &&
+        (Array.isArray(target) ? target.includes("cedula") : String(target || "").includes("cedula"));
+      if (isCedulaConflict) {
+        return NextResponse.json(
+          { error: "Ya existe un registro con este número de cédula. Cada persona solo puede registrarse una vez." },
+          { status: 409 }
+        );
+      }
+      throw err;
+    }
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `${req.nextUrl.protocol}//${req.nextUrl.host}`;
 

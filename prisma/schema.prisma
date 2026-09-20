@@ -11,6 +11,7 @@ model Registration {
   id            String    @id @default(cuid())
   ticketCode    String    @unique
   nombre        String
+  cedula        String    @unique
   correo        String
   whatsapp      String
   barrio        String

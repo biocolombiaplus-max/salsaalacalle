@@ -82,16 +82,16 @@ export default async function Home() {
           </div>
         )}
 
-        <div className="relative z-10 max-w-6xl mx-auto w-full px-5 sm:px-8 pb-20 pt-40">
-          <p className="uppercase tracking-[0.35em] text-gold text-xs sm:text-sm mb-5">
+        <div className="relative z-10 max-w-6xl mx-auto w-full px-5 sm:px-8 pb-12 pt-40">
+          <p className="uppercase tracking-[0.35em] text-gold text-xs sm:text-sm mb-4">
             {s.eventoCiudad} · Norte de Santander
           </p>
           <h1 className="font-display font-extrabold leading-[0.95] text-5xl sm:text-7xl md:text-8xl text-white drop-shadow-lg">
             {s.eventoNombre}
           </h1>
-          <p className="font-display text-2xl sm:text-3xl text-gold mt-3 mb-8">{s.eventoEdicion}</p>
+          <p className="font-display text-2xl sm:text-3xl text-gold mt-3 mb-6">{s.eventoEdicion}</p>
 
-          <div className="flex flex-wrap items-center gap-6 mb-10 text-white/90 text-sm sm:text-base">
+          <div className="flex flex-wrap items-center gap-6 mb-8 text-white/90 text-sm sm:text-base">
             <span className="flex items-center gap-2">📅 {s.eventoFechaTexto}</span>
             <span className="flex items-center gap-2">🕓 {s.eventoHoraTexto}</span>
             {s.googleMapsUrl ? (
@@ -113,18 +113,18 @@ export default async function Home() {
               href="/registro"
               className="inline-flex items-center gap-2 rounded-full bg-wine px-8 py-4 font-semibold text-white shadow-[0_10px_30px_-8px_rgba(240,36,12,0.55)] hover:brightness-110 transition text-base sm:text-lg"
             >
-              Reservar mi boleta gratis
+              Reservar mi boleta <span className="text-gold">— GRATIS</span>
             </Link>
             <Countdown fechaISO={s.eventoFechaISO} />
           </div>
-          <p className="mt-6 text-xs sm:text-sm text-white/60 max-w-md">
+          <p className="mt-5 text-xs sm:text-sm text-white/60 max-w-md">
             Entrada libre · {s.eventoCupo} · Registro con QR de ingreso, sin filas ni costo.
           </p>
         </div>
       </section>
 
       {/* SOBRE EL EVENTO */}
-      <section id="evento" className="relative py-24 sm:py-32 px-5 sm:px-8 overflow-hidden">
+      <section id="evento" className="relative py-14 sm:py-20 px-5 sm:px-8 overflow-hidden">
         {s.sobreImagenUrl && (
           <div
             className="absolute inset-0 opacity-30 blur-3xl scale-110"
@@ -169,7 +169,7 @@ export default async function Home() {
           </div>
         )}
 
-        <div className="relative max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16">
+        <div className="relative max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12">
           {[
             { title: "Fecha", value: s.eventoFechaTexto, icon: "📅" },
             { title: "Hora", value: s.eventoHoraTexto, icon: "🕓" },
@@ -192,10 +192,19 @@ export default async function Home() {
             </div>
           ))}
         </div>
+
+        <div className="relative flex justify-center mt-12">
+          <Link
+            href="/registro"
+            className="inline-flex items-center gap-2 rounded-full bg-wine px-7 py-3.5 font-semibold text-white text-sm sm:text-base shadow-[0_10px_30px_-8px_rgba(240,36,12,0.55)] hover:brightness-110 transition"
+          >
+            Reservar mi boleta <span className="text-gold">— GRATIS</span>
+          </Link>
+        </div>
       </section>
 
       {/* PROGRAMA */}
-      <section id="programa" className="relative py-24 sm:py-32 px-5 sm:px-8 border-y border-white/10 overflow-hidden">
+      <section id="programa" className="relative py-14 sm:py-20 px-5 sm:px-8 border-y border-white/10 overflow-hidden">
         {s.programaImagenUrl ? (
           <div className="absolute inset-0">
             <Image src={s.programaImagenUrl} alt="" fill quality={90} sizes="100vw" className="object-cover" />
@@ -204,7 +213,7 @@ export default async function Home() {
         ) : (
           <div className="absolute inset-0 bg-white/[0.02]" />
         )}
-        <div className="relative max-w-3xl mx-auto text-center mb-16">
+        <div className="relative max-w-3xl mx-auto text-center mb-12">
           <p className="uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">Programación</p>
           <h2 className="font-display text-3xl sm:text-5xl font-bold">Así se vivirá la noche</h2>
         </div>
@@ -216,12 +225,20 @@ export default async function Home() {
             </div>
           ))}
         </div>
+        <div className="relative flex justify-center mt-12">
+          <Link
+            href="/registro"
+            className="inline-flex items-center gap-2 rounded-full bg-wine px-7 py-3.5 font-semibold text-white text-sm sm:text-base shadow-[0_10px_30px_-8px_rgba(240,36,12,0.55)] hover:brightness-110 transition"
+          >
+            Reservar mi boleta <span className="text-gold">— GRATIS</span>
+          </Link>
+        </div>
       </section>
 
       {/* GALERIA */}
       {s.galeriaImagenes.length > 0 && (
-        <section id="galeria" className="relative py-24 sm:py-32 px-5 sm:px-8">
-          <div className="max-w-3xl mx-auto text-center mb-16">
+        <section id="galeria" className="relative py-14 sm:py-20 px-5 sm:px-8">
+          <div className="max-w-3xl mx-auto text-center mb-12">
             <p className="uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">Momentos</p>
             <h2 className="font-display text-3xl sm:text-5xl font-bold">La calle se prende de salsa</h2>
           </div>
@@ -239,11 +256,19 @@ export default async function Home() {
               </div>
             ))}
           </div>
+          <div className="relative flex justify-center mt-12">
+            <Link
+              href="/registro"
+              className="inline-flex items-center gap-2 rounded-full bg-wine px-7 py-3.5 font-semibold text-white text-sm sm:text-base shadow-[0_10px_30px_-8px_rgba(240,36,12,0.55)] hover:brightness-110 transition"
+            >
+              Reservar mi boleta <span className="text-gold">— GRATIS</span>
+            </Link>
+          </div>
         </section>
       )}
 
       {/* SEGURIDAD / CONFIANZA */}
-      <section id="seguridad" className="relative py-24 sm:py-32 px-5 sm:px-8 border-y border-white/10 overflow-hidden">
+      <section id="seguridad" className="relative py-14 sm:py-20 px-5 sm:px-8 border-y border-white/10 overflow-hidden">
         {s.seguridadImagenUrl ? (
           <div className="absolute inset-0">
             <Image src={s.seguridadImagenUrl} alt="" fill quality={90} sizes="100vw" className="object-cover" />
@@ -278,7 +303,7 @@ export default async function Home() {
               href="/registro"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-gold text-[#1a1408] font-semibold px-8 py-4 hover:brightness-110 transition w-full sm:w-auto"
             >
-              Quiero mi boleta gratis
+              Quiero mi boleta <span className="text-wine font-bold">— GRATIS</span>
             </Link>
             <p className="mt-4 text-[11px] text-white/40">
               Tratamos tus datos según la{" "}
@@ -293,40 +318,49 @@ export default async function Home() {
 
       {/* PATROCINADORES */}
       {s.patrocinadores.length > 0 && (
-        <section className="relative py-20 sm:py-24 px-5 sm:px-8 border-b border-white/10 overflow-hidden">
-          <p className="text-center uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-12">
+        <section className="relative py-14 sm:py-20 px-5 sm:px-8 border-b border-white/10 overflow-hidden">
+          <p className="text-center uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-10">
             Con el respaldo de
           </p>
           <div
             className="relative max-w-6xl mx-auto overflow-hidden"
             style={{
-              maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
-              WebkitMaskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
+              maskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+              WebkitMaskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
             }}
           >
-            <div className="flex w-max animate-marquee gap-16 items-center">
+            <div className="flex w-max animate-marquee gap-6 sm:gap-8 items-center">
               {[...s.patrocinadores, ...s.patrocinadores].map((p, i) => (
                 <div
                   key={`${p.nombre}-${i}`}
-                  className="shrink-0 flex items-center justify-center h-20 w-40 rounded-2xl border border-white/10 bg-white/[0.04] px-6 hover:border-gold/40 transition-colors"
+                  className="shrink-0 flex items-center justify-center h-32 sm:h-40 md:h-44 w-64 sm:w-72 md:w-80 rounded-2xl border border-white/10 bg-white/[0.06] px-8 shadow-[0_20px_45px_-18px_rgba(0,0,0,0.7)] hover:border-gold/50 hover:bg-white/[0.1] hover:scale-105 transition-all duration-300"
                   title={p.nombre}
                 >
                   <Image
                     src={p.logoUrl}
                     alt={p.nombre}
-                    width={140}
-                    height={70}
-                    className="max-h-12 w-auto object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition duration-300"
+                    width={340}
+                    height={220}
+                    quality={100}
+                    className="max-h-24 sm:max-h-32 md:max-h-36 w-auto object-contain"
                   />
                 </div>
               ))}
             </div>
           </div>
+          <div className="relative flex justify-center mt-12">
+            <Link
+              href="/registro"
+              className="inline-flex items-center gap-2 rounded-full border border-gold/40 text-gold font-semibold text-sm px-7 py-3.5 hover:bg-gold hover:text-[#1a1408] transition"
+            >
+              Reservar mi boleta <span className="font-bold">— GRATIS</span>
+            </Link>
+          </div>
         </section>
       )}
 
       {/* CTA FINAL */}
-      <section className="relative py-24 sm:py-32 px-5 sm:px-8 text-center overflow-hidden">
+      <section className="relative py-16 sm:py-24 px-5 sm:px-8 text-center overflow-hidden">
         {s.ctaImagenUrl && (
           <div className="absolute inset-0">
             <Image src={s.ctaImagenUrl} alt="" fill quality={90} sizes="100vw" className="object-cover" />
@@ -341,7 +375,7 @@ export default async function Home() {
           href="/registro"
           className="relative inline-flex items-center gap-2 rounded-full bg-wine px-10 py-5 font-semibold text-white text-lg shadow-[0_10px_30px_-8px_rgba(240,36,12,0.55)] hover:brightness-110 transition"
         >
-          Reservar mi boleta gratis
+          Reservar mi boleta <span className="text-gold">— GRATIS</span>
         </Link>
       </section>
 

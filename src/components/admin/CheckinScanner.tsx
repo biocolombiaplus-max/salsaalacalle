@@ -6,7 +6,7 @@ import jsQR from "jsqr";
 type ScanResult = {
   status: "ok" | "repetido" | "invalido" | "anulado";
   reason?: string;
-  registration?: { nombre: string; ticketCode: string; barrio?: string; checkedInAt?: string };
+  registration?: { nombre: string; cedula?: string; ticketCode: string; barrio?: string; checkedInAt?: string };
 };
 
 export default function CheckinScanner() {
@@ -163,6 +163,9 @@ export default function CheckinScanner() {
             {result.registration && (
               <div className="space-y-1 text-sm">
                 <p><span className="opacity-60">Nombre: </span>{result.registration.nombre}</p>
+                {result.registration.cedula && (
+                  <p><span className="opacity-60">Cédula: </span><span className="font-mono">{result.registration.cedula}</span></p>
+                )}
                 <p><span className="opacity-60">Boleta: </span><span className="font-mono">{result.registration.ticketCode}</span></p>
               </div>
             )}

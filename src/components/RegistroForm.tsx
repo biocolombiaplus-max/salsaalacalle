@@ -22,7 +22,7 @@ function getCanShareServerSnapshot() {
 }
 
 export default function RegistroForm() {
-  const [form, setForm] = useState({ nombre: "", correo: "", whatsapp: "", barrio: "", aceptaPolitica: false });
+  const [form, setForm] = useState({ nombre: "", cedula: "", correo: "", whatsapp: "", barrio: "", aceptaPolitica: false });
   const [result, setResult] = useState<Result>({ state: "idle" });
   const canShare = useSyncExternalStore(subscribeNoop, getCanShareSnapshot, getCanShareServerSnapshot);
 
@@ -137,6 +137,20 @@ export default function RegistroForm() {
           placeholder="Como aparecerá en tu boleta"
           className="w-full rounded-xl bg-black/30 border border-white/15 px-4 py-3 text-sm outline-none focus:border-gold transition"
         />
+      </div>
+      <div>
+        <label className="block text-xs uppercase tracking-widest text-white/60 mb-2">Número de cédula</label>
+        <input
+          required
+          type="text"
+          inputMode="numeric"
+          autoComplete="off"
+          value={form.cedula}
+          onChange={(e) => setForm({ ...form, cedula: e.target.value.replace(/[^\d]/g, "") })}
+          placeholder="Sin puntos ni espacios"
+          className="w-full rounded-xl bg-black/30 border border-white/15 px-4 py-3 text-sm outline-none focus:border-gold transition"
+        />
+        <p className="text-[11px] text-white/40 mt-1.5">Solo se permite un registro por número de cédula.</p>
       </div>
       <div>
         <label className="block text-xs uppercase tracking-widest text-white/60 mb-2">Correo electrónico</label>
