@@ -61,7 +61,7 @@ export default async function Home() {
       <section className="relative min-h-screen flex items-end overflow-hidden">
         <div className="absolute inset-0">
           {heroImg ? (
-            <Image src={heroImg} alt={s.eventoEdicion} fill priority className="object-cover" />
+            <Image src={heroImg} alt={s.eventoEdicion} fill priority quality={95} sizes="100vw" className="object-cover" />
           ) : (
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(252,144,0,0.18),transparent_55%),linear-gradient(135deg,#1a0d12_0%,#2b0f16_45%,#0c0708_100%)]" />
           )}
@@ -124,11 +124,34 @@ export default async function Home() {
       </section>
 
       {/* SOBRE EL EVENTO */}
-      <section id="evento" className="relative py-24 sm:py-32 px-5 sm:px-8">
+      <section id="evento" className="relative py-24 sm:py-32 px-5 sm:px-8 overflow-hidden">
+        {s.sobreImagenUrl && (
+          <div
+            className="absolute inset-0 opacity-30 blur-3xl scale-110"
+            aria-hidden
+          >
+            <Image src={s.sobreImagenUrl} alt="" fill className="object-cover" quality={60} sizes="100vw" />
+            <div className="absolute inset-0 bg-background/70" />
+          </div>
+        )}
         {s.sobreImagenUrl ? (
-          <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-            <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border border-white/10">
-              <Image src={s.sobreImagenUrl} alt={s.eventoEdicion} fill className="object-cover" />
+          <div className="relative max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="relative mx-auto w-full max-w-sm">
+              <div
+                className="absolute -inset-4 sm:-inset-6 rounded-[2.5rem] bg-gradient-to-br from-wine/40 via-gold/25 to-green/25 blur-2xl opacity-70"
+                aria-hidden
+              />
+              <div className="relative aspect-[9/16] rounded-[1.75rem] overflow-hidden shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85)] ring-1 ring-white/15">
+                <Image
+                  src={s.sobreImagenUrl}
+                  alt={s.eventoEdicion}
+                  fill
+                  quality={95}
+                  sizes="(max-width: 1024px) 80vw, 420px"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+              </div>
             </div>
             <div>
               <p className="uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">Sobre el evento</p>
@@ -146,7 +169,7 @@ export default async function Home() {
           </div>
         )}
 
-        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16">
+        <div className="relative max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16">
           {[
             { title: "Fecha", value: s.eventoFechaTexto, icon: "📅" },
             { title: "Hora", value: s.eventoHoraTexto, icon: "🕓" },
@@ -175,7 +198,7 @@ export default async function Home() {
       <section id="programa" className="relative py-24 sm:py-32 px-5 sm:px-8 border-y border-white/10 overflow-hidden">
         {s.programaImagenUrl ? (
           <div className="absolute inset-0">
-            <Image src={s.programaImagenUrl} alt="" fill className="object-cover" />
+            <Image src={s.programaImagenUrl} alt="" fill quality={90} sizes="100vw" className="object-cover" />
             <div className="absolute inset-0 bg-black/85" />
           </div>
         ) : (
@@ -202,10 +225,17 @@ export default async function Home() {
             <p className="uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">Momentos</p>
             <h2 className="font-display text-3xl sm:text-5xl font-bold">La calle se prende de salsa</h2>
           </div>
-          <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-5">
             {s.galeriaImagenes.map((src, i) => (
-              <div key={i} className={`relative rounded-2xl overflow-hidden aspect-square ${i % 5 === 0 ? "md:col-span-2 md:row-span-2 md:aspect-auto" : ""}`}>
-                <Image src={src} alt={`Salsa a la Calle ${i + 1}`} fill className="object-cover hover:scale-105 transition-transform duration-500" />
+              <div key={i} className="relative aspect-[9/16] rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.7)]">
+                <Image
+                  src={src}
+                  alt={`Salsa a la Calle ${i + 1}`}
+                  fill
+                  quality={92}
+                  sizes="(max-width: 640px) 45vw, (max-width: 768px) 30vw, 22vw"
+                  className="object-cover hover:scale-105 transition-transform duration-500"
+                />
               </div>
             ))}
           </div>
@@ -216,7 +246,7 @@ export default async function Home() {
       <section id="seguridad" className="relative py-24 sm:py-32 px-5 sm:px-8 border-y border-white/10 overflow-hidden">
         {s.seguridadImagenUrl ? (
           <div className="absolute inset-0">
-            <Image src={s.seguridadImagenUrl} alt="" fill className="object-cover" />
+            <Image src={s.seguridadImagenUrl} alt="" fill quality={90} sizes="100vw" className="object-cover" />
             <div className="absolute inset-0 bg-black/80" />
           </div>
         ) : (
@@ -299,7 +329,7 @@ export default async function Home() {
       <section className="relative py-24 sm:py-32 px-5 sm:px-8 text-center overflow-hidden">
         {s.ctaImagenUrl && (
           <div className="absolute inset-0">
-            <Image src={s.ctaImagenUrl} alt="" fill className="object-cover" />
+            <Image src={s.ctaImagenUrl} alt="" fill quality={90} sizes="100vw" className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/80 to-black/95" />
           </div>
         )}
