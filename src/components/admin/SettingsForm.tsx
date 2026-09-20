@@ -350,6 +350,15 @@ export default function SettingsForm() {
                 <div className="relative mb-3 h-20 w-20 rounded-xl bg-black/30 flex items-center justify-center overflow-hidden">
                   <Image src={singlePreview.logoUrl || settings.logoUrl} alt="Logo" width={80} height={80} className="max-h-full w-auto object-contain" />
                   {uploading === "logoUrl" && <UploadSpinnerOverlay />}
+                  {!uploading && settings.logoUrl && (
+                    <button
+                      onClick={() => set("logoUrl", "")}
+                      className="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full h-5 w-5 text-xs flex items-center justify-center"
+                      title="Quitar logo"
+                    >
+                      ✕
+                    </button>
+                  )}
                 </div>
               )}
               <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("logoUrl", e.target.files[0])} className="text-xs text-white/60" />
@@ -374,6 +383,15 @@ export default function SettingsForm() {
                 <div className="relative mb-3 h-[70px] w-[140px] rounded-xl overflow-hidden">
                   <Image src={singlePreview.boletaFondoUrl || settings.boletaFondoUrl} alt="Fondo boleta" width={140} height={70} className="rounded-xl object-cover h-[70px] w-[140px]" />
                   {uploading === "boletaFondoUrl" && <UploadSpinnerOverlay />}
+                  {!uploading && settings.boletaFondoUrl && (
+                    <button
+                      onClick={() => set("boletaFondoUrl", "")}
+                      className="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full h-5 w-5 text-xs flex items-center justify-center"
+                      title="Quitar imagen"
+                    >
+                      ✕
+                    </button>
+                  )}
                 </div>
               )}
               <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("boletaFondoUrl", e.target.files[0])} className="text-xs text-white/60" />
@@ -384,6 +402,15 @@ export default function SettingsForm() {
                 <div className="relative mb-3 h-[100px] w-[140px] rounded-xl overflow-hidden">
                   <Image src={singlePreview.sobreImagenUrl || settings.sobreImagenUrl} alt="Sobre el evento" width={140} height={100} className="rounded-xl object-cover h-[100px] w-[140px]" />
                   {uploading === "sobreImagenUrl" && <UploadSpinnerOverlay />}
+                  {!uploading && settings.sobreImagenUrl && (
+                    <button
+                      onClick={() => set("sobreImagenUrl", "")}
+                      className="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full h-5 w-5 text-xs flex items-center justify-center"
+                      title="Quitar imagen"
+                    >
+                      ✕
+                    </button>
+                  )}
                 </div>
               )}
               <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("sobreImagenUrl", e.target.files[0])} className="text-xs text-white/60" />
@@ -394,6 +421,15 @@ export default function SettingsForm() {
                 <div className="relative mb-3 h-[100px] w-[140px] rounded-xl overflow-hidden">
                   <Image src={singlePreview.seguridadImagenUrl || settings.seguridadImagenUrl} alt="Seguridad" width={140} height={100} className="rounded-xl object-cover h-[100px] w-[140px]" />
                   {uploading === "seguridadImagenUrl" && <UploadSpinnerOverlay />}
+                  {!uploading && settings.seguridadImagenUrl && (
+                    <button
+                      onClick={() => set("seguridadImagenUrl", "")}
+                      className="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full h-5 w-5 text-xs flex items-center justify-center"
+                      title="Quitar imagen"
+                    >
+                      ✕
+                    </button>
+                  )}
                 </div>
               )}
               <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("seguridadImagenUrl", e.target.files[0])} className="text-xs text-white/60" />
@@ -404,6 +440,15 @@ export default function SettingsForm() {
                 <div className="relative mb-3 h-[100px] w-[140px] rounded-xl overflow-hidden">
                   <Image src={singlePreview.programaImagenUrl || settings.programaImagenUrl} alt="Programación" width={140} height={100} className="rounded-xl object-cover h-[100px] w-[140px]" />
                   {uploading === "programaImagenUrl" && <UploadSpinnerOverlay />}
+                  {!uploading && settings.programaImagenUrl && (
+                    <button
+                      onClick={() => set("programaImagenUrl", "")}
+                      className="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full h-5 w-5 text-xs flex items-center justify-center"
+                      title="Quitar imagen"
+                    >
+                      ✕
+                    </button>
+                  )}
                 </div>
               )}
               <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("programaImagenUrl", e.target.files[0])} className="text-xs text-white/60" />
@@ -414,6 +459,15 @@ export default function SettingsForm() {
                 <div className="relative mb-3 h-[100px] w-[140px] rounded-xl overflow-hidden">
                   <Image src={singlePreview.ctaImagenUrl || settings.ctaImagenUrl} alt="CTA final" width={140} height={100} className="rounded-xl object-cover h-[100px] w-[140px]" />
                   {uploading === "ctaImagenUrl" && <UploadSpinnerOverlay />}
+                  {!uploading && settings.ctaImagenUrl && (
+                    <button
+                      onClick={() => set("ctaImagenUrl", "")}
+                      className="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full h-5 w-5 text-xs flex items-center justify-center"
+                      title="Quitar imagen"
+                    >
+                      ✕
+                    </button>
+                  )}
                 </div>
               )}
               <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("ctaImagenUrl", e.target.files[0])} className="text-xs text-white/60" />
