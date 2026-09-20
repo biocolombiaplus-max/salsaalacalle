@@ -77,7 +77,7 @@ export default async function Home() {
               width={400}
               height={400}
               priority
-              className="h-24 sm:h-32 md:h-40 w-auto object-contain drop-shadow-[0_8px_32px_rgba(0,0,0,0.7)]"
+              className="h-36 sm:h-44 md:h-52 w-auto object-contain drop-shadow-[0_8px_32px_rgba(0,0,0,0.7)]"
             />
           </div>
         )}
