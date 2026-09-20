@@ -69,17 +69,20 @@ export default async function Home() {
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-black/70" />
         </div>
 
-        <div className="relative z-10 max-w-6xl mx-auto w-full px-5 sm:px-8 pb-20 pt-40">
-          {s.logoUrl && (
+        {s.logoUrl && (
+          <div className="absolute top-20 sm:top-24 left-0 right-0 z-10 flex justify-center px-5">
             <Image
               src={s.logoUrl}
               alt={s.eventoNombre}
               width={400}
               height={400}
               priority
-              className="mx-auto h-40 sm:h-48 md:h-56 w-auto object-contain mb-8 drop-shadow-[0_8px_32px_rgba(0,0,0,0.7)]"
+              className="h-24 sm:h-32 md:h-40 w-auto object-contain drop-shadow-[0_8px_32px_rgba(0,0,0,0.7)]"
             />
-          )}
+          </div>
+        )}
+
+        <div className="relative z-10 max-w-6xl mx-auto w-full px-5 sm:px-8 pb-20 pt-40">
           <p className="uppercase tracking-[0.35em] text-gold text-xs sm:text-sm mb-5">
             {s.eventoCiudad} · Norte de Santander
           </p>
