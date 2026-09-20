@@ -77,7 +77,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   programaImagenUrl: "",
   ctaImagenUrl: "",
   patrocinadores: [],
-  patrocinadoresLogoAltura: 56,
+  patrocinadoresLogoAltura: 32,
   redesInstagram: "",
   redesFacebook: "",
   redesTiktok: "",

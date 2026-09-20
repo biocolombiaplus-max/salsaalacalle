@@ -523,8 +523,10 @@ export default function SettingsForm() {
       {tab === "patrocinadores" && (
         <div className="max-w-3xl">
           <p className="text-white/50 text-sm mb-6">
-            Los logos aparecen en el banner animado fijo en la parte superior de la landing. Sube logos
-            con fondo transparente (PNG) para mejor resultado.
+            Los logos aparecen en el banner animado fijo en la parte superior de la landing. La franja
+            del banner es de altura fija (como en las grandes páginas): el tamaño que definas aquí
+            ajusta el logo dentro de esa franja, sin engrosarla. Sube logos con fondo transparente (PNG)
+            para mejor resultado.
           </p>
           <div className="mb-6 max-w-sm">
             <label className="block text-[11px] uppercase tracking-widest text-white/50 mb-2">
@@ -532,9 +534,9 @@ export default function SettingsForm() {
             </label>
             <input
               type="range"
-              min={32}
-              max={96}
-              step={4}
+              min={20}
+              max={48}
+              step={2}
               value={settings.patrocinadoresLogoAltura}
               onChange={(e) => set("patrocinadoresLogoAltura", Number(e.target.value))}
               className="w-full accent-gold"
@@ -574,9 +576,9 @@ export default function SettingsForm() {
                     </label>
                     <input
                       type="range"
-                      min={32}
-                      max={96}
-                      step={4}
+                      min={20}
+                      max={48}
+                      step={2}
                       value={p.altura ?? settings.patrocinadoresLogoAltura}
                       onChange={(e) => updatePatrocinador(i, { altura: Number(e.target.value) })}
                       className="w-full accent-gold"

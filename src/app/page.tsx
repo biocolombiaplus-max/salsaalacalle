@@ -27,22 +27,22 @@ export default async function Home() {
         <div className="absolute inset-0 animate-gradient-shift bg-[length:300%_300%] bg-[linear-gradient(115deg,var(--wine),var(--gold),var(--green),var(--wine))] opacity-90" />
         <div className="absolute inset-0 bg-black/55" />
         {s.patrocinadores.length > 0 ? (
-          <div className="relative flex items-center gap-4 py-3.5 sm:py-4 px-3 sm:px-6">
-            <span className="shrink-0 hidden sm:inline-flex items-center gap-1.5 rounded-full bg-black/40 text-white/90 text-[11px] font-semibold uppercase tracking-widest px-3 py-1.5">
+          <div className="relative flex items-center gap-4 h-11 sm:h-14 px-3 sm:px-6">
+            <span className="shrink-0 hidden sm:inline-flex items-center gap-1.5 rounded-full bg-black/40 text-white/90 text-[10px] font-semibold uppercase tracking-widest px-2.5 py-1">
               🤝 Patrocinadores
             </span>
             <div
-              className="relative flex-1 overflow-hidden"
+              className="relative flex-1 h-full overflow-hidden"
               style={{
                 maskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)",
                 WebkitMaskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)",
               }}
             >
-              <div className="flex w-max animate-marquee gap-5 sm:gap-7 items-center">
+              <div className="flex h-full w-max animate-marquee gap-4 sm:gap-6 items-center">
                 {[...s.patrocinadores, ...s.patrocinadores, ...s.patrocinadores].map((p, i) => (
                   <div
                     key={`${p.nombre}-${i}`}
-                    className="shrink-0 flex items-center justify-center rounded-2xl bg-black/45 backdrop-blur-md ring-1 ring-white/15 px-5 sm:px-6 py-2.5 sm:py-3 shadow-[0_10px_28px_-10px_rgba(0,0,0,0.8)] hover:ring-gold/50 transition-all"
+                    className="shrink-0 h-[78%] flex items-center justify-center rounded-lg bg-black/45 backdrop-blur-md ring-1 ring-white/15 px-3.5 sm:px-4 shadow-[0_6px_16px_-8px_rgba(0,0,0,0.8)] hover:ring-gold/50 transition-all"
                     title={p.nombre}
                   >
                     <Image
@@ -52,7 +52,7 @@ export default async function Home() {
                       height={100}
                       quality={100}
                       style={{ height: `${p.altura ?? s.patrocinadoresLogoAltura}px` }}
-                      className="w-auto object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
+                      className="max-h-full w-auto object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
                     />
                   </div>
                 ))}
@@ -60,7 +60,7 @@ export default async function Home() {
             </div>
           </div>
         ) : (
-          <p className="relative text-center text-white font-display text-sm sm:text-base tracking-wide px-4 py-3.5">
+          <p className="relative text-center text-white font-display text-sm sm:text-base tracking-wide px-4 py-2.5">
             {s.eventoNombre} · {s.eventoEdicion}
           </p>
         )}
