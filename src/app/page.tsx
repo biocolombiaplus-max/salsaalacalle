@@ -70,6 +70,16 @@ export default async function Home() {
         </div>
 
         <div className="relative z-10 max-w-6xl mx-auto w-full px-5 sm:px-8 pb-20 pt-40">
+          {s.logoUrl && (
+            <Image
+              src={s.logoUrl}
+              alt={s.eventoNombre}
+              width={320}
+              height={320}
+              priority
+              className="h-28 sm:h-32 md:h-36 w-auto object-contain mb-6 drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)]"
+            />
+          )}
           <p className="uppercase tracking-[0.35em] text-gold text-xs sm:text-sm mb-5">
             {s.eventoCiudad} · Norte de Santander
           </p>

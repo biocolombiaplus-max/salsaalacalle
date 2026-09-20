@@ -3,9 +3,12 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
 import { buildQrPayload, createTicketCode, generateQrDataUrl } from "@/lib/ticket";
-import { renderTicketPng } from "@/lib/ticketImage";
 import { sendTicketEmail } from "@/lib/email";
 import { sendTicketWhatsApp } from "@/lib/whatsapp";
+// `renderTicketPng` carga playwright-core (Chromium), un paquete pesado que
+// solo hace falta en el trabajo de fondo. Se importa de forma dinámica dentro
+// de enviarBoleta() para que un problema al cargarlo (p. ej. empaquetado en
+// Vercel) nunca tumbe la respuesta principal del registro.
 
 // Da más margen para el trabajo en segundo plano (boleta + correo + WhatsApp)
 // que sigue corriendo después de responder al navegador.
@@ -41,6 +44,7 @@ async function enviarBoleta(params: {
   try {
     const settings = await getSettings();
     const qrDataUrl = await generateQrDataUrl(buildQrPayload(ticketCode));
+    const { renderTicketPng } = await import("@/lib/ticketImage");
     const ticketPng = await renderTicketPng({ nombre, ticketCode, qrDataUrl, settings });
 
     try {
