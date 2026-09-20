@@ -27,7 +27,7 @@ export default async function Home() {
         <div className="absolute inset-0 animate-gradient-shift bg-[length:300%_300%] bg-[linear-gradient(115deg,var(--wine),var(--gold),var(--green),var(--wine))] opacity-90" />
         <div className="absolute inset-0 bg-black/35" />
         {s.patrocinadores.length > 0 ? (
-          <div className="relative flex items-center gap-3 py-2.5 px-3 sm:px-5">
+          <div className="relative flex items-center gap-4 py-3.5 sm:py-4 px-3 sm:px-6">
             <span className="shrink-0 hidden sm:inline-flex items-center gap-1.5 rounded-full bg-black/40 text-white/90 text-[11px] font-semibold uppercase tracking-widest px-3 py-1.5">
               🤝 Patrocinadores
             </span>
@@ -38,20 +38,16 @@ export default async function Home() {
                 WebkitMaskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)",
               }}
             >
-              <div className="flex w-max animate-marquee gap-5 items-center">
+              <div className="flex w-max animate-marquee gap-10 sm:gap-14 items-center">
                 {[...s.patrocinadores, ...s.patrocinadores, ...s.patrocinadores].map((p, i) => (
-                  <div
-                    key={`${p.nombre}-${i}`}
-                    className="shrink-0 flex items-center justify-center rounded-xl bg-white px-4 py-1.5 shadow-[0_6px_18px_-6px_rgba(0,0,0,0.6)]"
-                    title={p.nombre}
-                  >
+                  <div key={`${p.nombre}-${i}`} className="shrink-0 flex items-center justify-center" title={p.nombre}>
                     <Image
                       src={p.logoUrl}
                       alt={p.nombre}
-                      width={140}
-                      height={56}
-                      quality={95}
-                      className="h-7 sm:h-9 w-auto object-contain"
+                      width={220}
+                      height={100}
+                      quality={100}
+                      className="h-12 sm:h-16 w-auto object-contain drop-shadow-[0_3px_10px_rgba(0,0,0,0.65)]"
                     />
                   </div>
                 ))}
