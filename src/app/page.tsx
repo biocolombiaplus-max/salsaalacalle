@@ -74,10 +74,10 @@ export default async function Home() {
             <Image
               src={s.logoUrl}
               alt={s.eventoNombre}
-              width={320}
-              height={320}
+              width={400}
+              height={400}
               priority
-              className="h-28 sm:h-32 md:h-36 w-auto object-contain mb-6 drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)]"
+              className="mx-auto h-40 sm:h-48 md:h-56 w-auto object-contain mb-8 drop-shadow-[0_8px_32px_rgba(0,0,0,0.7)]"
             />
           )}
           <p className="uppercase tracking-[0.35em] text-gold text-xs sm:text-sm mb-5">

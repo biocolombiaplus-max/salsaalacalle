@@ -64,27 +64,27 @@ function PendingThumb({
   className: string;
 }) {
   return (
-    <div
-      className={`relative rounded-lg overflow-hidden border ${className} ${
-        item.error ? "border-red-500" : "border-transparent"
-      }`}
-      title={item.error ? `${item.name}: ${item.error}` : item.name}
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element -- vista previa local (blob:), next/image no la soporta */}
-      <img src={item.localUrl} alt={item.name} className="h-full w-full object-cover" />
-      {!item.error && (
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-          <div className="h-5 w-5 rounded-full border-2 border-gold border-t-transparent animate-spin" />
-        </div>
-      )}
+    <div className={item.error ? "w-40" : className}>
+      <div
+        className={`relative rounded-lg overflow-hidden border ${className} ${
+          item.error ? "border-red-500" : "border-transparent"
+        }`}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element -- vista previa local (blob:), next/image no la soporta */}
+        <img src={item.localUrl} alt={item.name} className="h-full w-full object-cover" />
+        {!item.error && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+            <div className="h-5 w-5 rounded-full border-2 border-gold border-t-transparent animate-spin" />
+          </div>
+        )}
+      </div>
       {item.error && (
-        <button
-          onClick={onDismiss}
-          className="absolute inset-0 bg-red-950/80 flex flex-col items-center justify-center gap-1 text-[10px] text-red-200 px-1 text-center"
-        >
-          <span>⚠ Falló</span>
-          <span className="underline">Quitar</span>
-        </button>
+        <div className="mt-1 text-[10px] text-red-300 bg-red-950/60 rounded px-1.5 py-1 break-words">
+          {item.error}
+          <button onClick={onDismiss} className="block underline mt-0.5">
+            Quitar
+          </button>
+        </div>
       )}
     </div>
   );
@@ -94,7 +94,14 @@ export default function SettingsForm() {
   const [tab, setTab] = useState<Tab>("evento");
   const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessageState] = useState<{ text: string; ok: boolean } | null>(null);
+  function setMessage(text: string, ok = false) {
+    if (!text) {
+      setMessageState(null);
+      return;
+    }
+    setMessageState({ text, ok });
+  }
   const [uploading, setUploading] = useState<string | null>(null);
   // Vista previa local mientras cada imagen se sube, para que se vea de
   // inmediato qué archivo se está agregando (antes de tener la URL final).
@@ -125,7 +132,7 @@ export default function SettingsForm() {
         body: JSON.stringify(settings),
       });
       if (!res.ok) throw new Error("Error al guardar");
-      setMessage("Cambios guardados correctamente.");
+      setMessage("Cambios guardados correctamente.", true);
     } catch {
       setMessage("No fue posible guardar los cambios.");
     } finally {
@@ -567,7 +574,18 @@ export default function SettingsForm() {
         </div>
       )}
 
-      <div className="sticky bottom-4 mt-10 flex items-center gap-4">
+      {message && (
+        <div
+          className={`sticky bottom-20 mt-6 rounded-xl border text-sm px-4 py-3 shadow-lg ${
+            message.ok
+              ? "border-green/40 bg-green-950/80 text-green-200"
+              : "border-red-500/40 bg-red-950/90 text-red-200"
+          }`}
+        >
+          {message.text}
+        </div>
+      )}
+      <div className="sticky bottom-4 mt-4 flex items-center gap-4">
         <button
           onClick={save}
           disabled={saving}
@@ -575,7 +593,6 @@ export default function SettingsForm() {
         >
           {saving ? "Guardando..." : "Guardar cambios"}
         </button>
-        {message && <p className="text-sm text-white/70">{message}</p>}
       </div>
     </div>
   );
