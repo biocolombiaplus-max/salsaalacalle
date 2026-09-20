@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 
 export type ProgramaItem = { hora: string; actividad: string };
-export type Patrocinador = { nombre: string; logoUrl: string };
+export type Patrocinador = { nombre: string; logoUrl: string; altura?: number };
 
 export type SiteSettings = {
   eventoNombre: string;

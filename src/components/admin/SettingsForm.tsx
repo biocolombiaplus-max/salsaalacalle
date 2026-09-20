@@ -528,7 +528,7 @@ export default function SettingsForm() {
           </p>
           <div className="mb-6 max-w-sm">
             <label className="block text-[11px] uppercase tracking-widest text-white/50 mb-2">
-              Tamaño de los logos en el banner ({settings.patrocinadoresLogoAltura}px)
+              Tamaño por defecto ({settings.patrocinadoresLogoAltura}px)
             </label>
             <input
               type="range"
@@ -539,6 +539,9 @@ export default function SettingsForm() {
               onChange={(e) => set("patrocinadoresLogoAltura", Number(e.target.value))}
               className="w-full accent-gold"
             />
+            <p className="text-[11px] text-white/40 mt-1.5">
+              Se usa en los patrocinadores que no tengan un tamaño propio definido abajo.
+            </p>
           </div>
           <div className="space-y-4">
             {settings.patrocinadores.map((p, i) => (
@@ -564,6 +567,21 @@ export default function SettingsForm() {
                     className="text-xs text-white/60"
                   />
                   {uploading === `patrocinador-${i}` && <p className="text-xs text-gold">Subiendo...</p>}
+                  <div className="pt-1">
+                    <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
+                      <span>Tamaño de este logo</span>
+                      <span className="text-gold normal-case tracking-normal">{p.altura ?? settings.patrocinadoresLogoAltura}px</span>
+                    </label>
+                    <input
+                      type="range"
+                      min={32}
+                      max={96}
+                      step={4}
+                      value={p.altura ?? settings.patrocinadoresLogoAltura}
+                      onChange={(e) => updatePatrocinador(i, { altura: Number(e.target.value) })}
+                      className="w-full accent-gold"
+                    />
+                  </div>
                 </div>
                 <button onClick={() => removePatrocinador(i)} className="text-red-400 text-xs px-2 self-start">
                   ✕
