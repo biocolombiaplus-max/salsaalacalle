@@ -25,7 +25,7 @@ export default async function Home() {
       {/* BANNER DE PATROCINADORES (reemplaza la barra de navegación superior) */}
       <header className="fixed top-0 inset-x-0 z-50 overflow-hidden border-b border-white/10 backdrop-blur-sm">
         <div className="absolute inset-0 animate-gradient-shift bg-[length:300%_300%] bg-[linear-gradient(115deg,var(--wine),var(--gold),var(--green),var(--wine))] opacity-90" />
-        <div className="absolute inset-0 bg-black/35" />
+        <div className="absolute inset-0 bg-black/55" />
         {s.patrocinadores.length > 0 ? (
           <div className="relative flex items-center gap-4 py-3.5 sm:py-4 px-3 sm:px-6">
             <span className="shrink-0 hidden sm:inline-flex items-center gap-1.5 rounded-full bg-black/40 text-white/90 text-[11px] font-semibold uppercase tracking-widest px-3 py-1.5">
@@ -38,16 +38,20 @@ export default async function Home() {
                 WebkitMaskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)",
               }}
             >
-              <div className="flex w-max animate-marquee gap-10 sm:gap-14 items-center">
+              <div className="flex w-max animate-marquee gap-5 sm:gap-7 items-center">
                 {[...s.patrocinadores, ...s.patrocinadores, ...s.patrocinadores].map((p, i) => (
-                  <div key={`${p.nombre}-${i}`} className="shrink-0 flex items-center justify-center" title={p.nombre}>
+                  <div
+                    key={`${p.nombre}-${i}`}
+                    className="shrink-0 flex items-center justify-center rounded-2xl bg-black/45 backdrop-blur-md ring-1 ring-white/15 px-5 sm:px-6 py-2.5 sm:py-3 shadow-[0_10px_28px_-10px_rgba(0,0,0,0.8)] hover:ring-gold/50 transition-all"
+                    title={p.nombre}
+                  >
                     <Image
                       src={p.logoUrl}
                       alt={p.nombre}
                       width={220}
                       height={100}
                       quality={100}
-                      className="h-12 sm:h-16 w-auto object-contain drop-shadow-[0_3px_10px_rgba(0,0,0,0.65)]"
+                      className="h-11 sm:h-14 w-auto object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
                     />
                   </div>
                 ))}
