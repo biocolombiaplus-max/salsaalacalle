@@ -569,6 +569,12 @@ export default function SettingsForm() {
                     className="text-xs text-white/60"
                   />
                   {uploading === `patrocinador-${i}` && <p className="text-xs text-gold">Subiendo...</p>}
+                  <input
+                    className={`${inputClass} text-xs`}
+                    placeholder="O pega la URL del logo (https://...)"
+                    value={p.logoUrl}
+                    onChange={(e) => updatePatrocinador(i, { logoUrl: e.target.value })}
+                  />
                   <div className="pt-1">
                     <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
                       <span>Tamaño de este logo</span>
