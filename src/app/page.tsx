@@ -119,7 +119,7 @@ export default async function Home() {
 
           <div className="flex flex-wrap items-center gap-6">
             <Link
-              href="/registro"
+              href="#registro"
               className="btn-shine btn-glow-wine inline-flex items-center gap-2 rounded-full bg-wine px-8 py-4 font-semibold text-white hover:brightness-110 transition text-base sm:text-lg"
             >
               Reservar mi boleta <span className="gratis-badge text-gold text-lg sm:text-xl">GRATIS</span>
@@ -129,6 +129,35 @@ export default async function Home() {
           <p className="mt-5 text-xs sm:text-sm text-white/60 max-w-md">
             Entrada libre · {s.eventoCupo} · Registro con QR de ingreso, sin filas ni costo.
           </p>
+        </div>
+      </section>
+
+      {/* REGISTRO (widget externo de eventosid.com) */}
+      <section id="registro" className="relative py-14 sm:py-20 px-5 sm:px-8">
+        <div className="max-w-3xl mx-auto text-center mb-10">
+          <p className="uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">Registro gratuito</p>
+          <h2 className="font-display text-3xl sm:text-5xl font-bold mb-4">Reserva tu boleta aquí</h2>
+          <p className="text-white/60 text-sm sm:text-base">
+            Completa el formulario y recibe tu boleta con código QR al instante.
+          </p>
+        </div>
+        <div className="max-w-3xl mx-auto">
+          <iframe
+            src="https://eventosid.com/evento/salsa-a-la-calle-4to-encuentro-salsero-2026/embed"
+            title={`Registro · ${s.eventoNombre} · ${s.eventoEdicion}`}
+            width="100%"
+            height={750}
+            frameBorder={0}
+            allow="payment"
+            loading="lazy"
+            style={{
+              border: "none",
+              borderRadius: "14px",
+              width: "100%",
+              minHeight: "750px",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.35)",
+            }}
+          />
         </div>
       </section>
 
@@ -208,7 +237,7 @@ export default async function Home() {
 
         <div className="relative flex justify-center mt-12">
           <Link
-            href="/registro"
+            href="#registro"
             className="btn-shine btn-glow-wine inline-flex items-center gap-2 rounded-full bg-wine px-7 py-3.5 font-semibold text-white text-sm sm:text-base hover:brightness-110 transition"
           >
             Reservar mi boleta <span className="gratis-badge text-gold text-base sm:text-lg">GRATIS</span>
@@ -240,7 +269,7 @@ export default async function Home() {
         </div>
         <div className="relative flex justify-center mt-12">
           <Link
-            href="/registro"
+            href="#registro"
             className="btn-shine btn-glow-wine inline-flex items-center gap-2 rounded-full bg-wine px-7 py-3.5 font-semibold text-white text-sm sm:text-base hover:brightness-110 transition"
           >
             Reservar mi boleta <span className="gratis-badge text-gold text-base sm:text-lg">GRATIS</span>
@@ -271,7 +300,7 @@ export default async function Home() {
           </div>
           <div className="relative flex justify-center mt-12">
             <Link
-              href="/registro"
+              href="#registro"
               className="btn-shine btn-glow-wine inline-flex items-center gap-2 rounded-full bg-wine px-7 py-3.5 font-semibold text-white text-sm sm:text-base hover:brightness-110 transition"
             >
               Reservar mi boleta <span className="gratis-badge text-gold text-base sm:text-lg">GRATIS</span>
@@ -313,7 +342,7 @@ export default async function Home() {
             <p className="font-display text-2xl font-bold mb-2">Boleta 100% gratuita</p>
             <p className="text-white/60 text-sm mb-8">Regístrate en menos de un minuto y recibe tu invitación al instante.</p>
             <Link
-              href="/registro"
+              href="#registro"
               className="btn-shine btn-glow-gold inline-flex items-center justify-center gap-2 rounded-full bg-gold text-[#1a1408] font-semibold px-8 py-4 hover:brightness-110 transition w-full sm:w-auto"
             >
               Quiero mi boleta <span className="gratis-badge text-wine text-lg sm:text-xl">GRATIS</span>
@@ -363,7 +392,7 @@ export default async function Home() {
           </div>
           <div className="relative flex justify-center mt-12">
             <Link
-              href="/registro"
+              href="#registro"
               className="btn-shine inline-flex items-center gap-2 rounded-full border border-gold/40 text-gold font-semibold text-sm px-7 py-3.5 hover:bg-gold hover:text-[#1a1408] transition"
             >
               Reservar mi boleta <span className="gratis-badge text-base sm:text-lg">GRATIS</span>
@@ -385,7 +414,7 @@ export default async function Home() {
           No te quedes por fuera de {s.eventoEdicion}
         </h2>
         <Link
-          href="/registro"
+          href="#registro"
           className="btn-shine btn-glow-wine relative inline-flex items-center gap-2 rounded-full bg-wine px-10 py-5 font-semibold text-white text-lg hover:brightness-110 transition"
         >
           Reservar mi boleta <span className="gratis-badge text-gold text-xl sm:text-2xl">GRATIS</span>
