@@ -172,6 +172,11 @@ function drawContain(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: nu
   ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
 }
 
+// Renderiza en una resolución interna más alta que el tamaño final del
+// logo (hasta 2x, limitado al tamaño real de la imagen fuente) y luego
+// la reduce al dibujarla — mismo truco que el supersampling, evita que
+// el recoloreado (que redibuja el logo desde cero en un canvas aparte)
+// se vea más blando que el logo original.
 function drawRecolored(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement,
@@ -181,19 +186,26 @@ function drawRecolored(
   h: number,
   color: string
 ) {
+  const supersample = Math.min(2, Math.max(1, img.width / w, img.height / h));
+  const offW = Math.round(w * supersample);
+  const offH = Math.round(h * supersample);
+
   const off = document.createElement("canvas");
-  off.width = w;
-  off.height = h;
+  off.width = offW;
+  off.height = offH;
   const octx = off.getContext("2d");
   if (!octx) return;
-  const scale = Math.min(w / img.width, h / img.height);
+  octx.imageSmoothingEnabled = true;
+  octx.imageSmoothingQuality = "high";
+
+  const scale = Math.min(offW / img.width, offH / img.height);
   const dw = img.width * scale;
   const dh = img.height * scale;
-  octx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+  octx.drawImage(img, (offW - dw) / 2, (offH - dh) / 2, dw, dh);
   octx.globalCompositeOperation = "source-in";
   octx.fillStyle = color;
-  octx.fillRect(0, 0, w, h);
-  ctx.drawImage(off, x, y);
+  octx.fillRect(0, 0, offW, offH);
+  ctx.drawImage(off, x, y, w, h);
 }
 
 export default function StoryGenerator() {
@@ -210,10 +222,13 @@ export default function StoryGenerator() {
   const [overlayOpacity, setOverlayOpacity] = useState(45);
 
   const [showEventLogo, setShowEventLogo] = useState(true);
+  const [eventLogoSizePct, setEventLogoSizePct] = useState(41);
 
   const [eyebrowVisible, setEyebrowVisible] = useState(true);
   const [eyebrowText, setEyebrowText] = useState("Patrocinador oficial");
   const [eyebrowColor, setEyebrowColor] = useState("#fc9000");
+  const [eyebrowSize, setEyebrowSize] = useState(38);
+  const [eyebrowYPct, setEyebrowYPct] = useState(18);
 
   const [logoColorMode, setLogoColorMode] = useState<LogoColorMode>("original");
   const [logoCustomColor, setLogoCustomColor] = useState("#ffffff");
@@ -259,6 +274,8 @@ export default function StoryGenerator() {
     if (!ctx) return;
 
     ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
 
     if (backgroundMode === "imagen" && backgroundImg) {
       drawCover(ctx, backgroundImg, 0, 0, CANVAS_W, CANVAS_H);
@@ -270,15 +287,17 @@ export default function StoryGenerator() {
     }
 
     if (showEventLogo && eventLogoImg) {
-      drawContain(ctx, eventLogoImg, CANVAS_W / 2 - 220, 90, 440, 190);
+      const evW = CANVAS_W * (eventLogoSizePct / 100);
+      const evH = evW * (190 / 440);
+      drawContain(ctx, eventLogoImg, CANVAS_W / 2 - evW / 2, 90, evW, evH);
     }
 
     if (eyebrowVisible && eyebrowText.trim()) {
       ctx.fillStyle = eyebrowColor;
-      ctx.font = "700 38px Arial, sans-serif";
+      ctx.font = `700 ${eyebrowSize}px Arial, sans-serif`;
       ctx.textAlign = "center";
       const spaced = eyebrowText.trim().toUpperCase().split("").join("  ");
-      ctx.fillText(spaced, CANVAS_W / 2, 350);
+      ctx.fillText(spaced, CANVAS_W / 2, CANVAS_H * (eyebrowYPct / 100));
     }
 
     const recolorColor =
@@ -326,9 +345,12 @@ export default function StoryGenerator() {
     overlayOpacity,
     showEventLogo,
     eventLogoImg,
+    eventLogoSizePct,
     eyebrowVisible,
     eyebrowText,
     eyebrowColor,
+    eyebrowSize,
+    eyebrowYPct,
     sponsorLogoImg,
     gridLogoImgs,
     logoColorMode,
@@ -566,18 +588,64 @@ export default function StoryGenerator() {
             <input type="checkbox" checked={showEventLogo} onChange={(e) => setShowEventLogo(e.target.checked)} className="h-4 w-4 accent-gold" />
             Logo del evento arriba
           </label>
+          {showEventLogo && (
+            <div>
+              <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
+                <span>Tamaño del logo del evento</span>
+                <span className="text-gold normal-case tracking-normal">{eventLogoSizePct}%</span>
+              </label>
+              <input
+                type="range"
+                min={20}
+                max={75}
+                value={eventLogoSizePct}
+                onChange={(e) => setEventLogoSizePct(Number(e.target.value))}
+                className="w-full accent-gold"
+              />
+            </div>
+          )}
 
           <label className="flex items-center gap-2 text-xs uppercase tracking-widest text-white/50">
             <input type="checkbox" checked={eyebrowVisible} onChange={(e) => setEyebrowVisible(e.target.checked)} className="h-4 w-4 accent-gold" />
             Texto &quot;Patrocinador oficial&quot;
           </label>
           {eyebrowVisible && (
-            <div className="grid grid-cols-[1fr_auto] gap-3 items-end">
-              <Field label="Texto">
-                <input className={inputClass} value={eyebrowText} onChange={(e) => setEyebrowText(e.target.value)} />
-              </Field>
-              <input type="color" value={eyebrowColor} onChange={(e) => setEyebrowColor(e.target.value)} className={`${colorInputClass} w-14`} />
-            </div>
+            <>
+              <div className="grid grid-cols-[1fr_auto] gap-3 items-end">
+                <Field label="Texto">
+                  <input className={inputClass} value={eyebrowText} onChange={(e) => setEyebrowText(e.target.value)} />
+                </Field>
+                <input type="color" value={eyebrowColor} onChange={(e) => setEyebrowColor(e.target.value)} className={`${colorInputClass} w-14`} />
+              </div>
+              <div>
+                <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
+                  <span>Tamaño del texto</span>
+                  <span className="text-gold normal-case tracking-normal">{eyebrowSize}px</span>
+                </label>
+                <input
+                  type="range"
+                  min={22}
+                  max={64}
+                  value={eyebrowSize}
+                  onChange={(e) => setEyebrowSize(Number(e.target.value))}
+                  className="w-full accent-gold"
+                />
+              </div>
+              <div>
+                <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
+                  <span>Posición vertical del texto</span>
+                  <span className="text-gold normal-case tracking-normal">{eyebrowYPct}%</span>
+                </label>
+                <input
+                  type="range"
+                  min={5}
+                  max={60}
+                  value={eyebrowYPct}
+                  onChange={(e) => setEyebrowYPct(Number(e.target.value))}
+                  className="w-full accent-gold"
+                />
+              </div>
+            </>
           )}
         </div>
 
