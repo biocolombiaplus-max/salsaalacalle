@@ -21,6 +21,7 @@ export default async function Home() {
   const heroIsVideo = isVideoUrl(heroImg);
   const patrocinadoresDestacados = s.patrocinadores.filter((p) => p.destacado);
   const patrocinadoresRegulares = s.patrocinadores.filter((p) => !p.destacado);
+  const patrocinadoresTodos = s.patrocinadores;
   const socials = (Object.keys(SOCIAL_ICONS) as (keyof typeof SOCIAL_ICONS)[])
     .map((key) => ({ key, label: SOCIAL_ICONS[key], url: s[key] as string }))
     .filter((x) => x.url);
@@ -28,13 +29,14 @@ export default async function Home() {
   return (
     <main className="bg-background text-foreground">
       {/* BANNER DE PATROCINADORES (reemplaza la barra de navegación superior) */}
-      <header className="fixed top-0 inset-x-0 z-50 overflow-hidden border-b border-white/10 backdrop-blur-sm">
-        <div className="absolute inset-0 animate-gradient-shift bg-[length:300%_300%] bg-[linear-gradient(115deg,var(--wine),var(--gold),var(--green),var(--wine))] opacity-90" />
-        <div className="absolute inset-0 bg-black/55" />
-        {patrocinadoresRegulares.length > 0 ? (
-          <div className="relative flex items-center gap-4 h-11 sm:h-14 px-3 sm:px-6">
-            <span className="shrink-0 hidden sm:inline-flex items-center gap-1.5 rounded-full bg-black/40 text-white/90 text-[10px] font-semibold uppercase tracking-widest px-2.5 py-1">
-              🤝 Patrocinadores
+      <header className="fixed top-0 inset-x-0 z-50 overflow-hidden border-b border-gold/20 backdrop-blur-sm">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0d0906] to-black" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent" aria-hidden />
+        {patrocinadoresTodos.length > 0 ? (
+          <div className="relative flex items-center gap-4 h-12 sm:h-16 px-3 sm:px-6">
+            <span className="shrink-0 hidden sm:inline-flex items-center gap-1.5 rounded-full bg-white/[0.06] ring-1 ring-gold/20 text-gold/90 text-[10px] font-semibold uppercase tracking-widest px-2.5 py-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-gold pulse-dot" aria-hidden />
+              Patrocinadores
             </span>
             <div
               className="relative flex-1 h-full overflow-hidden"
@@ -43,10 +45,10 @@ export default async function Home() {
                 WebkitMaskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)",
               }}
             >
-              <div className="flex h-full w-max animate-marquee gap-4 sm:gap-6 items-center">
-                {[...patrocinadoresRegulares, ...patrocinadoresRegulares, ...patrocinadoresRegulares].map((p, i) => {
+              <div className="flex h-full w-max animate-marquee gap-5 sm:gap-7 items-center">
+                {[...patrocinadoresTodos, ...patrocinadoresTodos].map((p, i) => {
                   const cardClass =
-                    "shrink-0 h-[78%] flex items-center justify-center rounded-lg bg-black/45 backdrop-blur-md ring-1 ring-white/15 px-3.5 sm:px-4 shadow-[0_6px_16px_-8px_rgba(0,0,0,0.8)] hover:ring-gold/50 transition-all";
+                    "shrink-0 h-[80%] flex items-center justify-center rounded-lg bg-white/[0.05] backdrop-blur-md ring-1 ring-white/10 px-4 sm:px-5 hover:ring-gold/60 hover:bg-white/[0.09] transition-all";
                   const logo = (
                     <Image
                       src={p.logoUrl}
