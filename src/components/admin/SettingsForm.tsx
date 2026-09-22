@@ -547,53 +547,61 @@ export default function SettingsForm() {
           </div>
           <div className="space-y-4">
             {settings.patrocinadores.map((p, i) => (
-              <div key={i} className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-4">
-                <div className="h-16 w-24 shrink-0 rounded-lg bg-black/30 flex items-center justify-center overflow-hidden">
-                  {p.logoUrl ? (
-                    <Image src={p.logoUrl} alt={p.nombre || "Patrocinador"} width={96} height={64} className="max-h-14 w-auto object-contain" />
-                  ) : (
-                    <span className="text-white/30 text-[10px]">Sin logo</span>
-                  )}
-                </div>
-                <div className="flex-1 space-y-2">
+              <div key={i} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 space-y-3">
+                <div className="flex items-center gap-3">
                   <input
-                    className={inputClass}
+                    className={`${inputClass} flex-1 min-w-0`}
                     placeholder="Nombre del patrocinador"
                     value={p.nombre}
                     onChange={(e) => updatePatrocinador(i, { nombre: e.target.value })}
                   />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => e.target.files?.[0] && handlePatrocinadorLogo(i, e.target.files[0])}
-                    className="text-xs text-white/60"
-                  />
-                  {uploading === `patrocinador-${i}` && <p className="text-xs text-gold">Subiendo...</p>}
-                  <input
-                    className={`${inputClass} text-xs`}
-                    placeholder="O pega la URL del logo (https://...)"
-                    value={p.logoUrl}
-                    onChange={(e) => updatePatrocinador(i, { logoUrl: e.target.value })}
-                  />
-                  <div className="pt-1">
-                    <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
-                      <span>Tamaño de este logo</span>
-                      <span className="text-gold normal-case tracking-normal">{p.altura ?? settings.patrocinadoresLogoAltura}px</span>
-                    </label>
+                  <button
+                    onClick={() => removePatrocinador(i)}
+                    aria-label="Eliminar patrocinador"
+                    className="shrink-0 h-9 w-9 rounded-full bg-black/30 text-red-400 hover:text-red-300 hover:bg-black/50 transition flex items-center justify-center text-sm"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="h-16 w-24 shrink-0 rounded-lg bg-black/30 flex items-center justify-center overflow-hidden">
+                    {p.logoUrl ? (
+                      <Image src={p.logoUrl} alt={p.nombre || "Patrocinador"} width={96} height={64} className="max-h-14 w-auto object-contain" />
+                    ) : (
+                      <span className="text-white/30 text-[10px]">Sin logo</span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0 space-y-2">
                     <input
-                      type="range"
-                      min={20}
-                      max={48}
-                      step={2}
-                      value={p.altura ?? settings.patrocinadoresLogoAltura}
-                      onChange={(e) => updatePatrocinador(i, { altura: Number(e.target.value) })}
-                      className="w-full accent-gold"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => e.target.files?.[0] && handlePatrocinadorLogo(i, e.target.files[0])}
+                      className="w-full text-xs text-white/60"
                     />
+                    {uploading === `patrocinador-${i}` && <p className="text-xs text-gold">Subiendo...</p>}
+                    <input
+                      className={`${inputClass} text-xs`}
+                      placeholder="O pega la URL del logo (https://...)"
+                      value={p.logoUrl}
+                      onChange={(e) => updatePatrocinador(i, { logoUrl: e.target.value })}
+                    />
+                    <div className="pt-1">
+                      <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
+                        <span>Tamaño de este logo</span>
+                        <span className="text-gold normal-case tracking-normal">{p.altura ?? settings.patrocinadoresLogoAltura}px</span>
+                      </label>
+                      <input
+                        type="range"
+                        min={20}
+                        max={48}
+                        step={2}
+                        value={p.altura ?? settings.patrocinadoresLogoAltura}
+                        onChange={(e) => updatePatrocinador(i, { altura: Number(e.target.value) })}
+                        className="w-full accent-gold"
+                      />
+                    </div>
                   </div>
                 </div>
-                <button onClick={() => removePatrocinador(i)} className="text-red-400 text-xs px-2 self-start">
-                  ✕
-                </button>
               </div>
             ))}
           </div>
