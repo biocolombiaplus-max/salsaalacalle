@@ -59,6 +59,12 @@ body {
 .animate-marquee {
   animation: marquee 28s linear infinite;
 }
+.animate-marquee-slow {
+  animation: marquee 55s linear infinite;
+}
+.marquee-pausable:hover .animate-marquee-slow {
+  animation-play-state: paused;
+}
 
 /* Botones CTA "premium": brillo que recorre el botón + glow pulsante. */
 @keyframes btn-shine-sweep {
@@ -126,7 +132,9 @@ body {
   .btn-glow-wine,
   .btn-glow-gold,
   .gratis-badge,
-  .animate-gradient-shift {
+  .animate-gradient-shift,
+  .animate-marquee,
+  .animate-marquee-slow {
     animation: none;
   }
 }

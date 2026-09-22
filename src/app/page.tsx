@@ -231,29 +231,41 @@ export default async function Home() {
             <p className="uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">Momentos</p>
             <h2 className="font-display text-3xl sm:text-5xl font-bold">La calle se prende de salsa</h2>
           </div>
-          <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-5">
-            {s.galeriaImagenes.map((src, i) => (
-              <div key={i} className="relative aspect-[9/16] rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.7)]">
-                {isVideoUrl(src) ? (
-                  <video
-                    src={src}
-                    controls
-                    playsInline
-                    preload="metadata"
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
-                ) : (
-                  <Image
-                    src={src}
-                    alt={`Salsa a la Calle ${i + 1}`}
-                    fill
-                    quality={92}
-                    sizes="(max-width: 640px) 45vw, (max-width: 768px) 30vw, 22vw"
-                    className="object-cover hover:scale-105 transition-transform duration-500"
-                  />
-                )}
-              </div>
-            ))}
+          <div
+            className="marquee-pausable relative max-w-full overflow-hidden"
+            style={{
+              maskImage: "linear-gradient(to right, transparent, black 4%, black 96%, transparent)",
+              WebkitMaskImage: "linear-gradient(to right, transparent, black 4%, black 96%, transparent)",
+            }}
+          >
+            <div className="flex w-max animate-marquee-slow gap-4 sm:gap-5 items-center">
+              {[...s.galeriaImagenes, ...s.galeriaImagenes].map((src, i) => (
+                <div
+                  key={i}
+                  className="relative shrink-0 w-[170px] sm:w-[210px] md:w-[230px] aspect-[9/16] rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.7)]"
+                >
+                  {isVideoUrl(src) ? (
+                    <video
+                      src={src}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
+                  ) : (
+                    <Image
+                      src={src}
+                      alt="Salsa a la Calle"
+                      fill
+                      quality={92}
+                      sizes="230px"
+                      className="object-cover"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
           <div className="relative flex justify-center mt-12">
             <a href="#registro"
