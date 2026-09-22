@@ -7,6 +7,7 @@ const LINKS = [
   { href: "/admin/dashboard", label: "Dashboard", icon: "📊" },
   { href: "/admin/checkin", label: "Check-in", icon: "🎫" },
   { href: "/admin/settings", label: "Personalizar", icon: "🎨" },
+  { href: "/admin/historias", label: "Historias", icon: "📱" },
 ];
 
 export default function AdminNav({ email, nombre }: { email: string; nombre: string }) {
