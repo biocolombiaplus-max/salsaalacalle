@@ -13,6 +13,20 @@ const inputClass =
   "w-full rounded-xl bg-black/30 border border-white/15 px-4 py-2.5 text-sm outline-none focus:border-gold transition";
 const colorInputClass = "h-11 w-full rounded-xl bg-black/30 border border-white/15";
 
+// Los logos con URL absoluta (http/https) pueden vivir en un dominio
+// externo sin cabeceras CORS — el navegador entonces se niega a cargarlos
+// en modo crossOrigin, que es lo que el <canvas> necesita para poder
+// exportarse después. Los rutamos por nuestro propio servidor para que
+// siempre carguen, sin importar el dominio de origen. Las rutas propias
+// (relativas, o ya subidas a nuestro blob) no lo necesitan.
+function resolveImageSrc(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (/^https?:\/\//i.test(url)) {
+    return `/api/admin/image-proxy?url=${encodeURIComponent(url)}`;
+  }
+  return url;
+}
+
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
@@ -22,14 +36,17 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-function useImageElement(src: string | null): HTMLImageElement | null {
-  const [img, setImg] = useState<HTMLImageElement | null>(null);
+type ImageLoadState = { img: HTMLImageElement | null; failed: boolean };
+const EMPTY_IMAGE_STATE: ImageLoadState = { img: null, failed: false };
+
+function useImageElement(src: string | null): ImageLoadState {
+  const [state, setState] = useState<ImageLoadState>(EMPTY_IMAGE_STATE);
 
   useEffect(() => {
     let cancelled = false;
     if (!src) {
       queueMicrotask(() => {
-        if (!cancelled) setImg(null);
+        if (!cancelled) setState(EMPTY_IMAGE_STATE);
       });
       return () => {
         cancelled = true;
@@ -38,10 +55,10 @@ function useImageElement(src: string | null): HTMLImageElement | null {
     const el = new window.Image();
     el.crossOrigin = "anonymous";
     el.onload = () => {
-      if (!cancelled) setImg(el);
+      if (!cancelled) setState({ img: el, failed: false });
     };
     el.onerror = () => {
-      if (!cancelled) setImg(null);
+      if (!cancelled) setState({ img: null, failed: true });
     };
     el.src = src;
     return () => {
@@ -49,37 +66,38 @@ function useImageElement(src: string | null): HTMLImageElement | null {
     };
   }, [src]);
 
-  return img;
+  return state;
 }
 
-function useImageElements(urls: string[]): (HTMLImageElement | null)[] {
-  const [imgs, setImgs] = useState<(HTMLImageElement | null)[]>([]);
+function useImageElements(urls: string[]): ImageLoadState[] {
+  const [states, setStates] = useState<ImageLoadState[]>([]);
   const key = urls.join("|");
 
   useEffect(() => {
     let cancelled = false;
     if (urls.length === 0) {
       queueMicrotask(() => {
-        if (!cancelled) setImgs([]);
+        if (!cancelled) setStates([]);
       });
       return () => {
         cancelled = true;
       };
     }
-    const loaded: (HTMLImageElement | null)[] = new Array(urls.length).fill(null);
+    const loaded: ImageLoadState[] = new Array(urls.length).fill(EMPTY_IMAGE_STATE);
     let remaining = urls.length;
     urls.forEach((url, i) => {
       const el = new window.Image();
       el.crossOrigin = "anonymous";
       const settle = () => {
         remaining -= 1;
-        if (!cancelled && remaining === 0) setImgs([...loaded]);
+        if (!cancelled && remaining === 0) setStates([...loaded]);
       };
       el.onload = () => {
-        loaded[i] = el;
+        loaded[i] = { img: el, failed: false };
         settle();
       };
       el.onerror = () => {
+        loaded[i] = { img: null, failed: true };
         settle();
       };
       el.src = url;
@@ -90,7 +108,7 @@ function useImageElements(urls: string[]): (HTMLImageElement | null)[] {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- urls comparado vía `key`
   }, [key]);
 
-  return imgs;
+  return states;
 }
 
 function roundRectPath(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
@@ -271,10 +289,17 @@ export default function StoryGenerator() {
     setBottomBarText(next === "grid" ? "" : settings?.patrocinadores[sponsorIndex]?.link || "");
   }
 
-  const eventLogoImg = useImageElement(showEventLogo ? settings?.logoUrl || null : null);
-  const sponsorLogoImg = useImageElement(mode === "individual" ? sponsor?.logoUrl || null : null);
-  const gridLogoImgs = useImageElements(mode === "grid" ? settings?.patrocinadores.map((p) => p.logoUrl) ?? [] : []);
-  const backgroundImg = useImageElement(backgroundMode === "imagen" ? backgroundLocalUrl : null);
+  const { img: eventLogoImg } = useImageElement(showEventLogo ? resolveImageSrc(settings?.logoUrl) : null);
+  const { img: sponsorLogoImg, failed: sponsorLogoFailed } = useImageElement(
+    mode === "individual" ? resolveImageSrc(sponsor?.logoUrl) : null
+  );
+
+  const gridSponsors = mode === "grid" ? settings?.patrocinadores.filter((p) => !!p.logoUrl) ?? [] : [];
+  const gridLogoStates = useImageElements(gridSponsors.map((p) => resolveImageSrc(p.logoUrl) as string));
+  const gridLogoImgs = gridLogoStates.map((s) => s.img);
+  const gridFailedNames = gridSponsors.filter((_, i) => gridLogoStates[i]?.failed).map((p) => p.nombre || "Patrocinador");
+
+  const { img: backgroundImg } = useImageElement(backgroundMode === "imagen" ? backgroundLocalUrl : null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -442,24 +467,50 @@ export default function StoryGenerator() {
         </Field>
 
         {mode === "individual" ? (
-          <Field label="Patrocinador">
-            <select className={inputClass} value={sponsorIndex} onChange={(e) => handleSponsorChange(Number(e.target.value))}>
-              {settings.patrocinadores.map((p, i) => (
-                <option key={`${p.nombre}-${i}`} value={i}>
-                  {p.nombre || `Patrocinador ${i + 1}`}
-                </option>
-              ))}
-            </select>
-          </Field>
+          <>
+            <Field label="Patrocinador">
+              <select className={inputClass} value={sponsorIndex} onChange={(e) => handleSponsorChange(Number(e.target.value))}>
+                {settings.patrocinadores.map((p, i) => (
+                  <option key={`${p.nombre}-${i}`} value={i}>
+                    {p.nombre || `Patrocinador ${i + 1}`}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            {sponsorLogoFailed && (
+              <p className="text-red-400 text-sm">
+                No se pudo cargar el logo de {sponsor?.nombre || "este patrocinador"}. Si pegaste un link de otra página web,
+                es probable que esa página bloquee la descarga automática de sus imágenes. Solución: sube el logo como
+                archivo en{" "}
+                <a href="/admin/settings" className="underline">
+                  Personalizar → Patrocinadores
+                </a>{" "}
+                en vez de pegar el link — así siempre va a funcionar.
+              </p>
+            )}
+          </>
         ) : (
-          <p className="text-white/50 text-sm">
-            Se incluyen los {settings.patrocinadores.length} patrocinadores agregados, ordenados en una grilla que se acomoda
-            automáticamente según cuántos haya. El orden es el mismo que en{" "}
-            <a href="/admin/settings" className="text-gold underline">
-              Personalizar → Patrocinadores
-            </a>
-            .
-          </p>
+          <div className="space-y-2">
+            <p className="text-white/50 text-sm">
+              Se incluyen los {settings.patrocinadores.length} patrocinadores agregados, ordenados en una grilla que se acomoda
+              automáticamente según cuántos haya. El orden es el mismo que en{" "}
+              <a href="/admin/settings" className="text-gold underline">
+                Personalizar → Patrocinadores
+              </a>
+              .
+            </p>
+            {gridFailedNames.length > 0 && (
+              <p className="text-red-400 text-sm">
+                No se pudo cargar el logo de: {gridFailedNames.join(", ")}. Si pegaste un link de otra página web para esos
+                patrocinadores, es probable que esa página bloquee la descarga automática. Solución: sube esos logos como
+                archivo en{" "}
+                <a href="/admin/settings" className="underline">
+                  Personalizar → Patrocinadores
+                </a>{" "}
+                en vez de pegar el link.
+              </p>
+            )}
+          </div>
         )}
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 space-y-4">
