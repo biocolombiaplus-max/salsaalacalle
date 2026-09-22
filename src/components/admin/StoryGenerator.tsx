@@ -8,6 +8,7 @@ const CANVAS_H = 1920;
 
 type LogoColorMode = "original" | "white" | "black" | "gold" | "custom";
 type LogoPosition = "arriba" | "tres-cuartos" | "medio" | "abajo";
+type Mode = "individual" | "grid";
 
 const inputClass =
   "w-full rounded-xl bg-black/30 border border-white/15 px-4 py-2.5 text-sm outline-none focus:border-gold transition";
@@ -50,6 +51,111 @@ function useImageElement(src: string | null): HTMLImageElement | null {
   }, [src]);
 
   return img;
+}
+
+function useImageElements(urls: string[]): (HTMLImageElement | null)[] {
+  const [imgs, setImgs] = useState<(HTMLImageElement | null)[]>([]);
+  const key = urls.join("|");
+
+  useEffect(() => {
+    let cancelled = false;
+    if (urls.length === 0) {
+      queueMicrotask(() => {
+        if (!cancelled) setImgs([]);
+      });
+      return () => {
+        cancelled = true;
+      };
+    }
+    const loaded: (HTMLImageElement | null)[] = new Array(urls.length).fill(null);
+    let remaining = urls.length;
+    urls.forEach((url, i) => {
+      const el = new window.Image();
+      el.crossOrigin = "anonymous";
+      const settle = () => {
+        remaining -= 1;
+        if (!cancelled && remaining === 0) setImgs([...loaded]);
+      };
+      el.onload = () => {
+        loaded[i] = el;
+        settle();
+      };
+      el.onerror = () => {
+        settle();
+      };
+      el.src = url;
+    });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- urls comparado vía `key`
+  }, [key]);
+
+  return imgs;
+}
+
+function roundRectPath(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function drawSponsorGrid(
+  ctx: CanvasRenderingContext2D,
+  logos: (HTMLImageElement | null)[],
+  startY: number,
+  endY: number,
+  recolor: { mode: LogoColorMode; color: string }
+) {
+  const count = logos.length;
+  if (count === 0) return;
+
+  const cols = count === 1 ? 1 : count <= 4 ? 2 : 3;
+  const rows = Math.ceil(count / cols);
+
+  const marginX = 56;
+  const gap = 24;
+  const availW = CANVAS_W - marginX * 2;
+  const availH = endY - startY;
+  const cellW = (availW - gap * (cols - 1)) / cols;
+  const cellH = (availH - gap * (rows - 1)) / rows;
+  const labelH = 44;
+  const pad = 22;
+
+  logos.forEach((img, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const x = marginX + col * (cellW + gap);
+    const y = startY + row * (cellH + gap);
+
+    roundRectPath(ctx, x, y, cellW, cellH, 20);
+    ctx.fillStyle = "rgba(255,255,255,0.06)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(252,144,0,0.35)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    if (img) {
+      const boxW = cellW - pad * 2;
+      const boxH = cellH - labelH - pad * 1.4;
+      const boxX = x + pad;
+      const boxY = y + pad * 0.6;
+      if (recolor.mode === "original") {
+        drawContain(ctx, img, boxX, boxY, boxW, boxH);
+      } else {
+        drawRecolored(ctx, img, boxX, boxY, boxW, boxH, recolor.color);
+      }
+    }
+
+    ctx.fillStyle = "rgba(252,144,0,0.9)";
+    ctx.font = "600 18px Arial, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("OFICIAL", x + cellW / 2, y + cellH - labelH / 2 + 6);
+  });
 }
 
 function drawCover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number) {
@@ -95,6 +201,7 @@ export default function StoryGenerator() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [exportError, setExportError] = useState("");
 
+  const [mode, setMode] = useState<Mode>("individual");
   const [sponsorIndex, setSponsorIndex] = useState(0);
 
   const [backgroundMode, setBackgroundMode] = useState<"imagen" | "color">("color");
@@ -134,8 +241,15 @@ export default function StoryGenerator() {
     setBottomBarText(settings?.patrocinadores[index]?.link || "");
   }
 
+  function handleModeChange(next: Mode) {
+    setMode(next);
+    setEyebrowText(next === "grid" ? "Patrocinadores oficiales" : "Patrocinador oficial");
+    setBottomBarText(next === "grid" ? "" : settings?.patrocinadores[sponsorIndex]?.link || "");
+  }
+
   const eventLogoImg = useImageElement(showEventLogo ? settings?.logoUrl || null : null);
-  const sponsorLogoImg = useImageElement(sponsor?.logoUrl || null);
+  const sponsorLogoImg = useImageElement(mode === "individual" ? sponsor?.logoUrl || null : null);
+  const gridLogoImgs = useImageElements(mode === "grid" ? settings?.patrocinadores.map((p) => p.logoUrl) ?? [] : []);
   const backgroundImg = useImageElement(backgroundMode === "imagen" ? backgroundLocalUrl : null);
 
   useEffect(() => {
@@ -167,7 +281,10 @@ export default function StoryGenerator() {
       ctx.fillText(spaced, CANVAS_W / 2, 350);
     }
 
-    if (sponsorLogoImg) {
+    const recolorColor =
+      logoColorMode === "white" ? "#ffffff" : logoColorMode === "black" ? "#000000" : logoColorMode === "gold" ? "#fc9000" : logoCustomColor;
+
+    if (mode === "individual" && sponsorLogoImg) {
       const boxW = CANVAS_W * (logoSizePct / 100);
       const boxH = boxW * 0.62;
       const boxX = (CANVAS_W - boxW) / 2;
@@ -182,10 +299,12 @@ export default function StoryGenerator() {
       if (logoColorMode === "original") {
         drawContain(ctx, sponsorLogoImg, boxX, boxY, boxW, boxH);
       } else {
-        const color =
-          logoColorMode === "white" ? "#ffffff" : logoColorMode === "black" ? "#000000" : logoColorMode === "gold" ? "#fc9000" : logoCustomColor;
-        drawRecolored(ctx, sponsorLogoImg, boxX, boxY, boxW, boxH, color);
+        drawRecolored(ctx, sponsorLogoImg, boxX, boxY, boxW, boxH, recolorColor);
       }
+    } else if (mode === "grid" && gridLogoImgs.length > 0) {
+      const gridStartY = 420;
+      const gridEndY = CANVAS_H - (bottomBarVisible ? 190 + 50 : 70);
+      drawSponsorGrid(ctx, gridLogoImgs, gridStartY, gridEndY, { mode: logoColorMode, color: recolorColor });
     }
 
     if (bottomBarVisible) {
@@ -200,6 +319,7 @@ export default function StoryGenerator() {
       }
     }
   }, [
+    mode,
     backgroundMode,
     backgroundImg,
     backgroundColor,
@@ -210,6 +330,7 @@ export default function StoryGenerator() {
     eyebrowText,
     eyebrowColor,
     sponsorLogoImg,
+    gridLogoImgs,
     logoColorMode,
     logoCustomColor,
     logoSizePct,
@@ -235,7 +356,8 @@ export default function StoryGenerator() {
       const url = canvas.toDataURL("image/png");
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${(sponsor?.nombre || "patrocinador").trim().toLowerCase().replace(/\s+/g, "-")}-historia.png`;
+      const baseName = mode === "grid" ? "patrocinadores" : sponsor?.nombre || "patrocinador";
+      a.download = `${baseName.trim().toLowerCase().replace(/\s+/g, "-")}-historia.png`;
       a.click();
     } catch {
       setExportError(
@@ -263,19 +385,47 @@ export default function StoryGenerator() {
   return (
     <div className="grid lg:grid-cols-[1fr_360px] gap-8 items-start">
       <div className="space-y-6 max-w-2xl">
-        <Field label="Patrocinador">
-          <select
-            className={inputClass}
-            value={sponsorIndex}
-            onChange={(e) => handleSponsorChange(Number(e.target.value))}
-          >
-            {settings.patrocinadores.map((p, i) => (
-              <option key={`${p.nombre}-${i}`} value={i}>
-                {p.nombre || `Patrocinador ${i + 1}`}
-              </option>
-            ))}
-          </select>
+        <Field label="Qué mostrar">
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleModeChange("individual")}
+              className={`flex-1 rounded-xl px-4 py-2.5 text-sm transition ${
+                mode === "individual" ? "bg-gold text-[#1a1408] font-semibold" : "bg-black/30 text-white/70 hover:bg-white/5"
+              }`}
+            >
+              Un patrocinador
+            </button>
+            <button
+              onClick={() => handleModeChange("grid")}
+              className={`flex-1 rounded-xl px-4 py-2.5 text-sm transition ${
+                mode === "grid" ? "bg-gold text-[#1a1408] font-semibold" : "bg-black/30 text-white/70 hover:bg-white/5"
+              }`}
+            >
+              Todos los patrocinadores
+            </button>
+          </div>
         </Field>
+
+        {mode === "individual" ? (
+          <Field label="Patrocinador">
+            <select className={inputClass} value={sponsorIndex} onChange={(e) => handleSponsorChange(Number(e.target.value))}>
+              {settings.patrocinadores.map((p, i) => (
+                <option key={`${p.nombre}-${i}`} value={i}>
+                  {p.nombre || `Patrocinador ${i + 1}`}
+                </option>
+              ))}
+            </select>
+          </Field>
+        ) : (
+          <p className="text-white/50 text-sm">
+            Se incluyen los {settings.patrocinadores.length} patrocinadores agregados, ordenados en una grilla que se acomoda
+            automáticamente según cuántos haya. El orden es el mismo que en{" "}
+            <a href="/admin/settings" className="text-gold underline">
+              Personalizar → Patrocinadores
+            </a>
+            .
+          </p>
+        )}
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 space-y-4">
           <p className="text-xs uppercase tracking-widest text-white/50">Fondo</p>
@@ -327,7 +477,9 @@ export default function StoryGenerator() {
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 space-y-4">
-          <p className="text-xs uppercase tracking-widest text-white/50">Logo del patrocinador</p>
+          <p className="text-xs uppercase tracking-widest text-white/50">
+            {mode === "individual" ? "Logo del patrocinador" : "Logos de los patrocinadores"}
+          </p>
 
           <Field label="Color del logo">
             <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
@@ -361,43 +513,52 @@ export default function StoryGenerator() {
             )}
           </Field>
 
-          <Field label="Posición vertical">
-            <div className="grid grid-cols-4 gap-2">
-              {(
-                [
-                  ["arriba", "Arriba"],
-                  ["tres-cuartos", "3/4"],
-                  ["medio", "Medio"],
-                  ["abajo", "Abajo"],
-                ] as [LogoPosition, string][]
-              ).map(([pos, label]) => (
-                <button
-                  key={pos}
-                  onClick={() => setLogoPosition(pos)}
-                  className={`rounded-lg px-2 py-2 text-xs transition ${
-                    logoPosition === pos ? "bg-gold text-[#1a1408] font-semibold" : "bg-black/30 text-white/70 hover:bg-white/5"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </Field>
+          {mode === "individual" && (
+            <Field label="Posición vertical">
+              <div className="grid grid-cols-4 gap-2">
+                {(
+                  [
+                    ["arriba", "Arriba"],
+                    ["tres-cuartos", "3/4"],
+                    ["medio", "Medio"],
+                    ["abajo", "Abajo"],
+                  ] as [LogoPosition, string][]
+                ).map(([pos, label]) => (
+                  <button
+                    key={pos}
+                    onClick={() => setLogoPosition(pos)}
+                    className={`rounded-lg px-2 py-2 text-xs transition ${
+                      logoPosition === pos ? "bg-gold text-[#1a1408] font-semibold" : "bg-black/30 text-white/70 hover:bg-white/5"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </Field>
+          )}
 
-          <div>
-            <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
-              <span>Tamaño del logo</span>
-              <span className="text-gold normal-case tracking-normal">{logoSizePct}%</span>
-            </label>
-            <input
-              type="range"
-              min={20}
-              max={85}
-              value={logoSizePct}
-              onChange={(e) => setLogoSizePct(Number(e.target.value))}
-              className="w-full accent-gold"
-            />
-          </div>
+          {mode === "individual" && (
+            <div>
+              <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
+                <span>Tamaño del logo</span>
+                <span className="text-gold normal-case tracking-normal">{logoSizePct}%</span>
+              </label>
+              <input
+                type="range"
+                min={20}
+                max={85}
+                value={logoSizePct}
+                onChange={(e) => setLogoSizePct(Number(e.target.value))}
+                className="w-full accent-gold"
+              />
+            </div>
+          )}
+          {mode === "grid" && (
+            <p className="text-white/40 text-xs">
+              En este modo el tamaño y la posición de cada logo se ajustan automáticamente para que todos quepan bien.
+            </p>
+          )}
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 space-y-4">
