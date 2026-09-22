@@ -566,13 +566,13 @@ export default function SettingsForm() {
       {tab === "patrocinadores" && (
         <div className="max-w-3xl">
           <p className="text-white/50 text-sm mb-6">
-            Los logos aparecen en el banner animado fijo en la parte superior de la landing y en un
-            carrusel más abajo. La franja del banner es de altura fija (como en las grandes páginas): el
-            tamaño que definas aquí ajusta el logo dentro de esa franja, sin engrosarla. Marca un
-            patrocinador como &quot;destacado&quot; si es uno de tus patrocinadores grandes/oficiales: en
-            vez de rotar, aparece fijo y en grande, justo después del hero. Usa las flechas ▲▼ de cada
-            tarjeta para ordenar en qué orden aparecen (tanto en la sección de destacados como en el
-            carrusel). Sube logos con fondo transparente (PNG) para mejor resultado.
+            Todos los logos rotan en el banner animado de la parte superior y en el carrusel
+            &quot;Con el respaldo de&quot; más abajo. La franja del banner es de altura fija (como en las
+            grandes páginas): el tamaño que definas aquí ajusta el logo dentro de esa franja, sin
+            engrosarla. Marca un patrocinador como &quot;destacado&quot; si es uno de tus patrocinadores
+            grandes/oficiales: además de rotar, aparece fijo y en grande en su propia sección justo
+            después del hero. Usa las flechas ▲▼ de cada tarjeta para ordenar en qué orden aparecen.
+            Sube logos con fondo transparente (PNG) para mejor resultado.
           </p>
           <div className="mb-6 max-w-sm">
             <label className="block text-[11px] uppercase tracking-widest text-white/50 mb-2">
@@ -663,8 +663,8 @@ export default function SettingsForm() {
                         className="mt-0.5 h-4 w-4 accent-gold"
                       />
                       <span>
-                        Patrocinador destacado — aparece fijo y en grande en su propia sección
-                        &quot;Patrocinadores oficiales&quot;, en vez de rotar en el carrusel.
+                        Patrocinador destacado — además de rotar, aparece fijo y en grande en su
+                        propia sección &quot;Patrocinadores oficiales&quot;.
                       </span>
                     </label>
                     <div className="pt-1">

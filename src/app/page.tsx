@@ -20,7 +20,6 @@ export default async function Home() {
   const heroImg = s.heroImagenes[0] || "";
   const heroIsVideo = isVideoUrl(heroImg);
   const patrocinadoresDestacados = s.patrocinadores.filter((p) => p.destacado);
-  const patrocinadoresRegulares = s.patrocinadores.filter((p) => !p.destacado);
   const patrocinadoresTodos = s.patrocinadores;
   const socials = (Object.keys(SOCIAL_ICONS) as (keyof typeof SOCIAL_ICONS)[])
     .map((key) => ({ key, label: SOCIAL_ICONS[key], url: s[key] as string }))
@@ -415,7 +414,7 @@ export default async function Home() {
       </section>
 
       {/* PATROCINADORES */}
-      {patrocinadoresRegulares.length > 0 && (
+      {patrocinadoresTodos.length > 0 && (
         <section className="relative py-14 sm:py-20 px-5 sm:px-8 border-b border-white/10 overflow-hidden">
           <p className="text-center uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-10">
             Con el respaldo de
@@ -427,8 +426,8 @@ export default async function Home() {
               WebkitMaskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
             }}
           >
-            <div className="flex w-max animate-marquee gap-6 sm:gap-8 items-center">
-              {[...patrocinadoresRegulares, ...patrocinadoresRegulares].map((p, i) => {
+            <div className="flex w-max animate-marquee-fast gap-6 sm:gap-8 items-center">
+              {[...patrocinadoresTodos, ...patrocinadoresTodos].map((p, i) => {
                 const cardClass =
                   "shrink-0 flex flex-col items-center justify-center gap-2 h-32 sm:h-40 md:h-44 w-64 sm:w-72 md:w-80 rounded-2xl border border-white/10 bg-white/[0.06] px-8 shadow-[0_20px_45px_-18px_rgba(0,0,0,0.7)] hover:border-gold/50 hover:bg-white/[0.1] hover:scale-105 transition-all duration-300";
                 const content = (
