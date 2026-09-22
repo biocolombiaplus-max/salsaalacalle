@@ -266,6 +266,7 @@ export default function StoryGenerator() {
   const [bottomBarColor, setBottomBarColor] = useState("#3d1f5c");
   const [bottomBarText, setBottomBarText] = useState("");
   const [bottomBarTextColor, setBottomBarTextColor] = useState("#ffffff");
+  const [bottomBarTextSize, setBottomBarTextSize] = useState(34);
 
   useEffect(() => {
     fetch("/api/admin/settings")
@@ -368,9 +369,9 @@ export default function StoryGenerator() {
       ctx.fillRect(0, CANVAS_H - barH, CANVAS_W, barH);
       if (bottomBarText.trim()) {
         ctx.fillStyle = bottomBarTextColor;
-        ctx.font = "600 34px Arial, sans-serif";
+        ctx.font = `600 ${bottomBarTextSize}px Arial, sans-serif`;
         ctx.textAlign = "center";
-        ctx.fillText(bottomBarText.trim(), CANVAS_W / 2, CANVAS_H - barH / 2 + 12, CANVAS_W - 120);
+        ctx.fillText(bottomBarText.trim(), CANVAS_W / 2, CANVAS_H - barH / 2 + bottomBarTextSize * 0.35, CANVAS_W - 120);
       }
     }
   }, [
@@ -399,6 +400,7 @@ export default function StoryGenerator() {
     bottomBarColor,
     bottomBarText,
     bottomBarTextColor,
+    bottomBarTextSize,
   ]);
 
   function handleBackgroundFile(file: File) {
@@ -780,6 +782,20 @@ export default function StoryGenerator() {
                     className={colorInputClass}
                   />
                 </Field>
+              </div>
+              <div>
+                <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
+                  <span>Tamaño del texto</span>
+                  <span className="text-gold normal-case tracking-normal">{bottomBarTextSize}px</span>
+                </label>
+                <input
+                  type="range"
+                  min={20}
+                  max={60}
+                  value={bottomBarTextSize}
+                  onChange={(e) => setBottomBarTextSize(Number(e.target.value))}
+                  className="w-full accent-gold"
+                />
               </div>
             </>
           )}
