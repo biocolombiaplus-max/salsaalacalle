@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { getSettings } from "@/lib/settings";
+import { isVideoUrl } from "@/lib/media";
 
 const playfair = Playfair_Display({
   variable: "--font-display",
@@ -27,8 +28,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
   const title = `${settings.eventoNombre} · ${settings.eventoEdicion}`;
   // Para que WhatsApp, Facebook, etc. muestren una imagen en la vista previa
-  // del link siempre usamos el logo como respaldo si no hay foto del hero.
-  const previewImage = absoluteUrl(settings.heroImagenes[0] || settings.logoUrl);
+  // del link siempre usamos el logo como respaldo si no hay foto del hero
+  // (o si el hero es un video: esas vistas previas necesitan una imagen).
+  const heroForPreview = settings.heroImagenes.find((url) => !isVideoUrl(url));
+  const previewImage = absoluteUrl(heroForPreview || settings.logoUrl);
 
   return {
     metadataBase: new URL(SITE_URL),

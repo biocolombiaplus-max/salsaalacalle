@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { upload as blobUpload } from "@vercel/blob/client";
 import type { SiteSettings, ProgramaItem, Patrocinador } from "@/lib/settings";
+import { isVideoUrl } from "@/lib/media";
 
 type Tab = "evento" | "imagenes" | "patrocinadores" | "redes" | "legal";
 
@@ -44,7 +46,19 @@ async function uploadFile(file: File, folder: "hero" | "gallery" | "misc"): Prom
   return data.url as string;
 }
 
-type PendingFile = { id: string; localUrl: string; name: string; error?: string };
+// El hero y la galería aceptan video, y los archivos de video pueden pesar
+// varios MB — más de lo que soporta el cuerpo de una función serverless de
+// Vercel. Por eso estos dos, a diferencia de uploadFile(), suben directo
+// desde el navegador al Blob store con un token de un solo uso.
+async function uploadMediaClient(file: File, folder: "hero" | "gallery"): Promise<string> {
+  const blob = await blobUpload(`uploads/${folder}/${file.name}`, file, {
+    access: "public",
+    handleUploadUrl: "/api/admin/upload-token",
+  });
+  return blob.url;
+}
+
+type PendingFile = { id: string; localUrl: string; name: string; isVideo?: boolean; error?: string };
 
 function UploadSpinnerOverlay() {
   return (
@@ -70,8 +84,12 @@ function PendingThumb({
           item.error ? "border-red-500" : "border-transparent"
         }`}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element -- vista previa local (blob:), next/image no la soporta */}
-        <img src={item.localUrl} alt={item.name} className="h-full w-full object-cover" />
+        {item.isVideo ? (
+          <video src={item.localUrl} muted className="h-full w-full object-cover" />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element -- vista previa local (blob:), next/image no la soporta
+          <img src={item.localUrl} alt={item.name} className="h-full w-full object-cover" />
+        )}
         {!item.error && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
             <div className="h-5 w-5 rounded-full border-2 border-gold border-t-transparent animate-spin" />
@@ -166,6 +184,7 @@ export default function SettingsForm() {
       id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       localUrl: URL.createObjectURL(file),
       name: file.name,
+      isVideo: file.type.startsWith("video/"),
     }));
     setPendingMulti((prev) => ({ ...prev, [key]: [...(prev[key] || []), ...items] }));
 
@@ -173,7 +192,7 @@ export default function SettingsForm() {
       items.map(async (item, i) => {
         const file = Array.from(files)[i];
         try {
-          const url = await uploadFile(file, folder);
+          const url = await uploadMediaClient(file, folder);
           setSettings((prev) => (prev ? { ...prev, [key]: [...prev[key], url] } : prev));
         } catch (e) {
           setPendingMulti((prev) => ({
@@ -487,11 +506,19 @@ export default function SettingsForm() {
           </div>
 
           <div>
-            <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Imágenes del hero (portada)</p>
+            <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Imágenes o video del hero (portada)</p>
+            <p className="text-[11px] text-white/40 mb-3">
+              Puedes subir fotos o un video (MP4/WEBM/MOV, hasta 100MB). Si subes un video, se usa como
+              fondo del hero en lugar de la foto.
+            </p>
             <div className="flex flex-wrap gap-3 mb-3">
               {settings.heroImagenes.map((url, i) => (
                 <div key={url} className="relative">
-                  <Image src={url} alt="" width={120} height={80} className="rounded-lg object-cover h-20 w-30" />
+                  {isVideoUrl(url) ? (
+                    <video src={url} muted className="rounded-lg object-cover h-20 w-30" />
+                  ) : (
+                    <Image src={url} alt="" width={120} height={80} className="rounded-lg object-cover h-20 w-30" />
+                  )}
                   <button onClick={() => removeFromArray("heroImagenes", i)} className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full h-5 w-5 text-xs">✕</button>
                 </div>
               ))}
@@ -499,15 +526,22 @@ export default function SettingsForm() {
                 <PendingThumb key={p.id} item={p} onDismiss={() => dismissPendingError("heroImagenes", p.id)} className="h-20 w-30" />
               ))}
             </div>
-            <input type="file" accept="image/*" multiple onChange={(e) => e.target.files && handleMultiUpload("heroImagenes", "hero", e.target.files)} className="text-xs text-white/60" />
+            <input type="file" accept="image/*,video/*" multiple onChange={(e) => e.target.files && handleMultiUpload("heroImagenes", "hero", e.target.files)} className="text-xs text-white/60" />
           </div>
 
           <div>
-            <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Galería de fotos de salsa</p>
+            <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Galería de fotos y videos de salsa</p>
+            <p className="text-[11px] text-white/40 mb-3">
+              También puedes mezclar fotos con clips de video (MP4/WEBM/MOV, hasta 100MB cada uno).
+            </p>
             <div className="flex flex-wrap gap-3 mb-3">
               {settings.galeriaImagenes.map((url, i) => (
                 <div key={url} className="relative">
-                  <Image src={url} alt="" width={90} height={90} className="rounded-lg object-cover h-[90px] w-[90px]" />
+                  {isVideoUrl(url) ? (
+                    <video src={url} muted className="rounded-lg object-cover h-[90px] w-[90px]" />
+                  ) : (
+                    <Image src={url} alt="" width={90} height={90} className="rounded-lg object-cover h-[90px] w-[90px]" />
+                  )}
                   <button onClick={() => removeFromArray("galeriaImagenes", i)} className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full h-5 w-5 text-xs">✕</button>
                 </div>
               ))}
@@ -515,7 +549,7 @@ export default function SettingsForm() {
                 <PendingThumb key={p.id} item={p} onDismiss={() => dismissPendingError("galeriaImagenes", p.id)} className="h-[90px] w-[90px]" />
               ))}
             </div>
-            <input type="file" accept="image/*" multiple onChange={(e) => e.target.files && handleMultiUpload("galeriaImagenes", "gallery", e.target.files)} className="text-xs text-white/60" />
+            <input type="file" accept="image/*,video/*" multiple onChange={(e) => e.target.files && handleMultiUpload("galeriaImagenes", "gallery", e.target.files)} className="text-xs text-white/60" />
           </div>
         </div>
       )}

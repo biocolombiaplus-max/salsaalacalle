@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getSettings } from "@/lib/settings";
+import { isVideoUrl } from "@/lib/media";
 import Countdown from "@/components/Countdown";
 import RegistroModal from "@/components/RegistroModal";
 
@@ -17,6 +18,7 @@ const SOCIAL_ICONS = {
 export default async function Home() {
   const s = await getSettings();
   const heroImg = s.heroImagenes[0] || "";
+  const heroIsVideo = isVideoUrl(heroImg);
   const socials = (Object.keys(SOCIAL_ICONS) as (keyof typeof SOCIAL_ICONS)[])
     .map((key) => ({ key, label: SOCIAL_ICONS[key], url: s[key] as string }))
     .filter((x) => x.url);
@@ -70,7 +72,16 @@ export default async function Home() {
       {/* HERO */}
       <section className="relative min-h-screen flex items-end overflow-hidden">
         <div className="absolute inset-0">
-          {heroImg ? (
+          {heroImg && heroIsVideo ? (
+            <video
+              src={heroImg}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          ) : heroImg ? (
             <Image src={heroImg} alt={s.eventoEdicion} fill priority quality={95} sizes="100vw" className="object-cover" />
           ) : (
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(252,144,0,0.18),transparent_55%),linear-gradient(135deg,#1a0d12_0%,#2b0f16_45%,#0c0708_100%)]" />
@@ -223,14 +234,24 @@ export default async function Home() {
           <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-5">
             {s.galeriaImagenes.map((src, i) => (
               <div key={i} className="relative aspect-[9/16] rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.7)]">
-                <Image
-                  src={src}
-                  alt={`Salsa a la Calle ${i + 1}`}
-                  fill
-                  quality={92}
-                  sizes="(max-width: 640px) 45vw, (max-width: 768px) 30vw, 22vw"
-                  className="object-cover hover:scale-105 transition-transform duration-500"
-                />
+                {isVideoUrl(src) ? (
+                  <video
+                    src={src}
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                ) : (
+                  <Image
+                    src={src}
+                    alt={`Salsa a la Calle ${i + 1}`}
+                    fill
+                    quality={92}
+                    sizes="(max-width: 640px) 45vw, (max-width: 768px) 30vw, 22vw"
+                    className="object-cover hover:scale-105 transition-transform duration-500"
+                  />
+                )}
               </div>
             ))}
           </div>
