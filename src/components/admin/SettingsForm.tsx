@@ -246,6 +246,15 @@ export default function SettingsForm() {
     set("patrocinadores", settings!.patrocinadores.filter((_, i) => i !== index));
   }
 
+  function movePatrocinador(index: number, direction: -1 | 1) {
+    const target = index + direction;
+    const list = settings!.patrocinadores;
+    if (target < 0 || target >= list.length) return;
+    const next = [...list];
+    [next[index], next[target]] = [next[target], next[index]];
+    set("patrocinadores", next);
+  }
+
   async function handlePatrocinadorLogo(index: number, file: File) {
     const uploadKey = `patrocinador-${index}`;
     setUploading(uploadKey);
@@ -561,8 +570,9 @@ export default function SettingsForm() {
             carrusel más abajo. La franja del banner es de altura fija (como en las grandes páginas): el
             tamaño que definas aquí ajusta el logo dentro de esa franja, sin engrosarla. Marca un
             patrocinador como &quot;destacado&quot; si es uno de tus patrocinadores grandes/oficiales: en
-            vez de rotar, aparece fijo y en grande, justo después del hero. Sube logos con fondo
-            transparente (PNG) para mejor resultado.
+            vez de rotar, aparece fijo y en grande, justo después del hero. Usa las flechas ▲▼ de cada
+            tarjeta para ordenar en qué orden aparecen (tanto en la sección de destacados como en el
+            carrusel). Sube logos con fondo transparente (PNG) para mejor resultado.
           </p>
           <div className="mb-6 max-w-sm">
             <label className="block text-[11px] uppercase tracking-widest text-white/50 mb-2">
@@ -585,6 +595,24 @@ export default function SettingsForm() {
             {settings.patrocinadores.map((p, i) => (
               <div key={i} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 space-y-3">
                 <div className="flex items-center gap-3">
+                  <div className="shrink-0 flex flex-col gap-0.5">
+                    <button
+                      onClick={() => movePatrocinador(i, -1)}
+                      disabled={i === 0}
+                      aria-label="Subir orden"
+                      className="h-4 w-9 rounded-t-md bg-black/30 text-white/70 hover:text-gold hover:bg-black/50 transition flex items-center justify-center text-[10px] leading-none disabled:opacity-25 disabled:pointer-events-none"
+                    >
+                      ▲
+                    </button>
+                    <button
+                      onClick={() => movePatrocinador(i, 1)}
+                      disabled={i === settings.patrocinadores.length - 1}
+                      aria-label="Bajar orden"
+                      className="h-4 w-9 rounded-b-md bg-black/30 text-white/70 hover:text-gold hover:bg-black/50 transition flex items-center justify-center text-[10px] leading-none disabled:opacity-25 disabled:pointer-events-none"
+                    >
+                      ▼
+                    </button>
+                  </div>
                   <input
                     className={`${inputClass} flex-1 min-w-0`}
                     placeholder="Nombre del patrocinador"
