@@ -166,23 +166,22 @@ export default async function Home() {
           <p className="relative text-center uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-10">
             Patrocinadores oficiales
           </p>
-          <div className="relative max-w-5xl mx-auto flex flex-wrap items-stretch justify-center gap-5 sm:gap-8">
+          <div className="relative max-w-4xl mx-auto flex flex-col gap-5 sm:gap-6">
             {patrocinadoresDestacados.map((p, i) => {
               const cardClass =
-                "flex flex-col items-center justify-center gap-3 rounded-3xl border border-gold/30 bg-gradient-to-b from-white/[0.09] to-white/[0.02] px-10 py-8 sm:px-14 sm:py-10 shadow-[0_25px_60px_-20px_rgba(0,0,0,0.85)] hover:border-gold/60 hover:-translate-y-1 transition-all duration-300 min-w-[220px]";
+                "group relative block w-full aspect-[16/5] sm:aspect-[21/5] overflow-hidden rounded-2xl border border-gold/30 bg-gradient-to-r from-white/[0.09] to-white/[0.02] shadow-[0_25px_60px_-20px_rgba(0,0,0,0.85)] hover:border-gold/60 transition-all duration-300";
               const content = (
                 <>
                   <Image
                     src={p.logoUrl}
                     alt={p.nombre}
-                    width={320}
-                    height={200}
+                    fill
                     quality={100}
-                    style={{ height: `${(p.altura ?? s.patrocinadoresLogoAltura) * 2}px` }}
-                    className="max-h-24 sm:max-h-32 w-auto object-contain"
+                    sizes="(max-width: 768px) 90vw, 800px"
+                    className="object-contain p-6 sm:p-10"
                   />
                   {p.link && (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-widest text-gold">
+                    <span className="absolute bottom-3 sm:bottom-4 right-4 sm:right-6 inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-widest text-gold">
                       Visitar <span aria-hidden>↗</span>
                     </span>
                   )}
