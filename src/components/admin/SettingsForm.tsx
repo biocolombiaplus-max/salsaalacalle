@@ -619,6 +619,12 @@ export default function SettingsForm() {
                       value={p.logoUrl}
                       onChange={(e) => updatePatrocinador(i, { logoUrl: e.target.value })}
                     />
+                    <input
+                      className={`${inputClass} text-xs`}
+                      placeholder="Link al hacer clic (web o red social, opcional)"
+                      value={p.link || ""}
+                      onChange={(e) => updatePatrocinador(i, { link: e.target.value })}
+                    />
                     <div className="pt-1">
                       <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
                         <span>Tamaño de este logo</span>

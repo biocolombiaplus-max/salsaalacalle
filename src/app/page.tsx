@@ -42,12 +42,10 @@ export default async function Home() {
               }}
             >
               <div className="flex h-full w-max animate-marquee gap-4 sm:gap-6 items-center">
-                {[...s.patrocinadores, ...s.patrocinadores, ...s.patrocinadores].map((p, i) => (
-                  <div
-                    key={`${p.nombre}-${i}`}
-                    className="shrink-0 h-[78%] flex items-center justify-center rounded-lg bg-black/45 backdrop-blur-md ring-1 ring-white/15 px-3.5 sm:px-4 shadow-[0_6px_16px_-8px_rgba(0,0,0,0.8)] hover:ring-gold/50 transition-all"
-                    title={p.nombre}
-                  >
+                {[...s.patrocinadores, ...s.patrocinadores, ...s.patrocinadores].map((p, i) => {
+                  const cardClass =
+                    "shrink-0 h-[78%] flex items-center justify-center rounded-lg bg-black/45 backdrop-blur-md ring-1 ring-white/15 px-3.5 sm:px-4 shadow-[0_6px_16px_-8px_rgba(0,0,0,0.8)] hover:ring-gold/50 transition-all";
+                  const logo = (
                     <Image
                       src={p.logoUrl}
                       alt={p.nombre}
@@ -57,8 +55,24 @@ export default async function Home() {
                       style={{ height: `${p.altura ?? s.patrocinadoresLogoAltura}px` }}
                       className="max-h-full w-auto object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
                     />
-                  </div>
-                ))}
+                  );
+                  return p.link ? (
+                    <a
+                      key={`${p.nombre}-${i}`}
+                      href={p.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={p.nombre}
+                      className={cardClass}
+                    >
+                      {logo}
+                    </a>
+                  ) : (
+                    <div key={`${p.nombre}-${i}`} title={p.nombre} className={cardClass}>
+                      {logo}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
