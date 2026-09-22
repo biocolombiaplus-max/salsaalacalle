@@ -103,12 +103,16 @@ function roundRectPath(ctx: CanvasRenderingContext2D, x: number, y: number, w: n
   ctx.closePath();
 }
 
+type GridAlign = "arriba" | "medio" | "abajo";
+
 function drawSponsorGrid(
   ctx: CanvasRenderingContext2D,
   logos: (HTMLImageElement | null)[],
   startY: number,
   endY: number,
-  recolor: { mode: LogoColorMode; color: string }
+  recolor: { mode: LogoColorMode; color: string },
+  scalePct: number,
+  align: GridAlign
 ) {
   const count = logos.length;
   if (count === 0) return;
@@ -123,7 +127,7 @@ function drawSponsorGrid(
   const cellW = (availW - gap * (cols - 1)) / cols;
   const cellH = (availH - gap * (rows - 1)) / rows;
   const labelH = 44;
-  const pad = 22;
+  const innerPad = 22;
 
   logos.forEach((img, i) => {
     const col = i % cols;
@@ -139,10 +143,14 @@ function drawSponsorGrid(
     ctx.stroke();
 
     if (img) {
-      const boxW = cellW - pad * 2;
-      const boxH = cellH - labelH - pad * 1.4;
-      const boxX = x + pad;
-      const boxY = y + pad * 0.6;
+      const slotW = cellW - innerPad * 2;
+      const slotH = cellH - labelH - innerPad * 1.4;
+      const boxW = slotW * (scalePct / 100);
+      const boxH = slotH * (scalePct / 100);
+      const boxX = x + (cellW - boxW) / 2;
+      const slotY = y + innerPad * 0.6;
+      const boxY = align === "arriba" ? slotY : align === "abajo" ? slotY + (slotH - boxH) : slotY + (slotH - boxH) / 2;
+
       if (recolor.mode === "original") {
         drawContain(ctx, img, boxX, boxY, boxW, boxH);
       } else {
@@ -233,6 +241,8 @@ export default function StoryGenerator() {
   const [logoCustomColor, setLogoCustomColor] = useState("#ffffff");
   const [logoSizePct, setLogoSizePct] = useState(60);
   const [logoYPct, setLogoYPct] = useState(50);
+  const [gridLogoScalePct, setGridLogoScalePct] = useState(70);
+  const [gridLogoAlign, setGridLogoAlign] = useState<GridAlign>("medio");
 
   const [bottomBarVisible, setBottomBarVisible] = useState(true);
   const [bottomBarColor, setBottomBarColor] = useState("#3d1f5c");
@@ -316,7 +326,15 @@ export default function StoryGenerator() {
     } else if (mode === "grid" && gridLogoImgs.length > 0) {
       const gridStartY = 420;
       const gridEndY = CANVAS_H - (bottomBarVisible ? 190 + 50 : 70);
-      drawSponsorGrid(ctx, gridLogoImgs, gridStartY, gridEndY, { mode: logoColorMode, color: recolorColor });
+      drawSponsorGrid(
+        ctx,
+        gridLogoImgs,
+        gridStartY,
+        gridEndY,
+        { mode: logoColorMode, color: recolorColor },
+        gridLogoScalePct,
+        gridLogoAlign
+      );
     }
 
     if (bottomBarVisible) {
@@ -350,6 +368,8 @@ export default function StoryGenerator() {
     logoCustomColor,
     logoSizePct,
     logoYPct,
+    gridLogoScalePct,
+    gridLogoAlign,
     bottomBarVisible,
     bottomBarColor,
     bottomBarText,
@@ -566,9 +586,46 @@ export default function StoryGenerator() {
             </div>
           )}
           {mode === "grid" && (
-            <p className="text-white/40 text-xs">
-              En este modo el tamaño y la posición de cada logo se ajustan automáticamente para que todos quepan bien.
-            </p>
+            <>
+              <div>
+                <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
+                  <span>Tamaño de los logos</span>
+                  <span className="text-gold normal-case tracking-normal">{gridLogoScalePct}%</span>
+                </label>
+                <input
+                  type="range"
+                  min={30}
+                  max={100}
+                  value={gridLogoScalePct}
+                  onChange={(e) => setGridLogoScalePct(Number(e.target.value))}
+                  className="w-full accent-gold"
+                />
+                <p className="text-white/40 text-[11px] mt-1">
+                  Bájalo si los logos se ven muy pegados al borde de su tarjeta.
+                </p>
+              </div>
+              <Field label="Posición dentro de la tarjeta">
+                <div className="grid grid-cols-3 gap-2">
+                  {(
+                    [
+                      ["arriba", "Arriba"],
+                      ["medio", "Medio"],
+                      ["abajo", "Abajo"],
+                    ] as [GridAlign, string][]
+                  ).map(([align, label]) => (
+                    <button
+                      key={align}
+                      onClick={() => setGridLogoAlign(align)}
+                      className={`rounded-lg px-2 py-2 text-xs transition ${
+                        gridLogoAlign === align ? "bg-gold text-[#1a1408] font-semibold" : "bg-black/30 text-white/70 hover:bg-white/5"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </Field>
+            </>
           )}
         </div>
 
