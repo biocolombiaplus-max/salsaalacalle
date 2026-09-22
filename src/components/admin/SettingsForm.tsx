@@ -22,7 +22,8 @@ type SingleImageKey =
   | "sobreImagenUrl"
   | "seguridadImagenUrl"
   | "programaImagenUrl"
-  | "ctaImagenUrl";
+  | "ctaImagenUrl"
+  | "patrocinadoresFondoUrl";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -499,6 +500,25 @@ export default function SettingsForm() {
                 </div>
               )}
               <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("ctaImagenUrl", e.target.files[0])} className="text-xs text-white/60" />
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Imagen de fondo sección &quot;Patrocinadores oficiales&quot;</p>
+              {(singlePreview.patrocinadoresFondoUrl || settings.patrocinadoresFondoUrl) && (
+                <div className="relative mb-3 h-[100px] w-[140px] rounded-xl overflow-hidden">
+                  <Image src={singlePreview.patrocinadoresFondoUrl || settings.patrocinadoresFondoUrl} alt="Patrocinadores oficiales" width={140} height={100} className="rounded-xl object-cover h-[100px] w-[140px]" />
+                  {uploading === "patrocinadoresFondoUrl" && <UploadSpinnerOverlay />}
+                  {!uploading && settings.patrocinadoresFondoUrl && (
+                    <button
+                      onClick={() => set("patrocinadoresFondoUrl", "")}
+                      className="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full h-5 w-5 text-xs flex items-center justify-center"
+                      title="Quitar imagen"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              )}
+              <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("patrocinadoresFondoUrl", e.target.files[0])} className="text-xs text-white/60" />
             </div>
           </div>
 

@@ -169,7 +169,15 @@ export default async function Home() {
       {/* PATROCINADORES OFICIALES (destacados, fijos, no rotan) */}
       {patrocinadoresDestacados.length > 0 && (
         <section className="relative py-16 sm:py-24 px-5 sm:px-8 border-b border-white/10 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-gold/[0.08] via-transparent to-transparent" aria-hidden />
+          {s.patrocinadoresFondoUrl ? (
+            <div className="absolute inset-0">
+              <Image src={s.patrocinadoresFondoUrl} alt="" fill quality={90} sizes="100vw" className="object-cover" />
+              <div className="absolute inset-0 bg-black/80" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
+            </div>
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-b from-gold/[0.08] via-transparent to-transparent" aria-hidden />
+          )}
           <div className="relative flex items-center justify-center gap-2 sm:gap-3 mb-3">
             <span className="hidden sm:block h-px w-8 sm:w-12 bg-gold/50" aria-hidden />
             <p className="uppercase tracking-[0.12em] sm:tracking-[0.35em] text-gold text-xs sm:text-sm font-semibold whitespace-nowrap">

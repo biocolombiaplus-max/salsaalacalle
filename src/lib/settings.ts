@@ -30,6 +30,7 @@ export type SiteSettings = {
   ctaImagenUrl: string;
   patrocinadores: Patrocinador[];
   patrocinadoresLogoAltura: number;
+  patrocinadoresFondoUrl: string;
   redesInstagram: string;
   redesFacebook: string;
   redesTiktok: string;
@@ -78,6 +79,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   ctaImagenUrl: "",
   patrocinadores: [],
   patrocinadoresLogoAltura: 32,
+  patrocinadoresFondoUrl: "",
   redesInstagram: "",
   redesFacebook: "",
   redesTiktok: "",
