@@ -161,30 +161,52 @@ export default async function Home() {
 
       {/* PATROCINADORES OFICIALES (destacados, fijos, no rotan) */}
       {patrocinadoresDestacados.length > 0 && (
-        <section className="relative py-14 sm:py-20 px-5 sm:px-8 border-b border-white/10 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-gold/[0.06] via-transparent to-transparent" aria-hidden />
-          <p className="relative text-center uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-10">
-            Patrocinadores oficiales
+        <section className="relative py-16 sm:py-24 px-5 sm:px-8 border-b border-white/10 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-gold/[0.08] via-transparent to-transparent" aria-hidden />
+          <div className="relative flex items-center justify-center gap-2 sm:gap-3 mb-3">
+            <span className="hidden sm:block h-px w-8 sm:w-12 bg-gold/50" aria-hidden />
+            <p className="uppercase tracking-[0.12em] sm:tracking-[0.35em] text-gold text-xs sm:text-sm font-semibold whitespace-nowrap">
+              Patrocinadores oficiales
+            </p>
+            <span className="hidden sm:block h-px w-8 sm:w-12 bg-gold/50" aria-hidden />
+          </div>
+          <p className="relative text-center text-white/45 text-xs sm:text-sm mb-10 sm:mb-14">
+            Las marcas que respaldan este encuentro
           </p>
-          <div className="relative max-w-4xl mx-auto flex flex-col gap-5 sm:gap-6">
+          <div
+            className={`relative mx-auto grid gap-6 sm:gap-8 ${
+              patrocinadoresDestacados.length === 1
+                ? "max-w-[260px] grid-cols-1"
+                : patrocinadoresDestacados.length === 2
+                  ? "max-w-xl grid-cols-2"
+                  : "max-w-3xl grid-cols-2 sm:grid-cols-3"
+            }`}
+          >
             {patrocinadoresDestacados.map((p, i) => {
               const cardClass =
-                "group relative block w-full aspect-[16/5] sm:aspect-[21/5] overflow-hidden rounded-2xl border border-gold/30 bg-gradient-to-r from-white/[0.09] to-white/[0.02] shadow-[0_25px_60px_-20px_rgba(0,0,0,0.85)] hover:border-gold/60 transition-all duration-300";
+                "group relative flex flex-col overflow-hidden rounded-2xl bg-gradient-to-b from-[#faf6ec] to-[#efe6d2] ring-1 ring-gold/40 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.8)] hover:ring-gold/80 hover:-translate-y-1.5 transition-all duration-300";
               const content = (
                 <>
-                  <Image
-                    src={p.logoUrl}
-                    alt={p.nombre}
-                    fill
-                    quality={100}
-                    sizes="(max-width: 768px) 90vw, 800px"
-                    className="object-contain p-6 sm:p-10"
-                  />
-                  {p.link && (
-                    <span className="absolute bottom-3 sm:bottom-4 right-4 sm:right-6 inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-widest text-gold">
-                      Visitar <span aria-hidden>↗</span>
+                  <div className="relative aspect-[4/3] w-full">
+                    <Image
+                      src={p.logoUrl}
+                      alt={p.nombre}
+                      fill
+                      quality={100}
+                      sizes="(max-width: 640px) 45vw, 300px"
+                      className="object-contain p-6 sm:p-8"
+                    />
+                  </div>
+                  <div className="relative flex items-center justify-between gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-[#15100c]">
+                    <span className="truncate text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest text-gold/90">
+                      Oficial
                     </span>
-                  )}
+                    {p.link && (
+                      <span className="shrink-0 inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest text-white/60 group-hover:text-gold transition-colors">
+                        Visitar <span aria-hidden>↗</span>
+                      </span>
+                    )}
+                  </div>
                 </>
               );
               return p.link ? (
