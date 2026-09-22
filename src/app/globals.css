@@ -60,7 +60,7 @@ body {
   animation: marquee 28s linear infinite;
 }
 .animate-marquee-slow {
-  animation: marquee 14s linear infinite;
+  animation: marquee 9s linear infinite;
 }
 .marquee-pausable:hover .animate-marquee-slow {
   animation-play-state: paused;
