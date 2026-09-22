@@ -7,7 +7,6 @@ const CANVAS_W = 1080;
 const CANVAS_H = 1920;
 
 type LogoColorMode = "original" | "white" | "black" | "gold" | "custom";
-type LogoPosition = "arriba" | "tres-cuartos" | "medio" | "abajo";
 type Mode = "individual" | "grid";
 
 const inputClass =
@@ -233,7 +232,7 @@ export default function StoryGenerator() {
   const [logoColorMode, setLogoColorMode] = useState<LogoColorMode>("original");
   const [logoCustomColor, setLogoCustomColor] = useState("#ffffff");
   const [logoSizePct, setLogoSizePct] = useState(60);
-  const [logoPosition, setLogoPosition] = useState<LogoPosition>("medio");
+  const [logoYPct, setLogoYPct] = useState(50);
 
   const [bottomBarVisible, setBottomBarVisible] = useState(true);
   const [bottomBarColor, setBottomBarColor] = useState("#3d1f5c");
@@ -307,13 +306,7 @@ export default function StoryGenerator() {
       const boxW = CANVAS_W * (logoSizePct / 100);
       const boxH = boxW * 0.62;
       const boxX = (CANVAS_W - boxW) / 2;
-      const anchors: Record<LogoPosition, number> = {
-        arriba: CANVAS_H * 0.22,
-        "tres-cuartos": CANVAS_H * 0.42,
-        medio: CANVAS_H / 2 - boxH / 2,
-        abajo: CANVAS_H * 0.68,
-      };
-      const boxY = anchors[logoPosition];
+      const boxY = CANVAS_H * (logoYPct / 100) - boxH / 2;
 
       if (logoColorMode === "original") {
         drawContain(ctx, sponsorLogoImg, boxX, boxY, boxW, boxH);
@@ -356,7 +349,7 @@ export default function StoryGenerator() {
     logoColorMode,
     logoCustomColor,
     logoSizePct,
-    logoPosition,
+    logoYPct,
     bottomBarVisible,
     bottomBarColor,
     bottomBarText,
@@ -536,28 +529,24 @@ export default function StoryGenerator() {
           </Field>
 
           {mode === "individual" && (
-            <Field label="Posición vertical">
-              <div className="grid grid-cols-4 gap-2">
-                {(
-                  [
-                    ["arriba", "Arriba"],
-                    ["tres-cuartos", "3/4"],
-                    ["medio", "Medio"],
-                    ["abajo", "Abajo"],
-                  ] as [LogoPosition, string][]
-                ).map(([pos, label]) => (
-                  <button
-                    key={pos}
-                    onClick={() => setLogoPosition(pos)}
-                    className={`rounded-lg px-2 py-2 text-xs transition ${
-                      logoPosition === pos ? "bg-gold text-[#1a1408] font-semibold" : "bg-black/30 text-white/70 hover:bg-white/5"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
+            <div>
+              <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
+                <span>Posición vertical</span>
+                <span className="text-gold normal-case tracking-normal">{logoYPct}%</span>
+              </label>
+              <input
+                type="range"
+                min={10}
+                max={90}
+                value={logoYPct}
+                onChange={(e) => setLogoYPct(Number(e.target.value))}
+                className="w-full accent-gold"
+              />
+              <div className="flex justify-between text-[10px] text-white/30 mt-1">
+                <span>Arriba</span>
+                <span>Abajo</span>
               </div>
-            </Field>
+            </div>
           )}
 
           {mode === "individual" && (
