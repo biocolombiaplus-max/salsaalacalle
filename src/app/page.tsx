@@ -174,12 +174,12 @@ export default async function Home() {
             Las marcas que respaldan este encuentro
           </p>
           <div
-            className={`relative mx-auto grid gap-6 sm:gap-8 ${
+            className={`relative mx-auto grid grid-cols-1 gap-5 sm:gap-8 ${
               patrocinadoresDestacados.length === 1
-                ? "max-w-[260px] grid-cols-1"
+                ? "max-w-sm"
                 : patrocinadoresDestacados.length === 2
-                  ? "max-w-xl grid-cols-2"
-                  : "max-w-3xl grid-cols-2 sm:grid-cols-3"
+                  ? "max-w-2xl sm:grid-cols-2"
+                  : "max-w-4xl sm:grid-cols-3"
             }`}
           >
             {patrocinadoresDestacados.map((p, i) => {
@@ -187,14 +187,14 @@ export default async function Home() {
                 "group relative flex flex-col overflow-hidden rounded-2xl bg-gradient-to-b from-[#faf6ec] to-[#efe6d2] ring-1 ring-gold/40 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.8)] hover:ring-gold/80 hover:-translate-y-1.5 transition-all duration-300";
               const content = (
                 <>
-                  <div className="relative aspect-[4/3] w-full">
+                  <div className="relative aspect-[12/5] w-full">
                     <Image
                       src={p.logoUrl}
                       alt={p.nombre}
                       fill
                       quality={100}
-                      sizes="(max-width: 640px) 45vw, 300px"
-                      className="object-contain p-6 sm:p-8"
+                      sizes="(max-width: 640px) 90vw, 400px"
+                      className="object-contain p-1.5 sm:p-2"
                     />
                   </div>
                   <div className="relative flex items-center justify-between gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-[#15100c]">
