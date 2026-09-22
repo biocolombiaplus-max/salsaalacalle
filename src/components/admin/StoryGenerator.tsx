@@ -130,7 +130,8 @@ function drawSponsorGrid(
   endY: number,
   recolor: { mode: LogoColorMode; color: string },
   scalePct: number,
-  align: GridAlign
+  align: GridAlign,
+  borderPx: number
 ) {
   const count = logos.length;
   if (count === 0) return;
@@ -169,11 +170,7 @@ function drawSponsorGrid(
       const slotY = y + innerPad * 0.6;
       const boxY = align === "arriba" ? slotY : align === "abajo" ? slotY + (slotH - boxH) : slotY + (slotH - boxH) / 2;
 
-      if (recolor.mode === "original") {
-        drawContain(ctx, img, boxX, boxY, boxW, boxH);
-      } else {
-        drawRecolored(ctx, img, boxX, boxY, boxW, boxH, recolor.color);
-      }
+      drawLogoWithBorder(ctx, img, boxX, boxY, boxW, boxH, recolor.mode, recolor.color, borderPx);
     }
 
     ctx.fillStyle = "rgba(252,144,0,0.9)";
@@ -202,15 +199,7 @@ function drawContain(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: nu
 // la reduce al dibujarla — mismo truco que el supersampling, evita que
 // el recoloreado (que redibuja el logo desde cero en un canvas aparte)
 // se vea más blando que el logo original.
-function drawRecolored(
-  ctx: CanvasRenderingContext2D,
-  img: HTMLImageElement,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  color: string
-) {
+function buildRecoloredCanvas(img: HTMLImageElement, w: number, h: number, color: string): HTMLCanvasElement | null {
   const supersample = Math.min(2, Math.max(1, img.width / w, img.height / h));
   const offW = Math.round(w * supersample);
   const offH = Math.round(h * supersample);
@@ -219,7 +208,7 @@ function drawRecolored(
   off.width = offW;
   off.height = offH;
   const octx = off.getContext("2d");
-  if (!octx) return;
+  if (!octx) return null;
   octx.imageSmoothingEnabled = true;
   octx.imageSmoothingQuality = "high";
 
@@ -230,7 +219,46 @@ function drawRecolored(
   octx.globalCompositeOperation = "source-in";
   octx.fillStyle = color;
   octx.fillRect(0, 0, offW, offH);
-  ctx.drawImage(off, x, y, w, h);
+  return off;
+}
+
+function drawRecolored(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number, color: string) {
+  const off = buildRecoloredCanvas(img, w, h, color);
+  if (off) ctx.drawImage(off, x, y, w, h);
+}
+
+// Efecto "sticker": estampa una silueta blanca del logo (su propia forma,
+// no un rectángulo) alrededor del original en varias direcciones para
+// simular un borde/halo, y encima dibuja el logo con su color elegido.
+// Necesita que el logo tenga fondo transparente para que se note la forma.
+function drawLogoWithBorder(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  colorMode: LogoColorMode,
+  color: string,
+  borderPx: number
+) {
+  if (borderPx > 0) {
+    const silhouette = buildRecoloredCanvas(img, w, h, "#ffffff");
+    if (silhouette) {
+      const steps = 24;
+      for (let i = 0; i < steps; i++) {
+        const angle = (i / steps) * Math.PI * 2;
+        const dx = Math.cos(angle) * borderPx;
+        const dy = Math.sin(angle) * borderPx;
+        ctx.drawImage(silhouette, x + dx, y + dy, w, h);
+      }
+    }
+  }
+  if (colorMode === "original") {
+    drawContain(ctx, img, x, y, w, h);
+  } else {
+    drawRecolored(ctx, img, x, y, w, h, color);
+  }
 }
 
 export default function StoryGenerator() {
@@ -261,6 +289,8 @@ export default function StoryGenerator() {
   const [logoYPct, setLogoYPct] = useState(50);
   const [gridLogoScalePct, setGridLogoScalePct] = useState(70);
   const [gridLogoAlign, setGridLogoAlign] = useState<GridAlign>("medio");
+  const [logoBorderEnabled, setLogoBorderEnabled] = useState(false);
+  const [logoBorderPx, setLogoBorderPx] = useState(10);
 
   const [bottomBarVisible, setBottomBarVisible] = useState(true);
   const [bottomBarColor, setBottomBarColor] = useState("#3d1f5c");
@@ -344,11 +374,7 @@ export default function StoryGenerator() {
       const boxX = (CANVAS_W - boxW) / 2;
       const boxY = CANVAS_H * (logoYPct / 100) - boxH / 2;
 
-      if (logoColorMode === "original") {
-        drawContain(ctx, sponsorLogoImg, boxX, boxY, boxW, boxH);
-      } else {
-        drawRecolored(ctx, sponsorLogoImg, boxX, boxY, boxW, boxH, recolorColor);
-      }
+      drawLogoWithBorder(ctx, sponsorLogoImg, boxX, boxY, boxW, boxH, logoColorMode, recolorColor, logoBorderEnabled ? logoBorderPx : 0);
     } else if (mode === "grid" && gridLogoImgs.length > 0) {
       const gridStartY = 420;
       const gridEndY = CANVAS_H - (bottomBarVisible ? 190 + 50 : 70);
@@ -359,7 +385,8 @@ export default function StoryGenerator() {
         gridEndY,
         { mode: logoColorMode, color: recolorColor },
         gridLogoScalePct,
-        gridLogoAlign
+        gridLogoAlign,
+        logoBorderEnabled ? logoBorderPx : 0
       );
     }
 
@@ -396,6 +423,8 @@ export default function StoryGenerator() {
     logoYPct,
     gridLogoScalePct,
     gridLogoAlign,
+    logoBorderEnabled,
+    logoBorderPx,
     bottomBarVisible,
     bottomBarColor,
     bottomBarText,
@@ -679,6 +708,35 @@ export default function StoryGenerator() {
                 </div>
               </Field>
             </>
+          )}
+
+          <label className="flex items-center gap-2 text-xs uppercase tracking-widest text-white/50 pt-2 border-t border-white/10">
+            <input
+              type="checkbox"
+              checked={logoBorderEnabled}
+              onChange={(e) => setLogoBorderEnabled(e.target.checked)}
+              className="h-4 w-4 accent-gold"
+            />
+            Borde blanco (para destacar el logo)
+          </label>
+          {logoBorderEnabled && (
+            <div>
+              <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
+                <span>Grosor del borde</span>
+                <span className="text-gold normal-case tracking-normal">{logoBorderPx}px</span>
+              </label>
+              <input
+                type="range"
+                min={2}
+                max={30}
+                value={logoBorderPx}
+                onChange={(e) => setLogoBorderPx(Number(e.target.value))}
+                className="w-full accent-gold"
+              />
+              <p className="text-white/40 text-[11px] mt-1">
+                Solo se nota bien si el logo tiene fondo transparente (PNG).
+              </p>
+            </div>
           )}
         </div>
 
