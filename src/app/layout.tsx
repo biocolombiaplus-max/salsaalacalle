@@ -27,11 +27,12 @@ function absoluteUrl(path: string): string {
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
   const title = `${settings.eventoNombre} · ${settings.eventoEdicion}`;
-  // Para que WhatsApp, Facebook, etc. muestren una imagen en la vista previa
-  // del link siempre usamos el logo como respaldo si no hay foto del hero
-  // (o si el hero es un video: esas vistas previas necesitan una imagen).
+  // La vista previa de WhatsApp/Facebook usa el logo de la marca primero
+  // (identidad reconocible, como hacen las grandes marcas); si no hay logo,
+  // cae a una foto del hero (nunca un video: esas vistas previas necesitan
+  // una imagen estática).
   const heroForPreview = settings.heroImagenes.find((url) => !isVideoUrl(url));
-  const previewImage = absoluteUrl(heroForPreview || settings.logoUrl);
+  const previewImage = absoluteUrl(settings.logoUrl || heroForPreview || "");
 
   return {
     metadataBase: new URL(SITE_URL),
