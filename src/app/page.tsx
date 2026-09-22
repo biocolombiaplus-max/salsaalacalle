@@ -184,20 +184,20 @@ export default async function Home() {
           >
             {patrocinadoresDestacados.map((p, i) => {
               const cardClass =
-                "group relative flex flex-col overflow-hidden rounded-2xl bg-gradient-to-b from-[#faf6ec] to-[#efe6d2] ring-1 ring-gold/40 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.8)] hover:ring-gold/80 hover:-translate-y-1.5 transition-all duration-300";
+                "group relative flex flex-col overflow-hidden rounded-2xl bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-sm ring-1 ring-gold/30 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.85)] hover:ring-gold/70 hover:-translate-y-1.5 transition-all duration-300";
               const content = (
                 <>
-                  <div className="relative aspect-[12/5] w-full">
+                  <div className="flex items-center justify-center h-28 sm:h-36 px-6 sm:px-10">
                     <Image
                       src={p.logoUrl}
                       alt={p.nombre}
-                      fill
+                      width={360}
+                      height={180}
                       quality={100}
-                      sizes="(max-width: 640px) 90vw, 400px"
-                      className="object-contain p-1.5 sm:p-2"
+                      className="max-h-full w-auto object-contain drop-shadow-[0_4px_18px_rgba(0,0,0,0.6)]"
                     />
                   </div>
-                  <div className="relative flex items-center justify-between gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-[#15100c]">
+                  <div className="relative flex items-center justify-between gap-1.5 px-4 sm:px-5 py-2.5 sm:py-3 border-t border-white/10 bg-black/30">
                     <span className="truncate text-[9px] sm:text-[10px] font-semibold uppercase tracking-widest text-gold/90">
                       Oficial
                     </span>
