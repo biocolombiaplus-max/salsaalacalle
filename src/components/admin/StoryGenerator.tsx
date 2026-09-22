@@ -611,11 +611,18 @@ export default function StoryGenerator() {
           </label>
           {eyebrowVisible && (
             <>
-              <div className="grid grid-cols-[1fr_auto] gap-3 items-end">
+              <div className="grid grid-cols-[1fr_auto] gap-3">
                 <Field label="Texto">
                   <input className={inputClass} value={eyebrowText} onChange={(e) => setEyebrowText(e.target.value)} />
                 </Field>
-                <input type="color" value={eyebrowColor} onChange={(e) => setEyebrowColor(e.target.value)} className={`${colorInputClass} w-14`} />
+                <Field label="Color">
+                  <input
+                    type="color"
+                    value={eyebrowColor}
+                    onChange={(e) => setEyebrowColor(e.target.value)}
+                    className="h-11 w-14 rounded-xl bg-black/30 border border-white/15"
+                  />
+                </Field>
               </div>
               <div>
                 <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
