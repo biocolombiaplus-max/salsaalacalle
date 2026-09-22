@@ -147,23 +147,21 @@ export default async function Home() {
           <div className="relative max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="relative mx-auto w-full max-w-sm">
               <div
-                className="absolute -inset-5 sm:-inset-7 bg-gradient-to-br from-wine/40 via-gold/25 to-green/25 blur-2xl opacity-70"
-                style={{ borderRadius: "63% 37% 54% 46% / 43% 37% 63% 57%" }}
+                className="absolute -inset-4 sm:-inset-6 rounded-[2.25rem] bg-gradient-to-br from-wine/40 via-gold/25 to-green/25 blur-2xl opacity-70"
                 aria-hidden
               />
-              <div
-                className="relative aspect-[9/16] overflow-hidden shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85)] ring-1 ring-white/15 -rotate-2"
-                style={{ borderRadius: "63% 37% 54% 46% / 43% 37% 63% 57%" }}
-              >
+              <div className="relative aspect-[9/16] rounded-[1.75rem] overflow-hidden shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85)] ring-1 ring-gold/30">
                 <Image
                   src={s.sobreImagenUrl}
                   alt={s.eventoEdicion}
                   fill
                   quality={95}
                   sizes="(max-width: 1024px) 80vw, 420px"
-                  className="object-cover scale-110"
+                  className="object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                <div className="absolute top-4 left-4 h-8 w-8 border-t-2 border-l-2 border-gold/80 rounded-tl-lg pointer-events-none" aria-hidden />
+                <div className="absolute bottom-4 right-4 h-8 w-8 border-b-2 border-r-2 border-gold/80 rounded-br-lg pointer-events-none" aria-hidden />
               </div>
             </div>
             <div>
