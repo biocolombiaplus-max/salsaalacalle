@@ -46,9 +46,9 @@ export type SiteSettings = {
 export const DEFAULT_SETTINGS: SiteSettings = {
   eventoNombre: "Salsa a la Calle",
   eventoEdicion: "4to Encuentro Salsero 2026",
-  eventoFechaISO: "2026-09-25T19:00:00-05:00",
+  eventoFechaISO: "2026-09-25T17:00:00-05:00",
   eventoFechaTexto: "Viernes 25 de septiembre de 2026",
-  eventoHoraTexto: "7:00 p.m. — 3:00 a.m.",
+  eventoHoraTexto: "5:00 p.m. — 3:00 a.m.",
   eventoLugar: "El Patín de la Fruta",
   eventoDireccion: "Malecón, Cúcuta",
   eventoCiudad: "Cúcuta",

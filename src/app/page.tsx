@@ -213,37 +213,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* PROGRAMA */}
-      <section id="programa" className="relative py-14 sm:py-20 px-5 sm:px-8 border-y border-white/10 overflow-hidden">
-        {s.programaImagenUrl ? (
-          <div className="absolute inset-0">
-            <Image src={s.programaImagenUrl} alt="" fill quality={90} sizes="100vw" className="object-cover" />
-            <div className="absolute inset-0 bg-black/85" />
-          </div>
-        ) : (
-          <div className="absolute inset-0 bg-white/[0.02]" />
-        )}
-        <div className="relative max-w-3xl mx-auto text-center mb-12">
-          <p className="uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">Programación</p>
-          <h2 className="font-display text-3xl sm:text-5xl font-bold">Así se vivirá la noche</h2>
-        </div>
-        <div className="relative max-w-2xl mx-auto">
-          {s.eventoPrograma.map((item, i) => (
-            <div key={i} className="flex gap-6 items-start py-5 border-b border-white/10 last:border-0">
-              <span className="font-display text-gold font-bold w-24 shrink-0 text-right">{item.hora}</span>
-              <span className="text-white/85">{item.actividad}</span>
-            </div>
-          ))}
-        </div>
-        <div className="relative flex justify-center mt-12">
-          <a href="#registro"
-            className="btn-shine btn-glow-wine inline-flex items-center gap-2 rounded-full bg-wine px-7 py-3.5 font-semibold text-white text-sm sm:text-base hover:brightness-110 transition"
-          >
-            Reservar mi boleta <span className="gratis-badge text-gold text-base sm:text-lg">GRATIS</span>
-          </a>
-        </div>
-      </section>
-
       {/* GALERIA */}
       {s.galeriaImagenes.length > 0 && (
         <section id="galeria" className="relative py-14 sm:py-20 px-5 sm:px-8">
