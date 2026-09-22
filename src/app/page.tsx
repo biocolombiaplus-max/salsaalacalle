@@ -353,22 +353,43 @@ export default async function Home() {
             }}
           >
             <div className="flex w-max animate-marquee gap-6 sm:gap-8 items-center">
-              {[...s.patrocinadores, ...s.patrocinadores].map((p, i) => (
-                <div
-                  key={`${p.nombre}-${i}`}
-                  className="shrink-0 flex items-center justify-center h-32 sm:h-40 md:h-44 w-64 sm:w-72 md:w-80 rounded-2xl border border-white/10 bg-white/[0.06] px-8 shadow-[0_20px_45px_-18px_rgba(0,0,0,0.7)] hover:border-gold/50 hover:bg-white/[0.1] hover:scale-105 transition-all duration-300"
-                  title={p.nombre}
-                >
-                  <Image
-                    src={p.logoUrl}
-                    alt={p.nombre}
-                    width={340}
-                    height={220}
-                    quality={100}
-                    className="max-h-24 sm:max-h-32 md:max-h-36 w-auto object-contain"
-                  />
-                </div>
-              ))}
+              {[...s.patrocinadores, ...s.patrocinadores].map((p, i) => {
+                const cardClass =
+                  "shrink-0 flex flex-col items-center justify-center gap-2 h-32 sm:h-40 md:h-44 w-64 sm:w-72 md:w-80 rounded-2xl border border-white/10 bg-white/[0.06] px-8 shadow-[0_20px_45px_-18px_rgba(0,0,0,0.7)] hover:border-gold/50 hover:bg-white/[0.1] hover:scale-105 transition-all duration-300";
+                const content = (
+                  <>
+                    <Image
+                      src={p.logoUrl}
+                      alt={p.nombre}
+                      width={340}
+                      height={220}
+                      quality={100}
+                      className="max-h-24 sm:max-h-32 md:max-h-36 w-auto object-contain"
+                    />
+                    {p.link && (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-widest text-gold">
+                        Visitar <span aria-hidden>↗</span>
+                      </span>
+                    )}
+                  </>
+                );
+                return p.link ? (
+                  <a
+                    key={`${p.nombre}-${i}`}
+                    href={p.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={p.nombre}
+                    className={cardClass}
+                  >
+                    {content}
+                  </a>
+                ) : (
+                  <div key={`${p.nombre}-${i}`} title={p.nombre} className={cardClass}>
+                    {content}
+                  </div>
+                );
+              })}
             </div>
           </div>
           <div className="relative flex justify-center mt-12">
