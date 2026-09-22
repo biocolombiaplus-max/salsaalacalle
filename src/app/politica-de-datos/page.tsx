@@ -50,14 +50,18 @@ export default async function PoliticaDatosPage() {
             </p>
             <ul className="list-disc pl-6 space-y-1 text-white/75">
               <li>Nombre completo</li>
+              <li>Número de cédula o documento de identidad</li>
               <li>Correo electrónico</li>
               <li>Número de WhatsApp / teléfono de contacto</li>
               <li>Barrio de residencia</li>
             </ul>
             <p className="mt-3">
               No solicitamos ni almacenamos datos sensibles (origen racial o étnico, orientación política,
-              convicciones religiosas o filosóficas, datos de salud, datos biométricos, entre otros) en este
-              proceso de registro.
+              convicciones religiosas o filosóficas, pertenencia a sindicatos u organizaciones sociales, datos de
+              salud, datos biométricos, datos de la vida sexual, entre otros definidos en el artículo 5 de la Ley
+              1581 de 2012) en este proceso de registro. El número de cédula, si bien es un dato personal, no
+              tiene el carácter de dato sensible conforme a dicha norma; lo recolectamos únicamente para
+              identificarte de forma inequívoca y evitar registros duplicados o suplantaciones.
             </p>
           </section>
 
@@ -66,6 +70,7 @@ export default async function PoliticaDatosPage() {
             <p className="mb-3">Los datos recolectados serán utilizados exclusivamente para:</p>
             <ul className="list-disc pl-6 space-y-1 text-white/75">
               <li>Gestionar tu inscripción y expedir tu boleta digital de asistencia al evento (número de boleta y código QR de ingreso).</li>
+              <li>Verificar tu identidad y evitar registros duplicados o suplantaciones, garantizando que cada número de cédula se use en una sola inscripción.</li>
               <li>Validar tu ingreso al evento de forma ágil y ordenada, evitando filas y congestión.</li>
               <li>Enviarte, por correo electrónico y/o WhatsApp, tu boleta, recordatorios e información logística relacionada con el evento.</li>
               <li>Elaborar estadísticas internas y análisis de asistencia por zonas de la ciudad, con fines exclusivamente organizativos y de mejora logística de futuras ediciones.</li>
@@ -76,6 +81,13 @@ export default async function PoliticaDatosPage() {
               vendidos, arrendados o cedidos</strong> a ningún tercero distinto de los proveedores tecnológicos
               estrictamente necesarios para el envío del correo electrónico y del mensaje de WhatsApp (encargados
               del tratamiento), quienes actúan bajo instrucciones expresas y confidencialidad.
+            </p>
+            <p className="mt-3">
+              Algunos de estos proveedores tecnológicos pueden tener servidores ubicados fuera de Colombia. En
+              ese caso, la eventual transferencia o transmisión internacional de tus datos se limita
+              estrictamente a lo necesario para el envío de tu boleta digital y demás comunicaciones logísticas
+              del evento, y se realiza garantizando niveles adecuados de protección conforme a la Ley 1581 de
+              2012 y sus decretos reglamentarios.
             </p>
           </section>
 
@@ -104,8 +116,12 @@ export default async function PoliticaDatosPage() {
               Puedes ejercer estos derechos enviando una solicitud
               {s.contactoEmail ? <> al correo electrónico <strong>{s.contactoEmail}</strong></> : " a nuestros canales de contacto oficiales"},
               indicando tu nombre completo, el derecho que deseas ejercer y una descripción clara de tu solicitud.
-              Responderemos dentro de los términos establecidos por la Ley 1581 de 2012 (10 días hábiles para
-              consultas y 15 días hábiles para reclamos, prorrogables conforme a la ley).
+              El equipo organizador de <strong>{s.eventoEdicion}</strong> es el área responsable de la atención
+              de peticiones, consultas y reclamos en materia de protección de datos personales, y responderá
+              dentro de los términos establecidos por la Ley 1581 de 2012 (10 días hábiles para consultas,
+              prorrogables por 5 días hábiles adicionales; y 15 días hábiles para reclamos, prorrogables por 8
+              días hábiles adicionales, contados a partir de la fecha de recibo, cuando así se te informe antes
+              del vencimiento del término inicial).
             </p>
           </section>
 
@@ -139,10 +155,13 @@ export default async function PoliticaDatosPage() {
           </section>
 
           <section>
-            <h2 className="font-display text-xl text-white font-bold mb-3">10. Modificaciones</h2>
+            <h2 className="font-display text-xl text-white font-bold mb-3">10. Vigencia y modificaciones</h2>
             <p>
-              Esta política podrá actualizarse en cualquier momento. Los cambios serán publicados en esta misma
-              página con la fecha de última actualización correspondiente.
+              Esta política rige a partir de la fecha de última actualización indicada al inicio de este
+              documento y se mantendrá vigente mientras subsista la finalidad del tratamiento descrita en la
+              sección 4, y en todo caso durante el tiempo señalado en la sección 8. Podrá actualizarse en
+              cualquier momento para reflejar cambios normativos u operativos; los cambios serán publicados en
+              esta misma página con la fecha de última actualización correspondiente.
             </p>
           </section>
         </div>
