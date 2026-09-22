@@ -19,6 +19,8 @@ export default async function Home() {
   const s = await getSettings();
   const heroImg = s.heroImagenes[0] || "";
   const heroIsVideo = isVideoUrl(heroImg);
+  const patrocinadoresDestacados = s.patrocinadores.filter((p) => p.destacado);
+  const patrocinadoresRegulares = s.patrocinadores.filter((p) => !p.destacado);
   const socials = (Object.keys(SOCIAL_ICONS) as (keyof typeof SOCIAL_ICONS)[])
     .map((key) => ({ key, label: SOCIAL_ICONS[key], url: s[key] as string }))
     .filter((x) => x.url);
@@ -29,7 +31,7 @@ export default async function Home() {
       <header className="fixed top-0 inset-x-0 z-50 overflow-hidden border-b border-white/10 backdrop-blur-sm">
         <div className="absolute inset-0 animate-gradient-shift bg-[length:300%_300%] bg-[linear-gradient(115deg,var(--wine),var(--gold),var(--green),var(--wine))] opacity-90" />
         <div className="absolute inset-0 bg-black/55" />
-        {s.patrocinadores.length > 0 ? (
+        {patrocinadoresRegulares.length > 0 ? (
           <div className="relative flex items-center gap-4 h-11 sm:h-14 px-3 sm:px-6">
             <span className="shrink-0 hidden sm:inline-flex items-center gap-1.5 rounded-full bg-black/40 text-white/90 text-[10px] font-semibold uppercase tracking-widest px-2.5 py-1">
               🤝 Patrocinadores
@@ -42,7 +44,7 @@ export default async function Home() {
               }}
             >
               <div className="flex h-full w-max animate-marquee gap-4 sm:gap-6 items-center">
-                {[...s.patrocinadores, ...s.patrocinadores, ...s.patrocinadores].map((p, i) => {
+                {[...patrocinadoresRegulares, ...patrocinadoresRegulares, ...patrocinadoresRegulares].map((p, i) => {
                   const cardClass =
                     "shrink-0 h-[78%] flex items-center justify-center rounded-lg bg-black/45 backdrop-blur-md ring-1 ring-white/15 px-3.5 sm:px-4 shadow-[0_6px_16px_-8px_rgba(0,0,0,0.8)] hover:ring-gold/50 transition-all";
                   const logo = (
@@ -156,6 +158,56 @@ export default async function Home() {
           </p>
         </div>
       </section>
+
+      {/* PATROCINADORES OFICIALES (destacados, fijos, no rotan) */}
+      {patrocinadoresDestacados.length > 0 && (
+        <section className="relative py-14 sm:py-20 px-5 sm:px-8 border-b border-white/10 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-gold/[0.06] via-transparent to-transparent" aria-hidden />
+          <p className="relative text-center uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-10">
+            Patrocinadores oficiales
+          </p>
+          <div className="relative max-w-5xl mx-auto flex flex-wrap items-stretch justify-center gap-5 sm:gap-8">
+            {patrocinadoresDestacados.map((p, i) => {
+              const cardClass =
+                "flex flex-col items-center justify-center gap-3 rounded-3xl border border-gold/30 bg-gradient-to-b from-white/[0.09] to-white/[0.02] px-10 py-8 sm:px-14 sm:py-10 shadow-[0_25px_60px_-20px_rgba(0,0,0,0.85)] hover:border-gold/60 hover:-translate-y-1 transition-all duration-300 min-w-[220px]";
+              const content = (
+                <>
+                  <Image
+                    src={p.logoUrl}
+                    alt={p.nombre}
+                    width={320}
+                    height={200}
+                    quality={100}
+                    style={{ height: `${(p.altura ?? s.patrocinadoresLogoAltura) * 2}px` }}
+                    className="max-h-24 sm:max-h-32 w-auto object-contain"
+                  />
+                  {p.link && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-widest text-gold">
+                      Visitar <span aria-hidden>↗</span>
+                    </span>
+                  )}
+                </>
+              );
+              return p.link ? (
+                <a
+                  key={`${p.nombre}-${i}`}
+                  href={p.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={p.nombre}
+                  className={cardClass}
+                >
+                  {content}
+                </a>
+              ) : (
+                <div key={`${p.nombre}-${i}`} title={p.nombre} className={cardClass}>
+                  {content}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* SOBRE EL EVENTO */}
       <section id="evento" className="relative py-14 sm:py-20 px-5 sm:px-8 overflow-hidden">
@@ -340,7 +392,7 @@ export default async function Home() {
       </section>
 
       {/* PATROCINADORES */}
-      {s.patrocinadores.length > 0 && (
+      {patrocinadoresRegulares.length > 0 && (
         <section className="relative py-14 sm:py-20 px-5 sm:px-8 border-b border-white/10 overflow-hidden">
           <p className="text-center uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-10">
             Con el respaldo de
@@ -353,7 +405,7 @@ export default async function Home() {
             }}
           >
             <div className="flex w-max animate-marquee gap-6 sm:gap-8 items-center">
-              {[...s.patrocinadores, ...s.patrocinadores].map((p, i) => {
+              {[...patrocinadoresRegulares, ...patrocinadoresRegulares].map((p, i) => {
                 const cardClass =
                   "shrink-0 flex flex-col items-center justify-center gap-2 h-32 sm:h-40 md:h-44 w-64 sm:w-72 md:w-80 rounded-2xl border border-white/10 bg-white/[0.06] px-8 shadow-[0_20px_45px_-18px_rgba(0,0,0,0.7)] hover:border-gold/50 hover:bg-white/[0.1] hover:scale-105 transition-all duration-300";
                 const content = (

@@ -557,10 +557,12 @@ export default function SettingsForm() {
       {tab === "patrocinadores" && (
         <div className="max-w-3xl">
           <p className="text-white/50 text-sm mb-6">
-            Los logos aparecen en el banner animado fijo en la parte superior de la landing. La franja
-            del banner es de altura fija (como en las grandes páginas): el tamaño que definas aquí
-            ajusta el logo dentro de esa franja, sin engrosarla. Sube logos con fondo transparente (PNG)
-            para mejor resultado.
+            Los logos aparecen en el banner animado fijo en la parte superior de la landing y en un
+            carrusel más abajo. La franja del banner es de altura fija (como en las grandes páginas): el
+            tamaño que definas aquí ajusta el logo dentro de esa franja, sin engrosarla. Marca un
+            patrocinador como &quot;destacado&quot; si es uno de tus patrocinadores grandes/oficiales: en
+            vez de rotar, aparece fijo y en grande, justo después del hero. Sube logos con fondo
+            transparente (PNG) para mejor resultado.
           </p>
           <div className="mb-6 max-w-sm">
             <label className="block text-[11px] uppercase tracking-widest text-white/50 mb-2">
@@ -625,6 +627,18 @@ export default function SettingsForm() {
                       value={p.link || ""}
                       onChange={(e) => updatePatrocinador(i, { link: e.target.value })}
                     />
+                    <label className="flex items-start gap-2 text-xs text-white/70 pt-1">
+                      <input
+                        type="checkbox"
+                        checked={!!p.destacado}
+                        onChange={(e) => updatePatrocinador(i, { destacado: e.target.checked })}
+                        className="mt-0.5 h-4 w-4 accent-gold"
+                      />
+                      <span>
+                        Patrocinador destacado — aparece fijo y en grande en su propia sección
+                        &quot;Patrocinadores oficiales&quot;, en vez de rotar en el carrusel.
+                      </span>
+                    </label>
                     <div className="pt-1">
                       <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
                         <span>Tamaño de este logo</span>
