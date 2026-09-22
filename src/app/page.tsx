@@ -108,15 +108,21 @@ export default async function Home() {
         </div>
 
         {s.logoUrl && (
-          <div className="absolute top-20 sm:top-24 left-0 right-0 z-10 flex justify-center px-5">
-            <Image
-              src={s.logoUrl}
-              alt={s.eventoNombre}
-              width={400}
-              height={400}
-              priority
-              className="h-36 sm:h-44 md:h-52 w-auto object-contain drop-shadow-[0_8px_32px_rgba(0,0,0,0.7)]"
-            />
+          <div className="absolute top-16 sm:top-20 inset-x-0 z-10 flex justify-center px-6">
+            <div className="relative h-44 sm:h-56 md:h-64 w-full max-w-xs sm:max-w-sm">
+              <div
+                className="absolute inset-0 scale-125 blur-2xl opacity-50 bg-[radial-gradient(circle,var(--gold),transparent_70%)]"
+                aria-hidden
+              />
+              <Image
+                src={s.logoUrl}
+                alt={s.eventoNombre}
+                fill
+                priority
+                sizes="(max-width: 640px) 320px, 384px"
+                className="relative object-contain drop-shadow-[0_8px_32px_rgba(0,0,0,0.7)]"
+              />
+            </div>
           </div>
         )}
 
