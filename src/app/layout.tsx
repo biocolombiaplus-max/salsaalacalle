@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Baloo_2, Inter } from "next/font/google";
 import "./globals.css";
 import { getSettings } from "@/lib/settings";
 import { isVideoUrl } from "@/lib/media";
 
-const playfair = Playfair_Display({
+const baloo = Baloo_2({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["600", "700", "800", "900"],
+  weight: ["600", "700", "800"],
 });
 
 const inter = Inter({
@@ -69,7 +69,7 @@ export default async function RootLayout({
       <head>
         <style>{`:root{--wine:${settings.colorPrimario};--gold:${settings.colorSecundario};--green:${settings.colorTerciario};}`}</style>
       </head>
-      <body className={`${playfair.variable} ${inter.variable} antialiased`}>
+      <body className={`${baloo.variable} ${inter.variable} antialiased`}>
         {children}
       </body>
     </html>
