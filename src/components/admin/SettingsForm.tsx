@@ -556,6 +556,18 @@ export default function SettingsForm() {
               ))}
             </div>
             <input type="file" accept="image/*,video/*" multiple onChange={(e) => e.target.files && handleMultiUpload("heroImagenes", "hero", e.target.files)} className="text-xs text-white/60" />
+            <label className="flex items-start gap-2 text-xs text-white/70 mt-4">
+              <input
+                type="checkbox"
+                checked={settings.heroOcultarTitulo}
+                onChange={(e) => set("heroOcultarTitulo", e.target.checked)}
+                className="mt-0.5 h-4 w-4 accent-gold"
+              />
+              <span>
+                Ocultar el logo y el título sobre el hero — actívalo si la imagen que subiste ya es un flyer u
+                cartel oficial que trae su propio diseño (título, fecha, DJs), para que no se vea duplicado.
+              </span>
+            </label>
           </div>
 
           <div>

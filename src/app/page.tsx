@@ -96,10 +96,18 @@ export default async function Home() {
               muted
               loop
               playsInline
-              className="absolute inset-0 h-full w-full object-cover"
+              className={`absolute inset-0 h-full w-full object-cover ${s.heroOcultarTitulo ? "object-top" : ""}`}
             />
           ) : heroImg ? (
-            <Image src={heroImg} alt={s.eventoEdicion} fill priority quality={95} sizes="100vw" className="object-cover" />
+            <Image
+              src={heroImg}
+              alt={s.eventoEdicion}
+              fill
+              priority
+              quality={95}
+              sizes="100vw"
+              className={`object-cover ${s.heroOcultarTitulo ? "object-top" : ""}`}
+            />
           ) : (
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(252,144,0,0.18),transparent_55%),linear-gradient(135deg,#1a0d12_0%,#2b0f16_45%,#0c0708_100%)]" />
           )}
@@ -107,7 +115,7 @@ export default async function Home() {
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-black/70" />
         </div>
 
-        {s.logoUrl && (
+        {!s.heroOcultarTitulo && s.logoUrl && (
           <div className="absolute top-16 sm:top-20 inset-x-0 z-10 flex justify-center px-6">
             <div className="relative h-44 sm:h-56 md:h-64 w-full max-w-xs sm:max-w-sm">
               <div
@@ -126,14 +134,18 @@ export default async function Home() {
           </div>
         )}
 
-        <div className="relative z-10 max-w-6xl mx-auto w-full px-5 sm:px-8 pb-12 pt-40">
-          <p className="uppercase tracking-[0.35em] text-gold text-xs sm:text-sm mb-4">
-            {s.eventoCiudad} · Norte de Santander
-          </p>
-          <h1 className="font-display font-extrabold leading-[0.95] text-5xl sm:text-7xl md:text-8xl text-white drop-shadow-lg">
-            {s.eventoNombre}
-          </h1>
-          <p className="font-display text-2xl sm:text-3xl text-gold mt-3 mb-6">{s.eventoEdicion}</p>
+        <div className={`relative z-10 max-w-6xl mx-auto w-full px-5 sm:px-8 pb-12 ${s.heroOcultarTitulo ? "pt-6" : "pt-40"}`}>
+          {!s.heroOcultarTitulo && (
+            <>
+              <p className="uppercase tracking-[0.35em] text-gold text-xs sm:text-sm mb-4">
+                {s.eventoCiudad} · Norte de Santander
+              </p>
+              <h1 className="font-display font-extrabold leading-[0.95] text-5xl sm:text-7xl md:text-8xl text-white drop-shadow-lg">
+                {s.eventoNombre}
+              </h1>
+              <p className="font-display text-2xl sm:text-3xl text-gold mt-3 mb-6">{s.eventoEdicion}</p>
+            </>
+          )}
 
           <div className="flex flex-wrap items-center gap-6 mb-8 text-white/90 text-sm sm:text-base">
             <span className="flex items-center gap-2">📅 {s.eventoFechaTexto}</span>

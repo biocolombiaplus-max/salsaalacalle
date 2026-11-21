@@ -22,6 +22,7 @@ export type SiteSettings = {
   colorSecundario: string;
   colorTerciario: string;
   heroImagenes: string[];
+  heroOcultarTitulo: boolean;
   galeriaImagenes: string[];
   boletaFondoUrl: string;
   sobreImagenUrl: string;
@@ -46,16 +47,16 @@ export type SiteSettings = {
 
 export const DEFAULT_SETTINGS: SiteSettings = {
   eventoNombre: "Salsa a la Calle",
-  eventoEdicion: "4to Encuentro Salsero 2026",
-  eventoFechaISO: "2026-09-25T17:00:00-05:00",
-  eventoFechaTexto: "Viernes 25 de septiembre de 2026",
-  eventoHoraTexto: "5:00 p.m. — 3:30 a.m.",
+  eventoEdicion: "VOLUMEN 5",
+  eventoFechaISO: "2026-11-27T18:00:00-05:00",
+  eventoFechaTexto: "Viernes 27 de noviembre de 2026",
+  eventoHoraTexto: "Desde las 6:00 p.m.",
   eventoLugar: "El Patín de la Fruta",
   eventoDireccion: "Malecón, Cúcuta",
   eventoCiudad: "Cúcuta",
   googleMapsUrl: "",
   eventoDescripcion:
-    "El encuentro salsero más esperado de Cúcuta regresa por cuarta vez consecutiva: una tarde y noche para bailar, compartir y vivir la salsa en comunidad, con música en vivo, DJ invitados, ruedas de casino y el mejor ambiente de la ciudad.",
+    "El encuentro salsero más esperado de Cúcuta regresa por quinta vez consecutiva: una tarde y noche para bailar, compartir y vivir la salsa en comunidad, con música en vivo, DJ invitados, ruedas de casino y el mejor ambiente de la ciudad.",
   eventoCupo: "Cupos limitados",
   eventoPrograma: [
     { hora: "7:00 p.m.", actividad: "Apertura de puertas y registro de asistentes" },
@@ -71,6 +72,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   colorSecundario: "#FC9000",
   colorTerciario: "#7FA30F",
   heroImagenes: [],
+  heroOcultarTitulo: false,
   galeriaImagenes: [],
   boletaFondoUrl: "",
   sobreImagenUrl: "",
@@ -116,6 +118,8 @@ export async function getSettings(forceFresh = false): Promise<SiteSettings> {
     } else if (typeof defaultVal === "number") {
       const num = Number(raw);
       if (!Number.isNaN(num)) (merged as Record<string, unknown>)[key] = num;
+    } else if (typeof defaultVal === "boolean") {
+      (merged as Record<string, unknown>)[key] = raw === "true";
     } else {
       (merged as Record<string, unknown>)[key] = raw;
     }
