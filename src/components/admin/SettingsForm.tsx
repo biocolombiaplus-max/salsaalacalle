@@ -723,22 +723,22 @@ export default function SettingsForm() {
                         className="mt-0.5 h-4 w-4 accent-gold"
                       />
                       <span>
-                        Borde blanco — pone el logo sobre una tarjeta blanca para que resalte mejor
-                        (ideal para logos oscuros o con fondo transparente).
+                        Borde blanco — traza un contorno blanco pegado a la forma del logo (no una
+                        tarjeta ni fondo), ideal para que resalte sobre el fondo oscuro.
                       </span>
                     </label>
                     {p.bordeBlanco && (
                       <div className="pt-1">
                         <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
                           <span>Grosor del borde</span>
-                          <span className="text-gold normal-case tracking-normal">{p.bordeGrosor ?? 8}px</span>
+                          <span className="text-gold normal-case tracking-normal">{p.bordeGrosor ?? 4}px</span>
                         </label>
                         <input
                           type="range"
-                          min={2}
-                          max={30}
+                          min={1}
+                          max={14}
                           step={1}
-                          value={p.bordeGrosor ?? 8}
+                          value={p.bordeGrosor ?? 4}
                           onChange={(e) => updatePatrocinador(i, { bordeGrosor: Number(e.target.value) })}
                           className="w-full accent-gold"
                         />

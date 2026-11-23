@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { getSettings, type Patrocinador } from "@/lib/settings";
@@ -6,6 +7,20 @@ import Countdown from "@/components/Countdown";
 import RegistroModal from "@/components/RegistroModal";
 
 export const revalidate = 0;
+
+// Traza un contorno blanco pegado a la silueta del logo (sin fondo/tarjeta),
+// apilando varios drop-shadow sin blur alrededor en círculo.
+function whiteOutlineFilter(thicknessPx: number) {
+  const steps = 20;
+  const shadows: string[] = [];
+  for (let i = 0; i < steps; i++) {
+    const angle = (i / steps) * 2 * Math.PI;
+    const x = (Math.cos(angle) * thicknessPx).toFixed(2);
+    const y = (Math.sin(angle) * thicknessPx).toFixed(2);
+    shadows.push(`drop-shadow(${x}px ${y}px 0 #fff)`);
+  }
+  return shadows.join(" ");
+}
 
 function PatrocinadorLogo({
   p,
@@ -24,26 +39,10 @@ function PatrocinadorLogo({
   maxHClass?: string;
   alwaysExplicitHeight?: boolean;
 }) {
-  const explicitHeight =
-    p.altura ?? (p.bordeBlanco || alwaysExplicitHeight ? contextDefaultHeight : undefined);
-
-  if (p.bordeBlanco) {
-    return (
-      <div
-        className="max-h-full rounded-lg bg-white flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.25)]"
-        style={{ height: `${explicitHeight}px`, padding: `${p.bordeGrosor ?? 8}px` }}
-      >
-        <Image
-          src={p.logoUrl}
-          alt={p.nombre}
-          width={imgWidth}
-          height={imgHeight}
-          quality={100}
-          className={`h-full w-auto object-contain ${imgClassName}`}
-        />
-      </div>
-    );
-  }
+  const explicitHeight = p.altura ?? (alwaysExplicitHeight ? contextDefaultHeight : undefined);
+  const style: CSSProperties = {};
+  if (explicitHeight) style.height = `${explicitHeight}px`;
+  if (p.bordeBlanco) style.filter = whiteOutlineFilter(p.bordeGrosor ?? 4);
 
   return (
     <Image
@@ -52,8 +51,8 @@ function PatrocinadorLogo({
       width={imgWidth}
       height={imgHeight}
       quality={100}
-      style={explicitHeight ? { height: `${explicitHeight}px` } : undefined}
-      className={`${maxHClass} w-auto object-contain ${imgClassName}`}
+      style={style}
+      className={`${maxHClass} w-auto object-contain ${p.bordeBlanco ? "" : imgClassName}`}
     />
   );
 }
