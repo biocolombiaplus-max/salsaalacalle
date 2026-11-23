@@ -44,6 +44,16 @@ model AdminUser {
   createdAt    DateTime @default(now())
 }
 
+model SongRequest {
+  id        String   @id @default(cuid())
+  cancion   String
+  artista   String?
+  nombre    String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
 model AuditLog {
   id        String   @id @default(cuid())
   action    String

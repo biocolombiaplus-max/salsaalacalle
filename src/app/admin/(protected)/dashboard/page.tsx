@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import DashboardCharts from "@/components/admin/DashboardCharts";
 import SearchBox from "@/components/admin/SearchBox";
+import DeleteCancionButton from "@/components/admin/DeleteCancionButton";
 import type { Prisma } from "@prisma/client";
 
 export const revalidate = 0;
@@ -32,6 +33,11 @@ export default async function DashboardPage({
     where,
     orderBy: { createdAt: "desc" },
     take: 200,
+  });
+
+  const canciones = await prisma.songRequest.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 100,
   });
 
   return (
@@ -100,6 +106,44 @@ export default async function DashboardPage({
         </table>
       </div>
       <p className="text-xs text-white/30 mt-3">Mostrando los últimos {registros.length} registros.</p>
+
+      <div className="mt-10 mb-4">
+        <h2 className="font-display text-xl font-bold mb-1">Canciones pedidas</h2>
+        <p className="text-white/50 text-sm">Lo que la gente quiere bailar — modera lo que no corresponda.</p>
+      </div>
+      <div className="overflow-x-auto rounded-2xl border border-white/10">
+        <table className="w-full text-sm">
+          <thead className="bg-white/[0.04] text-white/60 text-xs uppercase tracking-wider">
+            <tr>
+              <th className="text-left px-4 py-3">Canción</th>
+              <th className="text-left px-4 py-3">Artista</th>
+              <th className="text-left px-4 py-3">Pedida por</th>
+              <th className="text-left px-4 py-3">Fecha</th>
+              <th className="text-left px-4 py-3"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {canciones.map((c) => (
+              <tr key={c.id} className="border-t border-white/5 hover:bg-white/[0.02]">
+                <td className="px-4 py-3 font-semibold">{c.cancion}</td>
+                <td className="px-4 py-3 text-white/70">{c.artista || "—"}</td>
+                <td className="px-4 py-3 text-white/70">{c.nombre || "Anónimo"}</td>
+                <td className="px-4 py-3 text-white/50 text-xs">{c.createdAt.toLocaleString("es-CO")}</td>
+                <td className="px-4 py-3">
+                  <DeleteCancionButton id={c.id} />
+                </td>
+              </tr>
+            ))}
+            {canciones.length === 0 && (
+              <tr>
+                <td colSpan={5} className="px-4 py-10 text-center text-white/40">
+                  Todavía nadie ha pedido una canción.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

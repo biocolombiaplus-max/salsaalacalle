@@ -51,6 +51,10 @@ export type SiteSettings = {
   legalNit: string;
   creditoBoleteria: string;
   creditoBoleteriaUrl: string;
+  creditoSidLogoUrl: string;
+  creditoSidUrl: string;
+  creditoBioLogoUrl: string;
+  creditoBioUrl: string;
 };
 
 export const DEFAULT_SETTINGS: SiteSettings = {
@@ -101,6 +105,10 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   legalNit: "",
   creditoBoleteria: "SID & Biomarketing",
   creditoBoleteriaUrl: "",
+  creditoSidLogoUrl: "",
+  creditoSidUrl: "",
+  creditoBioLogoUrl: "",
+  creditoBioUrl: "",
 };
 
 let cache: { data: SiteSettings; ts: number } | null = null;

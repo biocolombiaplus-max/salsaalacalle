@@ -23,7 +23,9 @@ type SingleImageKey =
   | "seguridadImagenUrl"
   | "programaImagenUrl"
   | "ctaImagenUrl"
-  | "patrocinadoresFondoUrl";
+  | "patrocinadoresFondoUrl"
+  | "creditoSidLogoUrl"
+  | "creditoBioLogoUrl";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -817,6 +819,75 @@ export default function SettingsForm() {
             Aparece en el pie de página como &quot;Proceso de boletería y registro gestionado por [texto]&quot;,
             aclarando que ustedes administran el registro sin ser los organizadores del evento.
           </p>
+
+          <div className="sm:col-span-2 pt-2">
+            <p className="text-[11px] text-white/40 mb-4">
+              Si subes estos dos logos, reemplazan el texto de arriba en el footer y se ven como marcas
+              (más pro que solo texto).
+            </p>
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Logo SID</p>
+            {(singlePreview.creditoSidLogoUrl || settings.creditoSidLogoUrl) && (
+              <div className="relative mb-3 h-16 w-32 rounded-xl bg-black/30 overflow-hidden flex items-center justify-center">
+                <Image
+                  src={singlePreview.creditoSidLogoUrl || settings.creditoSidLogoUrl}
+                  alt="SID"
+                  width={128}
+                  height={64}
+                  className="max-h-full w-auto object-contain"
+                />
+                {uploading === "creditoSidLogoUrl" && <UploadSpinnerOverlay />}
+                {!uploading && settings.creditoSidLogoUrl && (
+                  <button
+                    onClick={() => set("creditoSidLogoUrl", "")}
+                    className="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full h-5 w-5 text-xs flex items-center justify-center"
+                    title="Quitar logo"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            )}
+            <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("creditoSidLogoUrl", e.target.files[0])} className="text-xs text-white/60 mb-2" />
+            <input
+              className={`${inputClass} text-xs`}
+              placeholder="Link al hacer clic (opcional)"
+              value={settings.creditoSidUrl}
+              onChange={(e) => set("creditoSidUrl", e.target.value)}
+            />
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Logo Biomarketing</p>
+            {(singlePreview.creditoBioLogoUrl || settings.creditoBioLogoUrl) && (
+              <div className="relative mb-3 h-16 w-32 rounded-xl bg-black/30 overflow-hidden flex items-center justify-center">
+                <Image
+                  src={singlePreview.creditoBioLogoUrl || settings.creditoBioLogoUrl}
+                  alt="Biomarketing"
+                  width={128}
+                  height={64}
+                  className="max-h-full w-auto object-contain"
+                />
+                {uploading === "creditoBioLogoUrl" && <UploadSpinnerOverlay />}
+                {!uploading && settings.creditoBioLogoUrl && (
+                  <button
+                    onClick={() => set("creditoBioLogoUrl", "")}
+                    className="absolute top-1 right-1 bg-red-600 hover:bg-red-500 text-white rounded-full h-5 w-5 text-xs flex items-center justify-center"
+                    title="Quitar logo"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            )}
+            <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleSingleUpload("creditoBioLogoUrl", e.target.files[0])} className="text-xs text-white/60 mb-2" />
+            <input
+              className={`${inputClass} text-xs`}
+              placeholder="Link al hacer clic (opcional)"
+              value={settings.creditoBioUrl}
+              onChange={(e) => set("creditoBioUrl", e.target.value)}
+            />
+          </div>
         </div>
       )}
 

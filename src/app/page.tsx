@@ -5,6 +5,7 @@ import { getSettings, type Patrocinador } from "@/lib/settings";
 import { isVideoUrl } from "@/lib/media";
 import Countdown from "@/components/Countdown";
 import RegistroModal from "@/components/RegistroModal";
+import CancionesSection from "@/components/CancionesSection";
 
 export const revalidate = 0;
 
@@ -439,6 +440,8 @@ export default async function Home() {
         </section>
       )}
 
+      <CancionesSection eventoEdicion={s.eventoEdicion} />
+
       {/* SEGURIDAD / CONFIANZA */}
       <section id="seguridad" className="relative py-14 sm:py-20 px-5 sm:px-8 border-y border-white/10 overflow-hidden">
         {s.seguridadImagenUrl ? (
@@ -602,23 +605,46 @@ export default async function Home() {
             </p>
           </div>
         </div>
-        {s.creditoBoleteria && (
-          <div className="max-w-6xl mx-auto border-t border-white/10 mt-12 pt-6 flex justify-center">
+        {(s.creditoSidLogoUrl || s.creditoBioLogoUrl || s.creditoBoleteria) && (
+          <div className="max-w-6xl mx-auto border-t border-white/10 mt-12 pt-6 flex flex-col items-center gap-4">
             <p className="text-center text-white/40 text-xs uppercase tracking-widest">
-              Proceso de boletería y registro gestionado por{" "}
-              {s.creditoBoleteriaUrl ? (
-                <a
-                  href={s.creditoBoleteriaUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white/70 hover:text-gold transition-colors font-semibold"
-                >
-                  {s.creditoBoleteria}
-                </a>
-              ) : (
-                <span className="text-white/70 font-semibold">{s.creditoBoleteria}</span>
-              )}
+              Diseño de esta página y proceso de boletería gestionados por
             </p>
+            {s.creditoSidLogoUrl || s.creditoBioLogoUrl ? (
+              <div className="flex items-center justify-center gap-7 sm:gap-10 flex-wrap">
+                {s.creditoSidLogoUrl &&
+                  (s.creditoSidUrl ? (
+                    <a href={s.creditoSidUrl} target="_blank" rel="noopener noreferrer" className="opacity-85 hover:opacity-100 transition">
+                      <Image src={s.creditoSidLogoUrl} alt="SID" width={160} height={60} className="h-9 sm:h-11 w-auto object-contain" />
+                    </a>
+                  ) : (
+                    <Image src={s.creditoSidLogoUrl} alt="SID" width={160} height={60} className="h-9 sm:h-11 w-auto object-contain opacity-85" />
+                  ))}
+                {s.creditoBioLogoUrl &&
+                  (s.creditoBioUrl ? (
+                    <a href={s.creditoBioUrl} target="_blank" rel="noopener noreferrer" className="opacity-85 hover:opacity-100 transition">
+                      <Image src={s.creditoBioLogoUrl} alt="Biomarketing" width={160} height={60} className="h-9 sm:h-11 w-auto object-contain" />
+                    </a>
+                  ) : (
+                    <Image src={s.creditoBioLogoUrl} alt="Biomarketing" width={160} height={60} className="h-9 sm:h-11 w-auto object-contain opacity-85" />
+                  ))}
+              </div>
+            ) : (
+              <p className="text-center text-white/40 text-xs uppercase tracking-widest -mt-2">
+                {s.creditoBoleteriaUrl ? (
+                  <a
+                    href={s.creditoBoleteriaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/70 hover:text-gold transition-colors font-semibold"
+                  >
+                    {s.creditoBoleteria}
+                  </a>
+                ) : (
+                  <span className="text-white/70 font-semibold">{s.creditoBoleteria}</span>
+                )}
+              </p>
+            )}
           </div>
         )}
         <div className="flex flex-col items-center gap-3 mt-6">
