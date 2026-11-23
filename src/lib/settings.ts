@@ -52,7 +52,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   eventoFechaTexto: "Viernes 27 de noviembre de 2026",
   eventoHoraTexto: "Desde las 6:00 p.m.",
   eventoLugar: "Plazoleta de Ventura Plaza",
-  eventoDireccion: "Junto a Movistar, Cúcuta",
+  eventoDireccion: "Junto a Movistar, Parque Fundadores (Calle 10 y Av. 0), Cúcuta",
   eventoCiudad: "Cúcuta",
   googleMapsUrl: "",
   eventoDescripcion:
