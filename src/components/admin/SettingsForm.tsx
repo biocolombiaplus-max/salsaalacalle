@@ -604,7 +604,8 @@ export default function SettingsForm() {
             engrosarla. Marca un patrocinador como &quot;destacado&quot; si es uno de tus patrocinadores
             grandes/oficiales: además de rotar, aparece fijo y en grande en su propia sección justo
             después del hero. Usa las flechas ▲▼ de cada tarjeta para ordenar en qué orden aparecen.
-            Sube logos con fondo transparente (PNG) para mejor resultado.
+            Sube logos con fondo transparente (PNG) para mejor resultado. Si un logo se ve muy pequeño
+            o no se nota bien sobre el fondo oscuro, sube su tamaño y/o actívale un borde blanco.
           </p>
           <div className="mb-6 max-w-sm">
             <label className="block text-[11px] uppercase tracking-widest text-white/50 mb-2">
@@ -613,7 +614,7 @@ export default function SettingsForm() {
             <input
               type="range"
               min={20}
-              max={48}
+              max={160}
               step={2}
               value={settings.patrocinadoresLogoAltura}
               onChange={(e) => set("patrocinadoresLogoAltura", Number(e.target.value))}
@@ -707,13 +708,42 @@ export default function SettingsForm() {
                       <input
                         type="range"
                         min={20}
-                        max={48}
+                        max={160}
                         step={2}
                         value={p.altura ?? settings.patrocinadoresLogoAltura}
                         onChange={(e) => updatePatrocinador(i, { altura: Number(e.target.value) })}
                         className="w-full accent-gold"
                       />
                     </div>
+                    <label className="flex items-start gap-2 text-xs text-white/70 pt-1">
+                      <input
+                        type="checkbox"
+                        checked={!!p.bordeBlanco}
+                        onChange={(e) => updatePatrocinador(i, { bordeBlanco: e.target.checked })}
+                        className="mt-0.5 h-4 w-4 accent-gold"
+                      />
+                      <span>
+                        Borde blanco — pone el logo sobre una tarjeta blanca para que resalte mejor
+                        (ideal para logos oscuros o con fondo transparente).
+                      </span>
+                    </label>
+                    {p.bordeBlanco && (
+                      <div className="pt-1">
+                        <label className="flex items-center justify-between text-[11px] uppercase tracking-widest text-white/50 mb-1.5">
+                          <span>Grosor del borde</span>
+                          <span className="text-gold normal-case tracking-normal">{p.bordeGrosor ?? 8}px</span>
+                        </label>
+                        <input
+                          type="range"
+                          min={2}
+                          max={30}
+                          step={1}
+                          value={p.bordeGrosor ?? 8}
+                          onChange={(e) => updatePatrocinador(i, { bordeGrosor: Number(e.target.value) })}
+                          className="w-full accent-gold"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

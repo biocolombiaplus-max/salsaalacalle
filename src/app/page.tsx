@@ -1,11 +1,62 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getSettings } from "@/lib/settings";
+import { getSettings, type Patrocinador } from "@/lib/settings";
 import { isVideoUrl } from "@/lib/media";
 import Countdown from "@/components/Countdown";
 import RegistroModal from "@/components/RegistroModal";
 
 export const revalidate = 0;
+
+function PatrocinadorLogo({
+  p,
+  contextDefaultHeight,
+  imgWidth,
+  imgHeight,
+  imgClassName = "",
+  maxHClass = "max-h-full",
+  alwaysExplicitHeight = false,
+}: {
+  p: Patrocinador;
+  contextDefaultHeight: number;
+  imgWidth: number;
+  imgHeight: number;
+  imgClassName?: string;
+  maxHClass?: string;
+  alwaysExplicitHeight?: boolean;
+}) {
+  const explicitHeight =
+    p.altura ?? (p.bordeBlanco || alwaysExplicitHeight ? contextDefaultHeight : undefined);
+
+  if (p.bordeBlanco) {
+    return (
+      <div
+        className="max-h-full rounded-lg bg-white flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.25)]"
+        style={{ height: `${explicitHeight}px`, padding: `${p.bordeGrosor ?? 8}px` }}
+      >
+        <Image
+          src={p.logoUrl}
+          alt={p.nombre}
+          width={imgWidth}
+          height={imgHeight}
+          quality={100}
+          className={`h-full w-auto object-contain ${imgClassName}`}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <Image
+      src={p.logoUrl}
+      alt={p.nombre}
+      width={imgWidth}
+      height={imgHeight}
+      quality={100}
+      style={explicitHeight ? { height: `${explicitHeight}px` } : undefined}
+      className={`${maxHClass} w-auto object-contain ${imgClassName}`}
+    />
+  );
+}
 
 const SOCIAL_ICONS = {
   redesInstagram: "Instagram",
@@ -49,14 +100,13 @@ export default async function Home() {
                   const cardClass =
                     "shrink-0 h-[80%] flex items-center justify-center rounded-lg bg-white/[0.05] backdrop-blur-md ring-1 ring-white/10 px-4 sm:px-5 hover:ring-gold/60 hover:bg-white/[0.09] transition-all";
                   const logo = (
-                    <Image
-                      src={p.logoUrl}
-                      alt={p.nombre}
-                      width={220}
-                      height={100}
-                      quality={100}
-                      style={{ height: `${p.altura ?? s.patrocinadoresLogoAltura}px` }}
-                      className="max-h-full w-auto object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
+                    <PatrocinadorLogo
+                      p={p}
+                      contextDefaultHeight={s.patrocinadoresLogoAltura}
+                      imgWidth={220}
+                      imgHeight={100}
+                      imgClassName="drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
+                      alwaysExplicitHeight
                     />
                   );
                   return p.link ? (
@@ -215,13 +265,12 @@ export default async function Home() {
               const content = (
                 <>
                   <div className="flex items-center justify-center h-28 sm:h-36 px-6 sm:px-10">
-                    <Image
-                      src={p.logoUrl}
-                      alt={p.nombre}
-                      width={360}
-                      height={180}
-                      quality={100}
-                      className="max-h-full w-auto object-contain drop-shadow-[0_4px_18px_rgba(0,0,0,0.6)]"
+                    <PatrocinadorLogo
+                      p={p}
+                      contextDefaultHeight={120}
+                      imgWidth={360}
+                      imgHeight={180}
+                      imgClassName="drop-shadow-[0_4px_18px_rgba(0,0,0,0.6)]"
                     />
                   </div>
                   <div className="relative flex items-center justify-between gap-1.5 px-4 sm:px-5 py-2.5 sm:py-3 border-t border-white/10 bg-black/30">
@@ -458,13 +507,12 @@ export default async function Home() {
                   "shrink-0 flex flex-col items-center justify-center gap-2 h-32 sm:h-40 md:h-44 w-64 sm:w-72 md:w-80 rounded-2xl border border-white/10 bg-white/[0.06] px-8 shadow-[0_20px_45px_-18px_rgba(0,0,0,0.7)] hover:border-gold/50 hover:bg-white/[0.1] hover:scale-105 transition-all duration-300";
                 const content = (
                   <>
-                    <Image
-                      src={p.logoUrl}
-                      alt={p.nombre}
-                      width={340}
-                      height={220}
-                      quality={100}
-                      className="max-h-24 sm:max-h-32 md:max-h-36 w-auto object-contain"
+                    <PatrocinadorLogo
+                      p={p}
+                      contextDefaultHeight={110}
+                      imgWidth={340}
+                      imgHeight={220}
+                      maxHClass="max-h-24 sm:max-h-32 md:max-h-36"
                     />
                     {p.link && (
                       <span className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-widest text-gold">
