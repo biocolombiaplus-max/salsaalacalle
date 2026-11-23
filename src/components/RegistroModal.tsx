@@ -64,7 +64,7 @@ export default function RegistroModal({
         </button>
         <div className="overflow-y-auto max-h-[92vh]">
           <iframe
-            src="https://eventosid.com/evento/salsa-a-la-calle-4to-encuentro-salsero-2026/embed"
+            src="https://eventosid.com/evento/salsa-a-la-calle-vol5/embed"
             title={`Registro · ${eventoNombre} · ${eventoEdicion}`}
             width="100%"
             height={750}

@@ -51,8 +51,8 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   eventoFechaISO: "2026-11-27T18:00:00-05:00",
   eventoFechaTexto: "Viernes 27 de noviembre de 2026",
   eventoHoraTexto: "Desde las 6:00 p.m.",
-  eventoLugar: "El Patín de la Fruta",
-  eventoDireccion: "Malecón, Cúcuta",
+  eventoLugar: "Plazoleta de Ventura Plaza",
+  eventoDireccion: "Junto a Movistar, Cúcuta",
   eventoCiudad: "Cúcuta",
   googleMapsUrl: "",
   eventoDescripcion:

@@ -34,6 +34,15 @@ body {
   max-width: 100vw;
 }
 
+/* Capa de calidez sobre el fondo plano: da profundidad sin tapar las secciones. */
+.bg-background {
+  background-image:
+    radial-gradient(circle at 15% 0%, rgba(252, 144, 0, 0.12), transparent 55%),
+    radial-gradient(circle at 100% 30%, rgba(240, 36, 12, 0.08), transparent 50%),
+    radial-gradient(circle at 10% 100%, rgba(127, 163, 15, 0.08), transparent 50%);
+  background-attachment: fixed;
+}
+
 .font-display {
   font-family: var(--font-display), "Segoe UI", sans-serif;
 }

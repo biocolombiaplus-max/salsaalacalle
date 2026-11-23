@@ -342,7 +342,7 @@ export default async function Home() {
       {s.galeriaImagenes.length > 0 && (
         <section id="galeria" className="relative py-14 sm:py-20 px-5 sm:px-8">
           <div className="max-w-3xl mx-auto text-center mb-12">
-            <p className="uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">Momentos</p>
+            <p className="uppercase tracking-[0.3em] text-green text-xs sm:text-sm mb-4">Momentos</p>
             <h2 className="font-display text-3xl sm:text-5xl font-bold">La calle se prende de salsa</h2>
           </div>
           <div
@@ -403,7 +403,7 @@ export default async function Home() {
         )}
         <div className="relative max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <p className="uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">Registro y seguridad</p>
+            <p className="uppercase tracking-[0.3em] text-wine text-xs sm:text-sm mb-4">Registro y seguridad</p>
             <h2 className="font-display text-3xl sm:text-4xl font-bold mb-6">
               Un ingreso ágil, seguro y sin filas
             </h2>
@@ -510,7 +510,7 @@ export default async function Home() {
             <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/80 to-black/95" />
           </div>
         )}
-        <p className="relative uppercase tracking-[0.3em] text-gold text-xs sm:text-sm mb-4">{s.eventoCupo}</p>
+        <p className="relative uppercase tracking-[0.3em] text-wine text-xs sm:text-sm mb-4">{s.eventoCupo}</p>
         <h2 className="relative font-display text-3xl sm:text-6xl font-bold mb-8 max-w-3xl mx-auto">
           No te quedes por fuera de {s.eventoEdicion}
         </h2>
