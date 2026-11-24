@@ -374,6 +374,50 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* CAUSA SOCIAL */}
+      {s.causaSocialActiva && (
+        <section id="causa-social" className="relative py-16 sm:py-24 px-5 sm:px-8 border-y border-white/10 overflow-hidden">
+          <div
+            className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(127,163,15,0.14),transparent_55%),radial-gradient(circle_at_85%_90%,rgba(252,144,0,0.12),transparent_50%)]"
+            aria-hidden
+          />
+          <div className="relative max-w-4xl mx-auto text-center mb-12">
+            <p className="uppercase tracking-[0.3em] text-green text-xs sm:text-sm mb-4">Responsabilidad social</p>
+            <h2 className="font-display text-3xl sm:text-5xl font-bold mb-6">
+              {s.causaSocialTitulo} <span aria-hidden>🎁</span>
+            </h2>
+            <p className="text-white/70 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
+              {s.causaSocialDescripcion}
+            </p>
+          </div>
+
+          <div className="relative max-w-3xl mx-auto grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4 mb-10">
+            {[
+              { icon: "🧸", label: "Peluche" },
+              { icon: "🪀", label: "Yoyo" },
+              { icon: "⚽", label: "Balón" },
+              { icon: "🪆", label: "Muñeca" },
+              { icon: "🚗", label: "Carrito" },
+              { icon: "🪁", label: "Trompo / cometa" },
+            ].map((toy) => (
+              <div
+                key={toy.label}
+                className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-white/[0.05] ring-1 ring-white/10 py-5 px-2 hover:ring-green/50 hover:bg-white/[0.08] transition-all"
+              >
+                <span className="text-3xl sm:text-4xl" aria-hidden>{toy.icon}</span>
+                <span className="text-[10px] sm:text-xs text-white/60 text-center leading-tight">{toy.label}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="relative flex justify-center">
+            <p className="inline-flex items-center gap-2 rounded-full bg-green/10 ring-1 ring-green/30 text-green text-xs sm:text-sm font-semibold px-5 py-2.5 text-center">
+              🎄 Recibimos los juguetes el día del evento y los entregamos antes de Navidad.
+            </p>
+          </div>
+        </section>
+      )}
+
       {/* GALERIA */}
       {s.galeriaImagenes.length > 0 && (
         <section id="galeria" className="relative py-14 sm:py-20 px-5 sm:px-8">

@@ -393,6 +393,41 @@ export default function SettingsForm() {
               <button onClick={addPrograma} className="text-gold text-xs hover:underline">+ Agregar actividad</button>
             </div>
           </div>
+
+          <div className="sm:col-span-2 pt-4 mt-2 border-t border-white/10">
+            <p className="text-xs uppercase tracking-widest text-white/60 mb-3">Causa social (sección &quot;Baila con causa&quot;)</p>
+            <label className="flex items-start gap-2 text-xs text-white/70 mb-4">
+              <input
+                type="checkbox"
+                checked={settings.causaSocialActiva}
+                onChange={(e) => set("causaSocialActiva", e.target.checked)}
+                className="mt-0.5 h-4 w-4 accent-gold"
+              />
+              <span>Mostrar la sección de donación de juguetes en la landing.</span>
+            </label>
+          </div>
+          {settings.causaSocialActiva && (
+            <>
+              <div className="sm:col-span-2">
+                <Field label="Título de la sección">
+                  <input
+                    className={inputClass}
+                    value={settings.causaSocialTitulo}
+                    onChange={(e) => set("causaSocialTitulo", e.target.value)}
+                  />
+                </Field>
+              </div>
+              <div className="sm:col-span-2">
+                <Field label="Texto explicativo">
+                  <textarea
+                    className={`${inputClass} min-h-28`}
+                    value={settings.causaSocialDescripcion}
+                    onChange={(e) => set("causaSocialDescripcion", e.target.value)}
+                  />
+                </Field>
+              </div>
+            </>
+          )}
         </div>
       )}
 

@@ -55,6 +55,9 @@ export type SiteSettings = {
   creditoSidUrl: string;
   creditoBioLogoUrl: string;
   creditoBioUrl: string;
+  causaSocialActiva: boolean;
+  causaSocialTitulo: string;
+  causaSocialDescripcion: string;
 };
 
 export const DEFAULT_SETTINGS: SiteSettings = {
@@ -109,6 +112,10 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   creditoSidUrl: "",
   creditoBioLogoUrl: "",
   creditoBioUrl: "",
+  causaSocialActiva: true,
+  causaSocialTitulo: "Baila con causa",
+  causaSocialDescripcion:
+    "Este diciembre, Salsa a la Calle se une a una causa especial: trae un juguete nuevo o en buen estado y ayúdanos a regalarle una sonrisa a niños y niñas en condición de vulnerabilidad de Cúcuta. No tiene que ser costoso — un trompo, un yoyo, un balón, una muñeca, cualquier juguete que haga feliz a un niño cuenta. Más que pagar una entrada, es apoyar una bonita causa mientras disfrutas la mejor música del mundo.",
 };
 
 let cache: { data: SiteSettings; ts: number } | null = null;
