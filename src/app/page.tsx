@@ -378,42 +378,57 @@ export default async function Home() {
       {s.causaSocialActiva && (
         <section id="causa-social" className="relative py-16 sm:py-24 px-5 sm:px-8 border-y border-white/10 overflow-hidden">
           <div
-            className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(127,163,15,0.14),transparent_55%),radial-gradient(circle_at_85%_90%,rgba(252,144,0,0.12),transparent_50%)]"
+            className="absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(127,163,15,0.16),transparent_55%),radial-gradient(circle_at_90%_90%,rgba(252,144,0,0.14),transparent_50%)]"
             aria-hidden
           />
-          <div className="relative max-w-4xl mx-auto text-center mb-12">
-            <p className="uppercase tracking-[0.3em] text-green text-xs sm:text-sm mb-4">Responsabilidad social</p>
-            <h2 className="font-display text-3xl sm:text-5xl font-bold mb-6">
-              {s.causaSocialTitulo} <span aria-hidden>🎁</span>
-            </h2>
-            <p className="text-white/70 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
-              {s.causaSocialDescripcion}
-            </p>
-          </div>
+          <div className="relative max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <p className="uppercase tracking-[0.3em] text-green text-xs sm:text-sm mb-4">Responsabilidad social</p>
+              <h2 className="font-display text-3xl sm:text-5xl font-bold mb-6">
+                {s.causaSocialTitulo} <span aria-hidden>🎁</span>
+              </h2>
+              <p className="text-white/70 leading-relaxed mb-10">{s.causaSocialDescripcion}</p>
 
-          <div className="relative max-w-3xl mx-auto grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4 mb-10">
-            {[
-              { icon: "🧸", label: "Peluche" },
-              { icon: "🪀", label: "Yoyo" },
-              { icon: "⚽", label: "Balón" },
-              { icon: "🪆", label: "Muñeca" },
-              { icon: "🚗", label: "Carrito" },
-              { icon: "🪁", label: "Trompo / cometa" },
-            ].map((toy) => (
-              <div
-                key={toy.label}
-                className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-white/[0.05] ring-1 ring-white/10 py-5 px-2 hover:ring-green/50 hover:bg-white/[0.08] transition-all"
-              >
-                <span className="text-3xl sm:text-4xl" aria-hidden>{toy.icon}</span>
-                <span className="text-[10px] sm:text-xs text-white/60 text-center leading-tight">{toy.label}</span>
+              <div className="grid grid-cols-3 gap-y-6 gap-x-3 max-w-md">
+                {[
+                  { icon: "🧸", label: "Peluche", tone: "wine" as const },
+                  { icon: "🪀", label: "Yoyo", tone: "gold" as const },
+                  { icon: "⚽", label: "Balón", tone: "green" as const },
+                  { icon: "🪆", label: "Muñeca", tone: "green" as const },
+                  { icon: "🚗", label: "Carrito", tone: "wine" as const },
+                  { icon: "🪁", label: "Trompo / cometa", tone: "gold" as const },
+                ].map((toy) => {
+                  const toneClass = {
+                    wine: "from-wine/80 to-wine/20 ring-wine/30",
+                    gold: "from-gold/80 to-gold/20 ring-gold/30",
+                    green: "from-green/80 to-green/20 ring-green/30",
+                  }[toy.tone];
+                  return (
+                    <div key={toy.label} className="flex flex-col items-center gap-2.5 group">
+                      <div
+                        className={`h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-gradient-to-br ${toneClass} ring-1 flex items-center justify-center text-3xl sm:text-4xl shadow-[0_10px_28px_-8px_rgba(0,0,0,0.75)] group-hover:scale-110 group-hover:-translate-y-1 transition-transform duration-300`}
+                      >
+                        <span aria-hidden>{toy.icon}</span>
+                      </div>
+                      <span className="text-[10px] sm:text-xs text-white/60 text-center leading-tight">{toy.label}</span>
+                    </div>
+                  );
+                })}
               </div>
-            ))}
-          </div>
+            </div>
 
-          <div className="relative flex justify-center">
-            <p className="inline-flex items-center gap-2 rounded-full bg-green/10 ring-1 ring-green/30 text-green text-xs sm:text-sm font-semibold px-5 py-2.5 text-center">
-              🎄 Recibimos los juguetes el día del evento y los entregamos antes de Navidad.
-            </p>
+            <div className="rounded-3xl border border-green/20 bg-gradient-to-b from-green/[0.09] to-white/[0.02] p-8 sm:p-10 text-center shadow-[0_30px_70px_-25px_rgba(0,0,0,0.8)]">
+              <div className="text-5xl mb-4" aria-hidden>🎄</div>
+              <p className="font-display text-2xl font-bold mb-2">Tu boleta, con corazón</p>
+              <p className="text-white/60 text-sm mb-7">
+                No tiene que ser costoso: cualquier juguete nuevo o en buen estado cuenta.
+              </p>
+              <ul className="space-y-3 text-white/80 text-sm text-left">
+                <li className="flex gap-3"><span className="text-green">✓</span> Lo recibimos el día del evento, en la entrada.</li>
+                <li className="flex gap-3"><span className="text-green">✓</span> Se entrega antes de Navidad a niños de Cúcuta.</li>
+                <li className="flex gap-3"><span className="text-green">✓</span> No reemplaza tu boleta — es un gesto extra desde el corazón.</li>
+              </ul>
+            </div>
           </div>
         </section>
       )}
