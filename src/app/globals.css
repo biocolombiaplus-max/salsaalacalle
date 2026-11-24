@@ -24,6 +24,8 @@
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  overscroll-behavior-x: none;
+  width: 100%;
 }
 
 body {
@@ -31,6 +33,8 @@ body {
   color: var(--foreground);
   font-family: var(--font-body), Arial, Helvetica, sans-serif;
   overflow-x: hidden;
+  overscroll-behavior-x: none;
+  width: 100%;
   max-width: 100vw;
 }
 

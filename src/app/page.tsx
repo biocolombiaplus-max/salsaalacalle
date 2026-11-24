@@ -64,7 +64,7 @@ export default async function Home() {
     .filter((x) => x.url);
 
   return (
-    <main className="bg-background text-foreground">
+    <main className="bg-background text-foreground touch-pan-y overflow-x-hidden">
       {/* BANNER DE PATROCINADORES (reemplaza la barra de navegación superior) */}
       <header className="fixed top-0 inset-x-0 z-50 overflow-hidden border-b border-gold/20 backdrop-blur-sm">
         <div className="absolute inset-0 bg-gradient-to-b from-[#0d0906] to-black" />
