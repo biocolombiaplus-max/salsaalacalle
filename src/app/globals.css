@@ -121,6 +121,14 @@ body {
   animation: btn-glow-gold 2.2s ease-in-out infinite;
 }
 
+@keyframes btn-glow-green {
+  0%, 100% { box-shadow: 0 8px 24px -8px rgba(127,163,15,0.55); }
+  50% { box-shadow: 0 10px 38px -4px rgba(127,163,15,0.9), 0 0 24px 4px rgba(127,163,15,0.4); }
+}
+.btn-glow-green {
+  animation: btn-glow-green 2.2s ease-in-out infinite;
+}
+
 /* Resalta la palabra GRATIS en toda la landing: más grande, con pulso sutil. */
 @keyframes gratis-pulse {
   0%, 100% { transform: scale(1); }
@@ -136,15 +144,36 @@ body {
   animation: gratis-pulse 1.6s ease-in-out infinite;
 }
 
+/* Nevada suave de fondo: copos sutiles cayendo, sin interferir con clics
+   ni distraer de la información (ver Snowfall.tsx). */
+.snowflake {
+  position: absolute;
+  top: -10px;
+  border-radius: 50%;
+  background: #fff;
+  filter: blur(0.3px);
+  animation-name: snow-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes snow-fall {
+  from { transform: translate3d(0, -10vh, 0); }
+  to { transform: translate3d(var(--snow-drift, 20px), 110vh, 0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .btn-shine::after,
   .btn-glow-wine,
   .btn-glow-gold,
+  .btn-glow-green,
   .gratis-badge,
   .pulse-dot,
   .animate-marquee,
   .animate-marquee-fast,
   .animate-marquee-slow {
     animation: none;
+  }
+  .snowflake {
+    display: none;
   }
 }

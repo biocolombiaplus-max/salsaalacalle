@@ -7,6 +7,7 @@ import { whiteOutlineFilter } from "@/lib/sponsorLogo";
 import Countdown from "@/components/Countdown";
 import RegistroModal from "@/components/RegistroModal";
 import CancionesSection from "@/components/CancionesSection";
+import Snowfall from "@/components/Snowfall";
 
 export const revalidate = 0;
 
@@ -65,6 +66,7 @@ export default async function Home() {
 
   return (
     <main className="bg-background text-foreground touch-pan-y overflow-x-hidden">
+      <Snowfall />
       {/* BANNER DE PATROCINADORES (reemplaza la barra de navegación superior) */}
       <header className="fixed top-0 inset-x-0 z-50 overflow-hidden border-b border-gold/20 backdrop-blur-sm">
         <div className="absolute inset-0 bg-gradient-to-b from-[#0d0906] to-black" />
@@ -428,6 +430,11 @@ export default async function Home() {
                 <li className="flex gap-3"><span className="text-green">✓</span> Se entrega antes de Navidad a niños de Cúcuta.</li>
                 <li className="flex gap-3"><span className="text-green">✓</span> No reemplaza tu boleta — es un gesto extra desde el corazón.</li>
               </ul>
+              <a href="#registro"
+                className="btn-shine btn-glow-green mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-green px-6 py-4 font-semibold text-[#122003] hover:brightness-110 transition text-sm sm:text-base"
+              >
+                Apoyaré esta iniciativa y quiero mi boleta <span className="gratis-badge text-wine text-base sm:text-lg">GRATIS</span>
+              </a>
             </div>
           </div>
         </section>
