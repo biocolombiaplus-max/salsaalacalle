@@ -5,6 +5,8 @@ import Image from "next/image";
 import { upload as blobUpload } from "@vercel/blob/client";
 import type { SiteSettings, ProgramaItem, Patrocinador } from "@/lib/settings";
 import { isVideoUrl } from "@/lib/media";
+import { whiteOutlineFilter } from "@/lib/sponsorLogo";
+import { removeSolidBackground } from "@/lib/removeBg";
 
 type Tab = "evento" | "imagenes" | "patrocinadores" | "redes" | "legal";
 
@@ -124,6 +126,7 @@ export default function SettingsForm() {
     setMessageState({ text, ok });
   }
   const [uploading, setUploading] = useState<string | null>(null);
+  const [removingBg, setRemovingBg] = useState<number | null>(null);
   // Vista previa local mientras cada imagen se sube, para que se vea de
   // inmediato qué archivo se está agregando (antes de tener la URL final).
   const [singlePreview, setSinglePreview] = useState<Record<string, string>>({});
@@ -268,6 +271,22 @@ export default function SettingsForm() {
       setMessage(e instanceof Error ? e.message : "Error al subir el logo");
     } finally {
       setUploading(null);
+    }
+  }
+
+  async function handleRemoveBg(index: number) {
+    const logoUrl = settings!.patrocinadores[index].logoUrl;
+    if (!logoUrl) return;
+    setRemovingBg(index);
+    try {
+      const blob = await removeSolidBackground(logoUrl);
+      const file = new File([blob], "logo-sin-fondo.png", { type: "image/png" });
+      const url = await uploadFile(file, "misc");
+      updatePatrocinador(index, { logoUrl: url });
+    } catch (e) {
+      setMessage(e instanceof Error ? e.message : "No se pudo quitar el fondo del logo");
+    } finally {
+      setRemovingBg(null);
     }
   }
 
@@ -606,8 +625,10 @@ export default function SettingsForm() {
             engrosarla. Marca un patrocinador como &quot;destacado&quot; si es uno de tus patrocinadores
             grandes/oficiales: además de rotar, aparece fijo y en grande en su propia sección justo
             después del hero. Usa las flechas ▲▼ de cada tarjeta para ordenar en qué orden aparecen.
-            Sube logos con fondo transparente (PNG) para mejor resultado. Si un logo se ve muy pequeño
-            o no se nota bien sobre el fondo oscuro, sube su tamaño y/o actívale un borde blanco.
+            Sube logos con fondo transparente (PNG) para mejor resultado. Si tu logo trae fondo blanco
+            sólido (se ve como un bloque rectangular), usa el botón &quot;Quitar fondo blanco&quot; de su
+            tarjeta para quitárselo automáticamente — así el borde blanco y el tamaño sí se notan bien
+            sobre el fondo oscuro.
           </p>
           <div className="mb-6 max-w-sm">
             <label className="block text-[11px] uppercase tracking-widest text-white/50 mb-2">
@@ -663,9 +684,16 @@ export default function SettingsForm() {
                   </button>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <div className="h-16 w-24 shrink-0 rounded-lg bg-black/30 flex items-center justify-center overflow-hidden">
+                  <div className="h-20 w-28 shrink-0 rounded-lg bg-[#1a1a1a] flex items-center justify-center overflow-hidden">
                     {p.logoUrl ? (
-                      <Image src={p.logoUrl} alt={p.nombre || "Patrocinador"} width={96} height={64} className="max-h-14 w-auto object-contain" />
+                      <Image
+                        src={p.logoUrl}
+                        alt={p.nombre || "Patrocinador"}
+                        width={112}
+                        height={80}
+                        style={p.bordeBlanco ? { filter: whiteOutlineFilter(p.bordeGrosor ?? 4) } : undefined}
+                        className="max-h-16 w-auto object-contain"
+                      />
                     ) : (
                       <span className="text-white/30 text-[10px]">Sin logo</span>
                     )}
@@ -678,6 +706,16 @@ export default function SettingsForm() {
                       className="w-full text-xs text-white/60"
                     />
                     {uploading === `patrocinador-${i}` && <p className="text-xs text-gold">Subiendo...</p>}
+                    {p.logoUrl && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveBg(i)}
+                        disabled={removingBg === i}
+                        className="text-[11px] text-gold hover:underline disabled:opacity-40 disabled:no-underline"
+                      >
+                        {removingBg === i ? "Quitando fondo..." : "✨ Quitar fondo blanco del logo"}
+                      </button>
+                    )}
                     <input
                       className={`${inputClass} text-xs`}
                       placeholder="O pega la URL del logo (https://...)"

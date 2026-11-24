@@ -3,25 +3,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { getSettings, type Patrocinador } from "@/lib/settings";
 import { isVideoUrl } from "@/lib/media";
+import { whiteOutlineFilter } from "@/lib/sponsorLogo";
 import Countdown from "@/components/Countdown";
 import RegistroModal from "@/components/RegistroModal";
 import CancionesSection from "@/components/CancionesSection";
 
 export const revalidate = 0;
-
-// Traza un contorno blanco pegado a la silueta del logo (sin fondo/tarjeta),
-// apilando varios drop-shadow sin blur alrededor en círculo.
-function whiteOutlineFilter(thicknessPx: number) {
-  const steps = 20;
-  const shadows: string[] = [];
-  for (let i = 0; i < steps; i++) {
-    const angle = (i / steps) * 2 * Math.PI;
-    const x = (Math.cos(angle) * thicknessPx).toFixed(2);
-    const y = (Math.sin(angle) * thicknessPx).toFixed(2);
-    shadows.push(`drop-shadow(${x}px ${y}px 0 #fff)`);
-  }
-  return shadows.join(" ");
-}
 
 function PatrocinadorLogo({
   p,
