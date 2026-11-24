@@ -7,6 +7,7 @@ import type { SiteSettings, ProgramaItem, Patrocinador } from "@/lib/settings";
 import { isVideoUrl } from "@/lib/media";
 import { whiteOutlineFilter } from "@/lib/sponsorLogo";
 import { removeSolidBackground } from "@/lib/removeBg";
+import { resizeImageFile } from "@/lib/resizeImage";
 
 type Tab = "evento" | "imagenes" | "patrocinadores" | "redes" | "legal";
 
@@ -265,7 +266,11 @@ export default function SettingsForm() {
     const uploadKey = `patrocinador-${index}`;
     setUploading(uploadKey);
     try {
-      const url = await uploadFile(file, "misc");
+      // Un logo nunca necesita más de unos cientos de píxeles: subirlo a su
+      // resolución nativa (a veces miles de píxeles) puede trabar el
+      // navegador al renderizarlo o al aplicarle el borde blanco.
+      const resized = await resizeImageFile(file).catch(() => file);
+      const url = await uploadFile(resized, "misc");
       updatePatrocinador(index, { logoUrl: url });
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "Error al subir el logo");

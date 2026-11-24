@@ -22,7 +22,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-const MAX_DIM = 900;
+const MAX_DIM = 500;
 
 export async function removeSolidBackground(logoUrl: string, tolerance = 42): Promise<Blob> {
   const img = await loadImage(resolveImageSrcForCanvas(logoUrl));

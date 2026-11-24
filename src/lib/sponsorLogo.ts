@@ -1,7 +1,7 @@
 // Traza un contorno blanco pegado a la silueta de un logo (sin fondo/tarjeta),
 // apilando varios drop-shadow sin blur alrededor en círculo. Se usa tanto en
 // la landing como en la vista previa del panel admin, para que ambas luzcan igual.
-export function whiteOutlineFilter(thicknessPx: number, steps = 20): string {
+export function whiteOutlineFilter(thicknessPx: number, steps = 10): string {
   const shadows: string[] = [];
   for (let i = 0; i < steps; i++) {
     const angle = (i / steps) * 2 * Math.PI;
