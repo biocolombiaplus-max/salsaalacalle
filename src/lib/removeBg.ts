@@ -49,15 +49,26 @@ export async function removeSolidBackground(logoUrl: string, tolerance = 42): Pr
   let rSum = 0;
   let gSum = 0;
   let bSum = 0;
+  let aSum = 0;
   for (const c of corners) {
     rSum += data[c];
     gSum += data[c + 1];
     bSum += data[c + 2];
+    aSum += data[c + 3];
   }
   const bgR = rSum / 4;
   const bgG = gSum / 4;
   const bgB = bSum / 4;
+  const bgA = aSum / 4;
   const tol2 = tolerance * tolerance;
+
+  // Si las esquinas ya son transparentes, la imagen no tiene un fondo sólido
+  // que quitar (ya viene con transparencia real, con degradados o sombras
+  // suaves). Procesarla de todos modos puede "morder" esos bordes suaves y
+  // dejar ruido. Mejor no tocarla.
+  if (bgA < 200) {
+    throw new Error("Esta imagen ya tiene fondo transparente, no hace falta quitarlo.");
+  }
 
   const visited = new Uint8Array(w * h);
   // [x, y, refR, refG, refB] por cada pixel en cola.
@@ -74,6 +85,10 @@ export async function removeSolidBackground(logoUrl: string, tolerance = 42): Pr
     if (visited[idx]) return;
     visited[idx] = 1;
     const o = idx * 4;
+    // Solo se considera "fondo" un pixel ya casi opaco. Uno que ya viene
+    // semi-transparente (sombra suave, degradado del propio logo) se deja
+    // intacto, sin importar qué tan parecido sea su color al del fondo.
+    if (data[o + 3] < 200) return;
     const dr = data[o] - refR;
     const dg = data[o + 1] - refG;
     const db = data[o + 2] - refB;
@@ -114,7 +129,7 @@ export async function removeSolidBackground(logoUrl: string, tolerance = 42): Pr
       for (let x = 0; x < w; x++) {
         const idx = y * w + x;
         const o = idx * 4;
-        if (data[o + 3] === 0) continue;
+        if (data[o + 3] < 200) continue;
         let transparentNeighbors = 0;
         let totalNeighbors = 0;
         for (const [nx, ny] of [
