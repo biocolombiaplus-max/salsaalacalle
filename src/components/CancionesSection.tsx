@@ -11,6 +11,30 @@ type Clasico = {
 
 const VOTO_STORAGE_KEY = "sac_voto_clasico";
 
+// "Carátulas" estilo Spotify para cada clásico: no usamos portadas reales
+// (derechos de autor), sino un ícono sobre un degradado de marca, cada uno
+// con una combinación distinta para que la lista se vea variada.
+const PORTADAS = [
+  { gradient: "from-wine to-gold", icon: "💿" },
+  { gradient: "from-gold to-green", icon: "🎷" },
+  { gradient: "from-green to-wine", icon: "🥁" },
+  { gradient: "from-wine via-gold to-green", icon: "🎺" },
+  { gradient: "from-green via-wine to-gold", icon: "🎶" },
+  { gradient: "from-gold via-green to-wine", icon: "🎙️" },
+  { gradient: "from-wine to-green", icon: "🪘" },
+];
+
+function Portada({ index }: { index: number }) {
+  const p = PORTADAS[index % PORTADAS.length];
+  return (
+    <div
+      className={`h-12 w-12 sm:h-14 sm:w-14 shrink-0 rounded-lg bg-gradient-to-br ${p.gradient} flex items-center justify-center shadow-[0_6px_16px_-4px_rgba(0,0,0,0.6)] ring-1 ring-white/10`}
+    >
+      <span className="text-xl sm:text-2xl drop-shadow" aria-hidden>{p.icon}</span>
+    </div>
+  );
+}
+
 export default function CancionesSection({
   eventoEdicion,
 }: {
@@ -202,8 +226,8 @@ export default function CancionesSection({
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8">
           <p className="text-xs uppercase tracking-widest text-white/50 mb-4">Vota tu clásico favorito</p>
-          <div className="space-y-3">
-            {clasicos.map((c) => {
+          <div className="space-y-2.5">
+            {clasicos.map((c, i) => {
               const maxVotos = Math.max(1, ...clasicos.map((x) => x.votos));
               const pct = Math.round((c.votos / maxVotos) * 100);
               const isVoted = votedId === c.id;
@@ -214,12 +238,13 @@ export default function CancionesSection({
                     style={{ width: `${pct}%` }}
                     aria-hidden
                   />
-                  <div className="relative flex items-center gap-3 px-4 py-3">
+                  <div className="relative flex items-center gap-3 px-3 py-2.5">
+                    <Portada index={i} />
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-sm truncate">{c.cancion}</p>
                       <p className="text-white/50 text-xs truncate">{c.artista}</p>
                     </div>
-                    <span className="text-[11px] text-white/40 shrink-0">
+                    <span className="text-[11px] text-white/40 shrink-0 hidden sm:inline">
                       {c.votos} {c.votos === 1 ? "voto" : "votos"}
                     </span>
                     <button
