@@ -1,9 +1,9 @@
-// Redimensiona una imagen en el navegador antes de subirla. Un logo nunca
-// necesita más de unos cientos de píxeles de lado — subirlo a resolución
-// nativa (a veces miles de píxeles, varios MB) hace que el navegador se
-// trabe al renderizarlo o al aplicarle efectos (ej. el contorno blanco),
-// además de pesar innecesariamente. Se re-codifica siempre a PNG para
-// conservar la transparencia del logo original.
+// Redimensiona una imagen en el navegador antes de subirla. Un logo a
+// resolución nativa (a veces miles de píxeles, varios MB) hace que el
+// navegador se trabe al renderizarlo o al aplicarle efectos (ej. el
+// contorno blanco); pero reducirlo demasiado lo deja borroso/pixelado al
+// mostrarse en tarjetas grandes o en pantallas retina. Se re-codifica
+// siempre a PNG para conservar la transparencia del logo original.
 
 function readAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -23,10 +23,22 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-export async function resizeImageFile(file: File, maxDim = 500): Promise<File> {
+export async function resizeImageFile(file: File, minDim = 400, maxDim = 1200): Promise<File> {
   const dataUrl = await readAsDataUrl(file);
   const img = await loadImage(dataUrl);
-  const scale = Math.min(1, maxDim / Math.max(img.naturalWidth, img.naturalHeight));
+  const longSide = Math.max(img.naturalWidth, img.naturalHeight);
+  const shortSide = Math.min(img.naturalWidth, img.naturalHeight);
+
+  // Los logos se muestran por altura (el lado corto, casi siempre, en logos
+  // horizontales tipo wordmark): si solo se limita el lado largo, un logo
+  // muy ancho y bajo puede quedar con muy pocos píxeles de alto y verse
+  // borroso/pixelado al mostrarse más grande o en pantallas retina. Por eso
+  // se respeta un mínimo en el lado corto, aunque eso deje el lado largo
+  // un poco por encima de maxDim en logos con proporciones muy extremas.
+  const scaleForMax = maxDim / longSide;
+  const scaleForMin = shortSide > 0 ? minDim / shortSide : 1;
+  const scale = Math.min(1, Math.max(scaleForMax, scaleForMin));
+
   const w = Math.max(1, Math.round(img.naturalWidth * scale));
   const h = Math.max(1, Math.round(img.naturalHeight * scale));
 

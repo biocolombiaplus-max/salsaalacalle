@@ -22,17 +22,21 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-const MAX_DIM = 500;
+const MIN_DIM = 400;
+const MAX_DIM = 1200;
 
 export async function removeSolidBackground(logoUrl: string, tolerance = 42): Promise<Blob> {
   const img = await loadImage(resolveImageSrcForCanvas(logoUrl));
-  let w = img.naturalWidth;
-  let h = img.naturalHeight;
-  if (Math.max(w, h) > MAX_DIM) {
-    const scale = MAX_DIM / Math.max(w, h);
-    w = Math.round(w * scale);
-    h = Math.round(h * scale);
-  }
+  const longSide = Math.max(img.naturalWidth, img.naturalHeight);
+  const shortSide = Math.min(img.naturalWidth, img.naturalHeight);
+  // Igual que en resizeImage.ts: respeta un mínimo en el lado corto para no
+  // dejar el logo borroso en pantallas retina, aunque eso implique superar
+  // un poco MAX_DIM en logos de proporciones muy extremas.
+  const scaleForMax = MAX_DIM / longSide;
+  const scaleForMin = shortSide > 0 ? MIN_DIM / shortSide : 1;
+  const scale = Math.min(1, Math.max(scaleForMax, scaleForMin));
+  const w = Math.max(1, Math.round(img.naturalWidth * scale));
+  const h = Math.max(1, Math.round(img.naturalHeight * scale));
 
   const canvas = document.createElement("canvas");
   canvas.width = w;
