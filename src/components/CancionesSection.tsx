@@ -2,20 +2,20 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 
-type CancionItem = {
+type Clasico = {
   id: string;
   cancion: string;
-  artista: string | null;
-  nombre: string | null;
-  createdAt: string;
+  artista: string;
+  votos: number;
 };
+
+const VOTO_STORAGE_KEY = "sac_voto_clasico";
 
 export default function CancionesSection({
   eventoEdicion,
 }: {
   eventoEdicion: string;
 }) {
-  const [canciones, setCanciones] = useState<CancionItem[]>([]);
   const [cancion, setCancion] = useState("");
   const [artista, setArtista] = useState("");
   const [nombre, setNombre] = useState("");
@@ -24,12 +24,42 @@ export default function CancionesSection({
   const [errorMsg, setErrorMsg] = useState("");
   const [shareState, setShareState] = useState<"idle" | "copied">("idle");
 
+  const [clasicos, setClasicos] = useState<Clasico[]>([]);
+  const [votedId, setVotedId] = useState<string | null>(null);
+
   useEffect(() => {
-    fetch("/api/canciones")
+    fetch("/api/clasicos")
       .then((r) => r.json())
-      .then((data) => setCanciones(data.canciones || []))
+      .then((data) => setClasicos(data.clasicos || []))
       .catch(() => {});
+    try {
+      const saved = localStorage.getItem(VOTO_STORAGE_KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza una sola vez al montar con localStorage (API externa solo disponible en el cliente), no una sincronización repetida
+      if (saved) setVotedId(saved);
+    } catch {
+      // localStorage no disponible (navegación privada, etc.); se puede votar sin restricción local
+    }
   }, []);
+
+  async function handleVote(id: string) {
+    if (votedId) return;
+    setVotedId(id);
+    try {
+      localStorage.setItem(VOTO_STORAGE_KEY, id);
+    } catch {
+      // ignorar si no hay localStorage disponible
+    }
+    setClasicos((prev) => prev.map((c) => (c.id === id ? { ...c, votos: c.votos + 1 } : c)));
+    try {
+      await fetch("/api/clasicos/vote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+    } catch {
+      // el voto ya se reflejó en pantalla; si falla la red no revertimos para no confundir
+    }
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -44,7 +74,6 @@ export default function CancionesSection({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "No se pudo enviar tu canción");
-      if (data.cancion) setCanciones((prev) => [data.cancion, ...prev].slice(0, 30));
       setStatus("sent");
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : "No se pudo enviar tu canción");
@@ -171,23 +200,49 @@ export default function CancionesSection({
           )}
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8 max-h-96 overflow-y-auto">
-          <p className="text-xs uppercase tracking-widest text-white/50 mb-4">Lo que está pidiendo la gente</p>
-          {canciones.length === 0 ? (
-            <p className="text-white/40 text-sm">Sé el primero en pedir una canción 🎶</p>
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8">
+          <p className="text-xs uppercase tracking-widest text-white/50 mb-4">Vota tu clásico favorito</p>
+          <div className="space-y-3">
+            {clasicos.map((c) => {
+              const maxVotos = Math.max(1, ...clasicos.map((x) => x.votos));
+              const pct = Math.round((c.votos / maxVotos) * 100);
+              const isVoted = votedId === c.id;
+              return (
+                <div key={c.id} className="relative rounded-xl border border-white/10 overflow-hidden">
+                  <div
+                    className="absolute inset-y-0 left-0 bg-green/15 transition-all duration-500"
+                    style={{ width: `${pct}%` }}
+                    aria-hidden
+                  />
+                  <div className="relative flex items-center gap-3 px-4 py-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm truncate">{c.cancion}</p>
+                      <p className="text-white/50 text-xs truncate">{c.artista}</p>
+                    </div>
+                    <span className="text-[11px] text-white/40 shrink-0">
+                      {c.votos} {c.votos === 1 ? "voto" : "votos"}
+                    </span>
+                    <button
+                      onClick={() => handleVote(c.id)}
+                      disabled={!!votedId}
+                      aria-label={`Votar por ${c.cancion}`}
+                      className={`shrink-0 h-9 w-9 rounded-full flex items-center justify-center transition ${
+                        isVoted
+                          ? "bg-green text-[#122003]"
+                          : "bg-white/10 hover:bg-green/30 text-white disabled:opacity-30 disabled:hover:bg-white/10"
+                      }`}
+                    >
+                      {isVoted ? "✓" : "🤍"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {votedId ? (
+            <p className="text-xs text-green mt-4 text-center">¡Gracias por votar! 🎉</p>
           ) : (
-            <ul className="space-y-3">
-              {canciones.map((c) => (
-                <li key={c.id} className="flex items-start gap-2.5 text-sm">
-                  <span aria-hidden>🎵</span>
-                  <span>
-                    <span className="font-semibold">{c.cancion}</span>
-                    {c.artista && <span className="text-white/60"> — {c.artista}</span>}
-                    {c.nombre && <span className="block text-white/40 text-xs mt-0.5">pedida por {c.nombre}</span>}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <p className="text-xs text-white/40 mt-4 text-center">Un voto por persona.</p>
           )}
         </div>
       </div>

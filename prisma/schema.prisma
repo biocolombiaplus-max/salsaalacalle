@@ -54,6 +54,14 @@ model SongRequest {
   @@index([createdAt])
 }
 
+model CancionClasica {
+  id      String @id @default(cuid())
+  cancion String
+  artista String
+  votos   Int    @default(0)
+  orden   Int    @default(0)
+}
+
 model AuditLog {
   id        String   @id @default(cuid())
   action    String
