@@ -151,7 +151,7 @@ body {
   top: -10px;
   border-radius: 50%;
   background: #fff;
-  filter: blur(0.3px);
+  will-change: transform;
   animation-name: snow-fall;
   animation-timing-function: linear;
   animation-iteration-count: infinite;

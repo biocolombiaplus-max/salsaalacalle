@@ -24,7 +24,7 @@ function generateFlakes(count: number): Flake[] {
   }));
 }
 
-export default function Snowfall({ count = 26 }: { count?: number }) {
+export default function Snowfall({ count = 18 }: { count?: number }) {
   // Los copos se generan en el cliente, después de montar: así el HTML del
   // servidor no tiene posiciones aleatorias que choquen con las del cliente
   // al hidratar (evita el parpadeo/discrepancia de hidratación).
@@ -38,7 +38,11 @@ export default function Snowfall({ count = 26 }: { count?: number }) {
   if (flakes.length === 0) return null;
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[60] overflow-hidden" aria-hidden="true">
+    <div
+      className="pointer-events-none fixed inset-0 z-[60] overflow-hidden will-change-transform"
+      style={{ transform: "translateZ(0)" }}
+      aria-hidden="true"
+    >
       {flakes.map((f) => (
         <span
           key={f.id}
