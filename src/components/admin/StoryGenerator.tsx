@@ -295,8 +295,10 @@ export default function StoryGenerator() {
   const [bottomBarVisible, setBottomBarVisible] = useState(true);
   const [bottomBarColor, setBottomBarColor] = useState("#3d1f5c");
   const [bottomBarText, setBottomBarText] = useState("");
+  const [bottomBarLink, setBottomBarLink] = useState("");
   const [bottomBarTextColor, setBottomBarTextColor] = useState("#ffffff");
   const [bottomBarTextSize, setBottomBarTextSize] = useState(34);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   useEffect(() => {
     fetch("/api/admin/settings")
@@ -825,9 +827,50 @@ export default function StoryGenerator() {
           </label>
           {bottomBarVisible && (
             <>
-              <Field label="Texto (link, @usuario, etc.)">
-                <input className={inputClass} value={bottomBarText} onChange={(e) => setBottomBarText(e.target.value)} />
+              <Field label="Texto a mostrar en la imagen">
+                <input
+                  className={inputClass}
+                  value={bottomBarText}
+                  onChange={(e) => setBottomBarText(e.target.value)}
+                  placeholder="Ej: Visítanos 👆 o @tuusuario"
+                />
               </Field>
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-white/60 mb-2">
+                  Link real (para el sticker de enlace de Instagram)
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    className={inputClass}
+                    value={bottomBarLink}
+                    onChange={(e) => setBottomBarLink(e.target.value)}
+                    placeholder="https://..."
+                  />
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!bottomBarLink) return;
+                      try {
+                        await navigator.clipboard.writeText(bottomBarLink);
+                        setLinkCopied(true);
+                        setTimeout(() => setLinkCopied(false), 2000);
+                      } catch {
+                        // portapapeles no disponible; el campo ya se puede copiar a mano
+                      }
+                    }}
+                    disabled={!bottomBarLink}
+                    className="shrink-0 rounded-xl bg-white/10 hover:bg-white/15 disabled:opacity-40 px-4 text-xs font-semibold transition"
+                  >
+                    {linkCopied ? "✓ Copiado" : "Copiar"}
+                  </button>
+                </div>
+                <p className="text-[11px] text-white/40 mt-2">
+                  Este link no queda escrito en la imagen (ninguna imagen puede ser &quot;clicable&quot; por sí
+                  sola). Se guarda aquí solo para que lo copies y lo pegues en el sticker de enlace nativo de
+                  Instagram al publicar la historia — así el texto se ve bonito y el link sigue funcionando,
+                  igual que cuando Instagram oculta el link detrás de un texto personalizado.
+                </p>
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Color de la barra">
                   <input type="color" value={bottomBarColor} onChange={(e) => setBottomBarColor(e.target.value)} className={colorInputClass} />
