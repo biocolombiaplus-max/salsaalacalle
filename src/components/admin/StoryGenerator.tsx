@@ -441,17 +441,37 @@ export default function StoryGenerator() {
     });
   }
 
-  function handleDownload() {
+  async function handleDownload() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     setExportError("");
     try {
-      const url = canvas.toDataURL("image/png");
+      const baseName = mode === "grid" ? "patrocinadores" : sponsor?.nombre || "patrocinador";
+      const filename = `${baseName.trim().toLowerCase().replace(/\s+/g, "-")}-historia.png`;
+
+      const blob: Blob | null = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+      if (!blob) throw new Error("No se pudo generar la imagen");
+
+      // En iPhone/Android, el truco de <a download> con frecuencia no guarda
+      // nada (Safari sobre todo lo ignora). El panel nativo de compartir sí
+      // incluye "Guardar en Fotos"/"Guardar imagen", así que se prioriza
+      // cuando el navegador lo soporta para archivos.
+      const file = new File([blob], filename, { type: "image/png" });
+      if (typeof navigator !== "undefined" && navigator.canShare?.({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file] });
+          return;
+        } catch {
+          // el usuario canceló el share nativo; cae al respaldo de descarga directa
+        }
+      }
+
+      const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      const baseName = mode === "grid" ? "patrocinadores" : sponsor?.nombre || "patrocinador";
-      a.download = `${baseName.trim().toLowerCase().replace(/\s+/g, "-")}-historia.png`;
+      a.download = filename;
       a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
     } catch {
       setExportError(
         "No se pudo exportar la imagen por una restricción de seguridad del navegador. Prueba usando una imagen de fondo subida por ti en vez de una URL externa."
@@ -662,7 +682,7 @@ export default function StoryGenerator() {
               <input
                 type="range"
                 min={20}
-                max={85}
+                max={100}
                 value={logoSizePct}
                 onChange={(e) => setLogoSizePct(Number(e.target.value))}
                 className="w-full accent-gold"
